@@ -1,0 +1,14 @@
+AllCops:
+  TargetRubyVersion: 3.0.0
+  NewCops: enable
+
+Style/Documentation:
+  Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - 'ports/dsl/lighstorm.rb'
+
+Layout/LineLength:
+  Exclude:
+    - 'static/spec.rb'
