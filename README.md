@@ -33,7 +33,7 @@ _Lighstorm_ is an opinionated abstraction layer on top of the [lnd-client](https
 
 It brings an [object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Models](https://guides.rubyonrails.org/active_record_basics.html) conventions.
 
-Although it tries to stay close to [Lightning's terminologies](https://docs.lightning.engineering/lightning-network-tools/lnd), it brings its own vocabulary and data modeling, optimizing for [programmer happiness](https://rubyonrails.org/doctrine).
+Although it tries to stay close to [Lightning's terminologies](https://docs.lightning.engineering/lightning-network-tools/lnd), it brings its own vocabulary and [data modeling](#data-modeling), optimizing for [programmer happiness](https://rubyonrails.org/doctrine).
 
 ## Usage
 
