@@ -3,6 +3,8 @@
 module Lighstorm
   module Models
     class Rate
+      attr_reader :parts_per_million
+
       # https://en.wikipedia.org/wiki/Parts-per_notation
       def initialize(parts_per_million: nil)
         raise 'missing parts_per_million' if parts_per_million.nil?

@@ -3,10 +3,16 @@
 require_relative '../../satoshis'
 require_relative '../../rate'
 
+require_relative '../../../components/lnd'
+
 module Lighstorm
   module Models
     class Fee
+      attr_reader :rate, :base
+
       def initialize(policy, channel, node)
+        @channel = channel
+        @policy = policy
         if node.myself?
           @base = Satoshis.new(
             milisatoshis: channel.data[:fee_report][:channel_fees].first.base_fee_msat
@@ -19,6 +25,46 @@ module Lighstorm
           @base = Satoshis.new(milisatoshis: policy.data.fee_base_msat)
 
           @rate = Rate.new(parts_per_million: policy.data.fee_rate_milli_msat)
+        end
+      end
+
+      def update(params, preview: false)
+        chan_point = @channel.data[:get_chan_info].chan_point.split(':')
+
+        # add_message "lnrpc.PolicyUpdateRequest" do
+        #   optional :base_fee_msat, :int64, 3
+        #   optional :fee_rate, :double, 4
+        #   optional :fee_rate_ppm, :uint32, 9
+        #   optional :time_lock_delta, :uint32, 5
+        #   optional :max_htlc_msat, :uint64, 6
+        #   optional :min_htlc_msat, :uint64, 7
+        #   optional :min_htlc_msat_specified, :bool, 8
+        #   oneof :scope do
+        #     optional :global, :bool, 1
+        #     optional :chan_point, :message, 2, "lnrpc.ChannelPoint"
+        #   end
+        # end
+
+        grpc_request = {
+          method: :update_channel_policy,
+          params: {
+            chan_point: {
+              funding_txid_str: chan_point[0],
+              output_index: chan_point[1].to_i
+            },
+            fee_rate_ppm: @policy.data.fee_rate_milli_msat,
+            base_fee_msat: @policy.data.fee_base_msat,
+            time_lock_delta: @policy.data.time_lock_delta,
+            max_htlc_msat: @policy.data.max_htlc_msat
+          }
+        }
+
+        grpc_request[:params][:fee_rate_ppm] = params[:rate][:parts_per_million]
+
+        return grpc_request if preview
+
+        LND.instance.middleware("lightning.#{grpc_request[:method]}") do
+          LND.instance.client.lightning.send(grpc_request[:method], grpc_request[:params])
         end
       end
 

@@ -17,17 +17,17 @@ module Lighstorm
     class Channel
       KIND = :edge
 
-      attr_reader :id, :data
+      attr_reader :data
 
       def self.all
-        response = Cache.for('lightning.list_channels', ttl: 1) do
+        response = Cache.for('lightning.list_channels') do
           LND.instance.middleware('lightning.list_channels') do
             LND.instance.client.lightning.list_channels
           end
         end
 
         response.channels.map do |channel|
-          Channel.find_by_id(channel.chan_id)
+          Channel.find_by_id(channel.chan_id.to_s)
         end
       end
 
@@ -43,21 +43,23 @@ module Lighstorm
         Channel.new({ id: id })
       end
 
+      def id
+        # Standard JSON don't support BigInt, so, a String is safer.
+        @id.to_s
+      end
+
       def initialize(params)
         begin
-          response = Cache.for(
-            'lightning.get_chan_info',
-            ttl: 1, params: { chan_id: params[:id] }
-          ) do
+          response = Cache.for('lightning.get_chan_info', params: { chan_id: params[:id].to_i }) do
             LND.instance.middleware('lightning.get_chan_info') do
-              LND.instance.client.lightning.get_chan_info(chan_id: params[:id])
+              LND.instance.client.lightning.get_chan_info(chan_id: params[:id].to_i)
             end
           end
 
           @data = { get_chan_info: response }
           @id = @data[:get_chan_info].channel_id
-        rescue StandardError => _e
-          @data = { get_chan_info: nil }
+        rescue StandardError => e
+          @data = { get_chan_info: nil, error: e }
           @id = params[:id]
         end
 
@@ -65,6 +67,10 @@ module Lighstorm
 
         fetch_from_list_channels!
         calculate_times_after_list_channels!
+      end
+
+      def error
+        @data[:error]
       end
 
       def active
@@ -141,7 +147,7 @@ module Lighstorm
 
       # Ensure that we are getting fresh up-date data about our own fees.
       def fetch_from_fee_report!
-        response = Cache.for('lightning.fee_report', ttl: 1) do
+        response = Cache.for('lightning.fee_report') do
           LND.instance.middleware('lightning.fee_report') do
             LND.instance.client.lightning.fee_report
           end
@@ -156,7 +162,7 @@ module Lighstorm
       end
 
       def fetch_from_list_channels!
-        response = Cache.for('lightning.list_channels', ttl: 1) do
+        response = Cache.for('lightning.list_channels') do
           LND.instance.middleware('lightning.list_channels') do
             LND.instance.client.lightning.list_channels
           end

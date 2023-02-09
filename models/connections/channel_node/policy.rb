@@ -18,12 +18,12 @@ module Lighstorm
                   end
       end
 
-      def fees
-        @fees ||= Fee.new(self, @channel, @node)
+      def fee
+        @fee ||= Fee.new(self, @channel, @node)
       end
 
       def to_h
-        { fee: fees.to_h }
+        { fee: fee.to_h }
       end
     end
   end

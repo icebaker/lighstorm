@@ -8,13 +8,16 @@ module Lighstorm
     class PaymentChannel
       KIND = :connection
 
-      def initialize(raw_hop, hop_index)
+      def initialize(raw_hop, hop_index, respond_info: true)
+        @respond_info = respond_info
         @raw_hop = raw_hop
-        @index = hop_index
+        @hop = hop_index
       end
 
+      attr_reader :hop
+
       def channel
-        @channel ||= Channel.find_by_id(@raw_hop.chan_id)
+        Channel.find_by_id(@raw_hop.chan_id)
       end
 
       def amount
@@ -34,24 +37,35 @@ module Lighstorm
       end
 
       def to_h
-        {
-          hop: @index,
+        response = {
+          hop: hop,
           amount: amount.to_h,
           fee: {
             milisatoshis: fee.milisatoshis,
             parts_per_million: fee.parts_per_million(amount.milisatoshis)
           },
           channel: {
-            id: channel.id,
-            partner: {
-              node: {
-                alias: partner_node&.alias,
-                public_key: partner_node&.public_key,
-                color: partner_node&.color
-              }
+            id: @raw_hop.chan_id.to_s,
+            node: {
+              public_key: @raw_hop.pub_key
             }
           }
         }
+
+        return response unless @respond_info
+
+        response[:channel] = {
+          id: channel.id,
+          partner: {
+            node: {
+              alias: partner_node&.alias,
+              public_key: partner_node&.public_key,
+              color: partner_node&.color
+            }
+          }
+        }
+
+        response
       end
     end
   end

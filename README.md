@@ -90,6 +90,7 @@ node.channels
 node.alias
 node.public_key
 node.color
+node.myself?
 
 node.platform.blockchain
 node.platform.network
@@ -129,6 +130,14 @@ channel.myself.node.color
 channel.myself.policy.fee.base.milisatoshis
 channel.myself.policy.fee.rate.parts_per_million
 
+channel.myself.policy.fee.update(
+  { rate: { parts_per_million: 25 } }, preview: true
+)
+
+channel.myself.policy.fee.update(
+  { rate: { parts_per_million: 25 } }
+)
+
 Lighstorm::Forward
 Lighstorm::Forward.all
 Lighstorm::Forward.first
@@ -141,7 +150,9 @@ forward.id
 forward.at
 
 forward.fee.milisatoshis
-forward.fee.parts_per_million
+forward.fee.parts_per_million(
+  forward.in.amount.milisatoshis
+)
 
 forward.in.amount.milisatoshis
 
@@ -154,6 +165,37 @@ forward.out.channel.id
 forward.out.channel.partner.node.alias
 forward.out.channel.partner.node.public_key
 forward.out.channel.partner.node.color
+
+Lighstorm::Forward.group_by_channel(direction: :in, hours_ago: 24, limit: 5)
+
+group.to_h
+
+group.last_at
+group.analysis.count
+group.analysis.sums.amount.milisatoshis
+group.analysis.sums.fee.milisatoshis
+group.analysis.averages.amount.milisatoshis
+group.analysis.averages.fee.milisatoshis
+group.analysis.averages.fee.parts_per_million(
+  group.analysis.averages.amount.milisatoshis
+)
+
+group.in.id
+group.in.partner.node.alias
+group.in.partner.node.public_key
+group.in.partner.node.color
+
+Lighstorm::Forward.group_by_channel(direction: :out)
+
+group.to_h
+
+group.last_at
+group.analysis.count
+
+group.out.id
+group.out.partner.node.alias
+group.out.partner.node.public_key
+group.out.partner.node.color
 
 Lighstorm::Payment
 Lighstorm::Payment.all
@@ -168,12 +210,17 @@ payment.purpose
 payment.status
 payment.amount.milisatoshis
 payment.fee.milisatoshis
-payment.fee.parts_per_million
+payment.fee.parts_per_million(
+  payment.amount.milisatoshis
+)
 
 payment.from.hop
 payment.from.amount.milisatoshis
 payment.from.fee.milisatoshis
-payment.from.fee.parts_per_million
+payment.from.fee.parts_per_million(
+  payment.from.amount.milisatoshis
+)
+
 payment.from.channel.id
 payment.from.channel.partner.node.alias
 payment.from.channel.partner.node.public_key
@@ -182,7 +229,10 @@ payment.from.channel.partner.node.color
 payment.to.hop
 payment.to.amount.milisatoshis
 payment.to.fee.milisatoshis
-payment.to.fee.parts_per_million
+payment.to.fee.parts_per_million(
+  payment.to.amount.milisatoshis
+)
+
 payment.to.channel.id
 payment.to.channel.partner.node.alias
 payment.to.channel.partner.node.public_key
@@ -193,7 +243,10 @@ payment.hops.size
 payment.hops[0].hop
 payment.hops[0].amount.milisatoshis
 payment.hops[0].fee.milisatoshis
-payment.hops[0].fee.parts_per_million
+payment.hops[0].fee.parts_per_million(
+  payment.hops[0].amount.milisatoshis
+)
+
 payment.hops[0].channel.id
 payment.hops[0].channel.partner.node.alias
 payment.hops[0].channel.partner.node.public_key

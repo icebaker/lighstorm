@@ -12,7 +12,7 @@ module Lighstorm
       def initialize(node)
         @node = node
 
-        response = Cache.for('lightning.get_info', ttl: 1) do
+        response = Cache.for('lightning.get_info') do
           LND.instance.middleware('lightning.get_info') do
             LND.instance.client.lightning.get_info
           end

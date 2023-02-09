@@ -14,7 +14,7 @@ module Lighstorm
       attr_reader :alias, :public_key, :color
 
       def self.myself
-        response = Cache.for('lightning.get_info', ttl: 1) do
+        response = Cache.for('lightning.get_info') do
           LND.instance.middleware('lightning.get_info') do
             LND.instance.client.lightning.get_info
           end
@@ -59,13 +59,20 @@ module Lighstorm
       private
 
       def initialize(params, myself: false)
-        response = Cache.for(
-          'lightning.get_node_info',
-          ttl: 5 * 60, params: { pub_key: params[:public_key] }
-        ) do
+        response = Cache.for('lightning.get_node_info', params: { pub_key: params[:public_key] }) do
           LND.instance.middleware('lightning.get_node_info') do
             LND.instance.client.lightning.get_node_info(pub_key: params[:public_key])
           end
+        end
+
+        unless myself
+          response_get_info = Cache.for('lightning.get_info') do
+            LND.instance.middleware('lightning.get_info') do
+              LND.instance.client.lightning.get_info
+            end
+          end
+
+          myself = true if params[:public_key] == response_get_info.identity_pubkey
         end
 
         @data = { get_node_info: response }

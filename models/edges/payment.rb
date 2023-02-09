@@ -15,14 +15,16 @@ module Lighstorm
 
       attr_reader :data
 
-      def self.all(limit: nil, purpose: nil, hops: true)
+      def self.all(limit: nil, purpose: nil, hops: true, info: true)
         last_offset = 0
 
         payments = []
 
         loop do
-          response = LND.instance.middleware('lightning.list_payments') do
-            LND.instance.client.lightning.list_payments(index_offset: last_offset)
+          response = Cache.for('lightning.list_payments', params: { index_offset: last_offset }) do
+            LND.instance.middleware('lightning.list_payments') do
+              LND.instance.client.lightning.list_payments(index_offset: last_offset)
+            end
           end
 
           response.payments.each do |raw_payment|
@@ -57,7 +59,7 @@ module Lighstorm
         payments = payments[0..limit - 1] unless limit.nil?
 
         payments.map do |raw_payment|
-          Payment.new(raw_payment, respond_hops: hops)
+          Payment.new(raw_payment, respond_hops: hops, respond_info: info)
         end
       end
 
@@ -69,8 +71,9 @@ module Lighstorm
         all.last
       end
 
-      def initialize(raw, respond_hops: true)
+      def initialize(raw, respond_hops: true, respond_info: true)
         @respond_hops = respond_hops
+        @respond_info = respond_info
         @data = { list_payments: { payments: [raw] } }
       end
 
@@ -163,7 +166,7 @@ module Lighstorm
 
         @from = PaymentChannel.new(
           @data[:list_payments][:payments].first.htlcs.first.route.hops.first,
-          1
+          1, respond_info: @respond_info
         )
 
         @from
@@ -185,12 +188,14 @@ module Lighstorm
                   @data[:list_payments][:payments].first.htlcs.first.route.hops[
                     @data[:list_payments][:payments].first.htlcs.first.route.hops.size - 2
                   ],
-                  @data[:list_payments][:payments].first.htlcs.first.route.hops.size - 1
+                  @data[:list_payments][:payments].first.htlcs.first.route.hops.size - 1,
+                  respond_info: @respond_info
                 )
               else
                 PaymentChannel.new(
                   @data[:list_payments][:payments].first.htlcs.first.route.hops.last,
-                  @data[:list_payments][:payments].first.htlcs.first.route.hops.size
+                  @data[:list_payments][:payments].first.htlcs.first.route.hops.size,
+                  respond_info: @respond_info
                 )
               end
 
@@ -203,7 +208,7 @@ module Lighstorm
         validated_htlcs_number!
 
         @hops = @data[:list_payments][:payments].first.htlcs.first.route.hops.map.with_index do |raw_hop, i|
-          PaymentChannel.new(raw_hop, i + 1)
+          PaymentChannel.new(raw_hop, i + 1, respond_info: @respond_info)
         end
       end
 

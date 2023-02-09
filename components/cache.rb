@@ -4,6 +4,8 @@ require 'singleton'
 
 require 'zache'
 
+require_relative '../static/cache'
+
 module Lighstorm
   class Cache
     include Singleton
@@ -18,7 +20,14 @@ module Lighstorm
       @client = Zache.new
     end
 
-    def for(key, ttl: 1, params: {}, &block)
+    def for(key, ttl: nil, params: {}, &block)
+      if ttl.nil?
+        ttl = Lighstorm::Static::CACHE[key.sub('lightning.', '').to_sym]
+        raise "missing ttl for #{key}" if ttl.nil?
+
+        ttl = ttl[:ttl]
+      end
+
       key = build_key_for(key, params)
 
       @client.get(key, lifetime: ttl) do
