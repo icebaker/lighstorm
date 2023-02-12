@@ -42,7 +42,7 @@ Although it tries to stay close to [Lightning's terminologies](https://docs.ligh
 Add to your `Gemfile`:
 
 ```ruby
-gem 'lighstorm', '~> 0.0.2'
+gem 'lighstorm', '~> 0.0.3'
 ```
 
 Run `bundle install`.
@@ -304,7 +304,7 @@ satoshis.parts_per_million(reference_in_milisatoshis)
 ```ruby
 require 'lighstorm'
 
-puts Lighstorm.version # => 0.0.2
+puts Lighstorm.version # => 0.0.3
 
 Lighstorm::Satoshis.new(
   milisatoshis: 75621650
@@ -426,7 +426,7 @@ gem 'lighstorm', path: '/home/user/lighstorm'
 # demo.rb
 require 'lighstorm'
 
-puts Lighstorm.version # => 0.0.2
+puts Lighstorm.version # => 0.0.3
 ```
 
 ```sh
@@ -441,5 +441,5 @@ gem build lighstorm.gemspec
 
 gem signin
 
-gem push lighstorm-0.0.2.gem
+gem push lighstorm-0.0.3.gem
 ```
