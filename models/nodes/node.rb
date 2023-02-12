@@ -32,8 +32,10 @@ module Lighstorm
           LND.instance.client.lightning.describe_graph
         end
 
+        myself_public_key = myself.public_key
+
         response.nodes.map do |raw_node|
-          Node.new({ describe_graph: raw_node })
+          Node.new({ describe_graph: raw_node }, myself: raw_node.pub_key == myself_public_key)
         end
       end
 

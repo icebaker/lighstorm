@@ -4,12 +4,13 @@ require 'dotenv/load'
 
 require_relative '../../static/spec'
 
+require_relative '../../models/satoshis'
+
 require_relative '../../models/nodes/node'
 
 require_relative '../../models/edges/channel'
 require_relative '../../models/edges/forward'
 require_relative '../../models/edges/payment'
-require_relative '../../models/connections/channel_node'
 
 module Lighstorm
   Node = Models::Node

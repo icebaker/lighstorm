@@ -29,14 +29,6 @@ module Lighstorm
         end
       end
 
-      def self.first
-        all.first
-      end
-
-      def self.last
-        all.last
-      end
-
       def self.mine
         response = Cache.for('lightning.list_channels') do
           LND.instance.middleware('lightning.list_channels') do

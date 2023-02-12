@@ -7,7 +7,7 @@ API for interacting with a [Lightning Node](https://lightning.network).
 ![Lighstorm text written stylized with an illustration of a Graph connecting two Nodes.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/lighstorm.png)
 
 ```ruby
-Lighstorm::Channel.first.myself.node.alias
+Lighstorm::Channel.mine.first.myself.node.alias
 ```
 
 ## Index
@@ -101,8 +101,6 @@ node.platform.lightning.version
 Lighstorm::Channel
 Lighstorm::Channel.mine # Your Node's Channels.
 Lighstorm::Channel.all # All 80k+ Channels on the Network.
-Lighstorm::Channel.first
-Lighstorm::Channel.last
 Lighstorm::Channel.find_by_id('850099509773795329')
 
 channel.to_h
@@ -120,12 +118,30 @@ channel.accounting.sent.milisatoshis
 channel.accounting.received.milisatoshis
 channel.accounting.unsettled.milisatoshis
 
+# Channels that don't belong to you:
+channel.partners
+
+channel.partners[0]
+channel.partners[0].node.alias
+
+channel.partners[1]
+channel.partners[1].node.alias
+
+# Channels that belong to you:
+channel.myself
+channel.myself.node.alias
+
+channel.partner
+channel.partner.node.alias
+
 channel.partner.accounting.balance.milisatoshis
 channel.partner.node.alias
 channel.partner.node.public_key
 channel.partner.node.color
 channel.partner.policy.fee.base.milisatoshis
 channel.partner.policy.fee.rate.parts_per_million
+channel.partner.policy.htlc.minimum.milisatoshis
+channel.partner.policy.htlc.maximum.milisatoshis
 
 channel.myself.accounting.balance.milisatoshis
 channel.myself.node.alias
@@ -133,13 +149,23 @@ channel.myself.node.public_key
 channel.myself.node.color
 channel.myself.policy.fee.base.milisatoshis
 channel.myself.policy.fee.rate.parts_per_million
+channel.myself.policy.htlc.minimum.milisatoshis
+channel.myself.policy.htlc.maximum.milisatoshis
 
 channel.myself.policy.fee.update(
   { rate: { parts_per_million: 25 } }, preview: true
 )
 
 channel.myself.policy.fee.update(
+  { base: { milisatoshis: 1 } }
+)
+
+channel.myself.policy.fee.update(
   { rate: { parts_per_million: 25 } }
+)
+
+channel.myself.policy.fee.update(
+  { base: { milisatoshis: 1 }, rate: { parts_per_million: 25 } }
 )
 
 Lighstorm::Forward
@@ -325,7 +351,7 @@ So, we are going to think in terms of _Edges_, _Nodes_, and _Connections_:
 #### Channel
 
 ```ruby
-channel = Lighstorm::Channel.first
+channel = Lighstorm::Channel.mine.first
 
 channel.id
 
