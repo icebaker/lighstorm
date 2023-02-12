@@ -7,7 +7,7 @@ API for interacting with a [Lightning Node](https://lightning.network).
 ![Lighstorm text written stylized with an illustration of a Graph connecting two Nodes.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/lighstorm.png)
 
 ```ruby
-Lighstorm::Channel.first.myself.node.alias
+Lighstorm::Channel.mine.first.myself.node.alias
 ```
 
 ## Index
@@ -78,7 +78,8 @@ Lighstorm.config!(
 ```ruby
 Lighstorm::Node
 
-Lighstorm::Node.myself
+Lighstorm::Node.myself # Your Node.
+Lighstorm::Node.all # All 18k+ Nodes on the Network.
 Lighstorm::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
@@ -98,12 +99,13 @@ node.platform.lightning.implementation
 node.platform.lightning.version
 
 Lighstorm::Channel
-Lighstorm::Channel.all
-Lighstorm::Channel.first
-Lighstorm::Channel.last
-Lighstorm::Channel.find_by_id(850099509773795329)
+Lighstorm::Channel.mine # Your Node's Channels.
+Lighstorm::Channel.all # All 80k+ Channels on the Network.
+Lighstorm::Channel.find_by_id('850099509773795329')
 
 channel.to_h
+
+channel.mine?
 
 channel.id
 channel.opened_at
@@ -116,12 +118,30 @@ channel.accounting.sent.milisatoshis
 channel.accounting.received.milisatoshis
 channel.accounting.unsettled.milisatoshis
 
+# Channels that don't belong to you:
+channel.partners
+
+channel.partners[0]
+channel.partners[0].node.alias
+
+channel.partners[1]
+channel.partners[1].node.alias
+
+# Channels that belong to you:
+channel.myself
+channel.myself.node.alias
+
+channel.partner
+channel.partner.node.alias
+
 channel.partner.accounting.balance.milisatoshis
 channel.partner.node.alias
 channel.partner.node.public_key
 channel.partner.node.color
 channel.partner.policy.fee.base.milisatoshis
 channel.partner.policy.fee.rate.parts_per_million
+channel.partner.policy.htlc.minimum.milisatoshis
+channel.partner.policy.htlc.maximum.milisatoshis
 
 channel.myself.accounting.balance.milisatoshis
 channel.myself.node.alias
@@ -129,13 +149,23 @@ channel.myself.node.public_key
 channel.myself.node.color
 channel.myself.policy.fee.base.milisatoshis
 channel.myself.policy.fee.rate.parts_per_million
+channel.myself.policy.htlc.minimum.milisatoshis
+channel.myself.policy.htlc.maximum.milisatoshis
 
 channel.myself.policy.fee.update(
   { rate: { parts_per_million: 25 } }, preview: true
 )
 
 channel.myself.policy.fee.update(
+  { base: { milisatoshis: 1 } }
+)
+
+channel.myself.policy.fee.update(
   { rate: { parts_per_million: 25 } }
+)
+
+channel.myself.policy.fee.update(
+  { base: { milisatoshis: 1 }, rate: { parts_per_million: 25 } }
 )
 
 Lighstorm::Forward
@@ -287,7 +317,7 @@ Lighstorm::Node.myself.to_h #> { ... }
 
 Lighstorm::Node.myself.channels.count # => 5
 
-Lighstorm::Channel.all.first.partner.node.alias
+Lighstorm::Channel.mine.first.partner.node.alias
 
 forward = Lighstorm::Forward.all(limit: 10).first
 
@@ -321,7 +351,7 @@ So, we are going to think in terms of _Edges_, _Nodes_, and _Connections_:
 #### Channel
 
 ```ruby
-channel = Lighstorm::Channel.first
+channel = Lighstorm::Channel.mine.first
 
 channel.id
 

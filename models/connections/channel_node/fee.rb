@@ -13,7 +13,7 @@ module Lighstorm
       def initialize(policy, channel, node)
         @channel = channel
         @policy = policy
-        if node.myself?
+        if channel.data[:fee_report] && node.myself?
           @base = Satoshis.new(
             milisatoshis: channel.data[:fee_report][:channel_fees].first.base_fee_msat
           )
@@ -21,10 +21,10 @@ module Lighstorm
           @rate = Rate.new(
             parts_per_million: channel.data[:fee_report][:channel_fees].first.fee_per_mil
           )
-        else
-          @base = Satoshis.new(milisatoshis: policy.data.fee_base_msat)
+        elsif policy.data
+          @base = policy.data.fee_base_msat ? Satoshis.new(milisatoshis: policy.data.fee_base_msat) : nil
 
-          @rate = Rate.new(parts_per_million: policy.data.fee_rate_milli_msat)
+          @rate = policy.data.fee_rate_milli_msat ? Rate.new(parts_per_million: policy.data.fee_rate_milli_msat) : nil
         end
       end
 
@@ -59,13 +59,39 @@ module Lighstorm
           }
         }
 
-        grpc_request[:params][:fee_rate_ppm] = params[:rate][:parts_per_million]
+        if params[:rate] && params[:rate][:parts_per_million]
+          if (params[:rate][:parts_per_million]).negative?
+            raise "fee rate can't be negative [#{params[:rate][:parts_per_million]}]"
+          end
+
+          grpc_request[:params][:fee_rate_ppm] = params[:rate][:parts_per_million]
+        end
+
+        if params[:base] && params[:base][:milisatoshis]
+          if (params[:base][:milisatoshis]).negative?
+            raise "fee base can't be negative [#{params[:base][:milisatoshis]}]"
+          end
+
+          grpc_request[:params][:base_fee_msat] = params[:base][:milisatoshis]
+        end
 
         return grpc_request if preview
 
-        LND.instance.middleware("lightning.#{grpc_request[:method]}") do
+        response = LND.instance.middleware("lightning.#{grpc_request[:method]}") do
           LND.instance.client.lightning.send(grpc_request[:method], grpc_request[:params])
         end
+
+        if response.failed_updates.empty?
+          @base = Satoshis.new(
+            milisatoshis: grpc_request[:params][:base_fee_msat]
+          )
+
+          @rate = Rate.new(
+            parts_per_million: grpc_request[:params][:fee_rate_ppm]
+          )
+        end
+
+        response
       end
 
       def to_h

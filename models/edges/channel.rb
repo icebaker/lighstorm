@@ -20,6 +20,16 @@ module Lighstorm
       attr_reader :data
 
       def self.all
+        response = LND.instance.middleware('lightning.describe_graph') do
+          LND.instance.client.lightning.describe_graph
+        end
+
+        response.edges.map do |raw_channel|
+          Channel.new({ describe_graph: raw_channel })
+        end
+      end
+
+      def self.mine
         response = Cache.for('lightning.list_channels') do
           LND.instance.middleware('lightning.list_channels') do
             LND.instance.client.lightning.list_channels
@@ -29,14 +39,6 @@ module Lighstorm
         response.channels.map do |channel|
           Channel.find_by_id(channel.chan_id.to_s)
         end
-      end
-
-      def self.first
-        all.first
-      end
-
-      def self.last
-        all.last
       end
 
       def self.find_by_id(id)
@@ -49,24 +51,33 @@ module Lighstorm
       end
 
       def initialize(params)
-        begin
-          response = Cache.for('lightning.get_chan_info', params: { chan_id: params[:id].to_i }) do
-            LND.instance.middleware('lightning.get_chan_info') do
-              LND.instance.client.lightning.get_chan_info(chan_id: params[:id].to_i)
+        if params[:id]
+          begin
+            response = Cache.for('lightning.get_chan_info', params: { chan_id: params[:id].to_i }) do
+              LND.instance.middleware('lightning.get_chan_info') do
+                LND.instance.client.lightning.get_chan_info(chan_id: params[:id].to_i)
+              end
             end
-          end
 
-          @data = { get_chan_info: response }
-          @id = @data[:get_chan_info].channel_id
-        rescue StandardError => e
-          @data = { get_chan_info: nil, error: e }
-          @id = params[:id]
+            @data = { get_chan_info: response }
+            @id = @data[:get_chan_info].channel_id
+          rescue StandardError => e
+            @data = { get_chan_info: nil, error: e }
+            @id = params[:id]
+          end
+        elsif params[:describe_graph]
+          @data = { describe_graph: params[:describe_graph] }
+          @id = @data[:describe_graph].channel_id
         end
 
         fetch_from_fee_report!
 
         fetch_from_list_channels!
         calculate_times_after_list_channels!
+      end
+
+      def error?
+        !@data[:error].nil?
       end
 
       def error
@@ -78,6 +89,8 @@ module Lighstorm
       end
 
       def exposure
+        return 'public' if @data[:describe_graph]
+
         return unless @data[:list_channels]
 
         @data[:list_channels][:channels].first.private ? 'private' : 'public'
@@ -100,24 +113,70 @@ module Lighstorm
       end
 
       def accounting
-        return nil unless @data[:get_chan_info]
-
         @accounting ||= ChannelAccounting.new(self)
       end
 
+      def partners(fetch: false)
+        @partners ||= if mine?
+                        [myself, partner]
+                      elsif @data[:describe_graph]
+                        [
+                          ChannelNode.new(
+                            self,
+                            Node.new({ public_key: @data[:describe_graph].node1_pub }, fetch: fetch)
+                          ),
+                          ChannelNode.new(
+                            self,
+                            Node.new({ public_key: @data[:describe_graph].node2_pub }, fetch: fetch)
+                          )
+                        ]
+                      elsif @data[:get_chan_info]
+                        [
+                          ChannelNode.new(
+                            self,
+                            Node.new({ public_key: @data[:get_chan_info].node1_pub }, fetch: fetch)
+                          ),
+                          ChannelNode.new(
+                            self,
+                            Node.new({ public_key: @data[:get_chan_info].node2_pub }, fetch: fetch)
+                          )
+                        ]
+                      else
+                        raise 'missing data'
+                      end
+      end
+
+      def mine?
+        my_node = Node.myself.public_key
+
+        if @data[:get_chan_info]
+          (
+            @data[:get_chan_info].node1_pub == my_node || @data[:get_chan_info].node2_pub == my_node
+          )
+        elsif @data[:describe_graph]
+          (
+            @data[:describe_graph].node1_pub == my_node || @data[:describe_graph].node2_pub == my_node
+          )
+        else
+          false
+        end
+      end
+
       def myself
-        return nil unless @data[:get_chan_info]
+        raise 'not your channel' unless mine?
 
         @myself ||= ChannelNode.new(self, Node.myself)
       end
 
       def partner
-        return nil unless @data[:get_chan_info]
+        raise 'not your channel' unless mine?
 
-        public_key = if @data[:get_chan_info].node1_pub == myself.node.public_key
-                       @data[:get_chan_info].node2_pub
+        key = @data[:get_chan_info] ? :get_chan_info : :describe_graph
+
+        public_key = if @data[key].node1_pub == myself.node.public_key
+                       @data[key].node2_pub
                      else
-                       @data[:get_chan_info].node1_pub
+                       @data[key].node1_pub
                      end
 
         @partner ||= ChannelNode.new(self, Node.find_by_public_key(public_key))
@@ -126,21 +185,32 @@ module Lighstorm
       def raw
         {
           get_chan_info: @data[:get_chan_info].to_h,
-          list_channels: { channels: @data[:list_channels][:channels].map(&:to_h) }
+          describe_graph: @data[:describe_graph].to_h,
+          list_channels: {
+            channels: @data[:list_channels] ? @data[:list_channels][:channels].map(&:to_h) : nil
+          }
         }
       end
 
       def to_h
-        {
-          id: id,
-          opened_at: opened_at,
-          up_at: up_at,
-          active: active,
-          exposure: exposure,
-          accounting: accounting.to_h,
-          partner: partner.to_h,
-          myself: myself.to_h
-        }
+        if @data[:get_chan_info]
+          {
+            id: id,
+            opened_at: opened_at,
+            up_at: up_at,
+            active: active,
+            exposure: exposure,
+            accounting: accounting.to_h,
+            partner: partner.to_h,
+            myself: myself.to_h
+          }
+        else
+          {
+            id: id,
+            accounting: accounting.to_h,
+            partners: partners.map(&:to_h)
+          }
+        end
       end
 
       private

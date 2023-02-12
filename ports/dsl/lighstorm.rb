@@ -4,6 +4,8 @@ require 'dotenv/load'
 
 require_relative '../../static/spec'
 
+require_relative '../../models/satoshis'
+
 require_relative '../../models/nodes/node'
 
 require_relative '../../models/edges/channel'

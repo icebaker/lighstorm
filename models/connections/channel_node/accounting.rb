@@ -11,6 +11,8 @@ module Lighstorm
       end
 
       def balance
+        return nil unless @channel.data[:list_channels]
+
         @balance ||= if @node.myself?
                        Satoshis.new(milisatoshis: (
                          @channel.data[:list_channels][:channels].first.local_balance.to_f * 1000.0

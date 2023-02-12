@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'fee'
+require_relative 'htlc'
 
 module Lighstorm
   module Models
@@ -11,10 +12,16 @@ module Lighstorm
       end
 
       def data
-        @data ||= if @channel.data[:get_chan_info].node1_pub == @node.public_key
-                    @channel.data[:get_chan_info].node1_policy
+        return @data if @data
+
+        return if !@channel.data[:get_chan_info] && !@channel.data[:describe_graph]
+
+        key = @channel.data[:get_chan_info] ? :get_chan_info : :describe_graph
+
+        @data ||= if @channel.data[key].node1_pub == @node.public_key
+                    @channel.data[key].node1_policy
                   else
-                    @channel.data[:get_chan_info].node2_policy
+                    @channel.data[key].node2_policy
                   end
       end
 
@@ -22,8 +29,12 @@ module Lighstorm
         @fee ||= Fee.new(self, @channel, @node)
       end
 
+      def htlc
+        @htlc ||= HTLC.new(self, @channel, @node)
+      end
+
       def to_h
-        { fee: fee.to_h }
+        { fee: fee.to_h, htlc: htlc.to_h }
       end
     end
   end
