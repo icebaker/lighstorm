@@ -13,7 +13,7 @@ module Lighstorm
       def initialize(policy, channel, node)
         @channel = channel
         @policy = policy
-        if node.myself?
+        if channel.data[:fee_report] && node.myself?
           @base = Satoshis.new(
             milisatoshis: channel.data[:fee_report][:channel_fees].first.base_fee_msat
           )
@@ -21,10 +21,10 @@ module Lighstorm
           @rate = Rate.new(
             parts_per_million: channel.data[:fee_report][:channel_fees].first.fee_per_mil
           )
-        else
-          @base = Satoshis.new(milisatoshis: policy.data.fee_base_msat)
+        elsif policy.data
+          @base = policy.data.fee_base_msat ? Satoshis.new(milisatoshis: policy.data.fee_base_msat) : nil
 
-          @rate = Rate.new(parts_per_million: policy.data.fee_rate_milli_msat)
+          @rate = policy.data.fee_rate_milli_msat ? Rate.new(parts_per_million: policy.data.fee_rate_milli_msat) : nil
         end
       end
 

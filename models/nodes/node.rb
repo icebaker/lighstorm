@@ -27,6 +27,16 @@ module Lighstorm
         Node.new({ public_key: public_key }, myself: myself)
       end
 
+      def self.all
+        response = LND.instance.middleware('lightning.describe_graph') do
+          LND.instance.client.lightning.describe_graph
+        end
+
+        response.nodes.map do |raw_node|
+          Node.new({ describe_graph: raw_node })
+        end
+      end
+
       def myself?
         @myself
       end
@@ -36,52 +46,98 @@ module Lighstorm
       end
 
       def channels
-        raise 'cannot list channels from a node that is not yours' unless myself?
-
-        Channel.all
+        if myself?
+          Channel.mine
+        else
+          Channel.all
+        end
       end
 
       def raw
         {
-          get_node_info: @data[:get_node_info].to_h
+          get_node_info: @data[:get_node_info].to_h,
+          describe_graph: @data[:describe_graph].to_h
         }
       end
 
       def to_h
-        {
-          alias: @alias,
-          public_key: @public_key,
-          color: @color,
-          platform: platform.to_h
-        }
+        if (@data[:get_node_info] || @data[:describe_graph]) && myself?
+          {
+            alias: @alias,
+            public_key: @public_key,
+            color: @color,
+            platform: platform.to_h
+          }
+        elsif @data[:get_node_info] || @data[:describe_graph]
+          {
+            alias: @alias,
+            public_key: @public_key,
+            color: @color
+          }
+        else
+          {
+            public_key: @public_key
+          }
+        end
       end
 
-      private
+      def myself
+        return @myself unless @myself.nil?
 
-      def initialize(params, myself: false)
-        response = Cache.for('lightning.get_node_info', params: { pub_key: params[:public_key] }) do
-          LND.instance.middleware('lightning.get_node_info') do
-            LND.instance.client.lightning.get_node_info(pub_key: params[:public_key])
+        response_get_info = Cache.for('lightning.get_info') do
+          LND.instance.middleware('lightning.get_info') do
+            LND.instance.client.lightning.get_info
           end
         end
 
-        unless myself
-          response_get_info = Cache.for('lightning.get_info') do
-            LND.instance.middleware('lightning.get_info') do
-              LND.instance.client.lightning.get_info
+        @myself = public_key == response_get_info.identity_pubkey
+      end
+
+      def error?
+        !@data[:error].nil?
+      end
+
+      def error
+        @data[:error]
+      end
+
+      def initialize(params, myself: false, fetch: true)
+        if params[:public_key] && fetch
+          begin
+            response = Cache.for('lightning.get_node_info', params: { pub_key: params[:public_key] }) do
+              LND.instance.middleware('lightning.get_node_info') do
+                LND.instance.client.lightning.get_node_info(pub_key: params[:public_key])
+              end
             end
+
+            @data = { get_node_info: response }
+            @raw_node = response.node
+          rescue StandardError => e
+            @data = { get_node_info: nil, error: e }
+            @public_key = params[:public_key]
           end
+        elsif params[:describe_graph]
+          @data = { describe_graph: params[:describe_graph] }
 
-          myself = true if params[:public_key] == response_get_info.identity_pubkey
+          @raw_node = params[:describe_graph]
+        else
+          @data = {}
         end
-
-        @data = { get_node_info: response }
 
         @myself = myself
 
-        @alias = @data[:get_node_info].node.alias
-        @public_key = @data[:get_node_info].node.pub_key
-        @color = @data[:get_node_info].node.color
+        if params[:public_key] && !fetch
+          @public_key = params[:public_key]
+          return
+        end
+
+        @myself = myself
+
+        return unless @raw_node
+
+        @alias = @raw_node.alias
+        @public_key = @raw_node.pub_key
+        @color = @raw_node.color
       end
     end
   end

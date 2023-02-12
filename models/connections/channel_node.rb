@@ -29,12 +29,19 @@ module Lighstorm
       end
 
       def to_h
-        {
-          accounting: accounting.to_h,
-          node: @node.to_h,
-          policy: policy.to_h
-          # constraints: constraints.to_h
-        }
+        if @channel.data[:get_chan_info]
+          {
+            accounting: accounting.to_h,
+            node: @node.to_h,
+            policy: policy.to_h
+            # constraints: constraints.to_h
+          }
+        else
+          {
+            node: @node.to_h,
+            policy: policy.to_h
+          }
+        end
       end
     end
   end

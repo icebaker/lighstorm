@@ -78,7 +78,8 @@ Lighstorm.config!(
 ```ruby
 Lighstorm::Node
 
-Lighstorm::Node.myself
+Lighstorm::Node.myself # Your Node.
+Lighstorm::Node.all # All 18k+ Nodes on the Network.
 Lighstorm::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
@@ -98,12 +99,15 @@ node.platform.lightning.implementation
 node.platform.lightning.version
 
 Lighstorm::Channel
-Lighstorm::Channel.all
+Lighstorm::Channel.mine # Your Node's Channels.
+Lighstorm::Channel.all # All 80k+ Channels on the Network.
 Lighstorm::Channel.first
 Lighstorm::Channel.last
-Lighstorm::Channel.find_by_id(850099509773795329)
+Lighstorm::Channel.find_by_id('850099509773795329')
 
 channel.to_h
+
+channel.mine?
 
 channel.id
 channel.opened_at
@@ -287,7 +291,7 @@ Lighstorm::Node.myself.to_h #> { ... }
 
 Lighstorm::Node.myself.channels.count # => 5
 
-Lighstorm::Channel.all.first.partner.node.alias
+Lighstorm::Channel.mine.first.partner.node.alias
 
 forward = Lighstorm::Forward.all(limit: 10).first
 

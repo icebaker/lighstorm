@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['ports/dsl']
 
   spec.add_dependency 'dotenv', '~> 2.8', '>= 2.8.1'
-  spec.add_dependency 'lnd-client', '~> 0.0.4'
+  spec.add_dependency 'lnd-client', '~> 0.0.5'
   spec.add_dependency 'zache', '~> 0.12.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
