@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary = Lighstorm::Static::SPEC[:summary]
   spec.description = Lighstorm::Static::SPEC[:description]
 
-  spec.homepage = Lighstorm::Static::SPEC[:github]
+  spec.homepage = Lighstorm::Static::SPEC[:documentation]
 
   spec.license = Lighstorm::Static::SPEC[:license]
 
@@ -20,6 +20,8 @@ Gem::Specification.new do |spec|
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = Lighstorm::Static::SPEC[:github]
+  spec.metadata['documentation_uri'] = Lighstorm::Static::SPEC[:documentation]
+  spec.metadata['bug_tracker_uri'] = Lighstorm::Static::SPEC[:issues]
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
     `git ls-files -z`.split("\x0").reject do |f|
