@@ -1,0 +1,2 @@
+{
+:base_fee_msatI"Integer:0..10:ET:chan_idI"Integer:11..20;T:channel_pointI"String:50+;T:fee_per_milI"Integer:0..10;T:fee_rateI"Float:0..10;T

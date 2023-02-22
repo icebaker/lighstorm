@@ -1,6 +1,8 @@
-> Lighstorm: API for interacting with a [Lightning Node](https://lightning.network).
+> ⚠️ Warning: Early-stage project, breaking changes are expected.
 
 # About
+
+> Lighstorm: API for interacting with a [Lightning Node](https://lightning.network).
 
 _Lighstorm_ is an opinionated abstraction layer on top of the [lnd-client](https://github.com/icebaker/lnd-client).
 
@@ -135,9 +137,11 @@ forward = Lighstorm::Forward.last
 
 forward.at
 
+forward.fee.milisatoshis
 forward.fee.parts_per_million
 
 forward.in.amount.milisatoshis
+forward.out.amount.milisatoshis
 
 forward.in.channel.id
 forward.in.channel.partner.node.alias
@@ -158,26 +162,32 @@ forward.out.channel.partner.node.alias
 ```ruby
 payment = Payment.last
 
-payment.hash
-payment.amount.milisatoshis
+payment.status
+payment.created_at
+
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+payment.request.code # "lnbc20m1pv...qqdhhwkj"
+
+payment.request.amount.milisatoshis
 
 payment.from.hop
 payment.from.amount.milisatoshis
 payment.from.fee.milisatoshis
 payment.from.channel.id
-payment.from.channel.partner.node.alias
+payment.from.channel.target.alias
+payment.from.channel.exit.alias
 
 payment.to.hop
 payment.to.amount.milisatoshis
 payment.to.fee.milisatoshis
 payment.to.channel.id
-payment.to.channel.partner.node.alias
+payment.to.channel.target.alias
 
 payment.hops[0].hop
 payment.hops[0].amount.milisatoshis
 payment.hops[0].fee.milisatoshis
 payment.hops[0].channel.id
-payment.hops[0].channel.partner.node.alias
+payment.hops[0].channel.target.alias
 ```
 
 [![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
@@ -187,6 +197,73 @@ payment.hops[0].channel.partner.node.alias
   </a>
 </center>
 
+# Error Handling
+
+## Rescuing
+```ruby
+require 'lighstorm'
+
+channel = Lighstorm::Channel.mine.first
+
+begin
+  channel.myself.policy.fee.update(
+    { rate: { parts_per_million: -1 } }, preview: true
+  )
+rescue Lighstorm::Errors::NegativeNotAllowedError => error
+  puts error.message # 'fee rate can't be negative: -1'
+end
+
+begin
+  channel.myself.policy.fee.update(
+    { rate: { parts_per_million: -1 } }, preview: true
+  )
+rescue Lighstorm::Errors::LighstormError => error
+  puts error.message # 'fee rate can't be negative: -1'
+end
+```
+
+### For Short
+
+```ruby
+require 'lighstorm'
+require 'lighstorm/errors'
+
+channel = Lighstorm::Channel.mine.first
+
+begin
+  channel.myself.policy.fee.update(
+    { rate: { parts_per_million: -1 } }, preview: true
+  )
+rescue NegativeNotAllowedError => error
+  puts error.message # "fee rate can't be negative: -1"
+end
+
+begin
+  channel.myself.policy.fee.update(
+    { rate: { parts_per_million: -1 } }, preview: true
+  )
+rescue LighstormError => error
+  puts error.message # "fee rate can't be negative: -1"
+end
+```
+
+## Errors
+```ruby
+LighstormError
+
+MissingCredentialsError
+MissingMilisatoshisError
+MissingPartsPerMillionError
+MissingTTLError
+NegativeNotAllowedError
+NotYourChannelError
+NotYourNodeError
+OperationNotAllowedError
+UnexpectedNumberOfHTLCsError
+UnknownChannelError
+UpdateChannelPolicyError
+```
+
 # API
 
 ## Node
@@ -195,9 +272,16 @@ Lighstorm::Node
 
 Lighstorm::Node.myself # Your Node.
 Lighstorm::Node.all # All 18k+ Nodes on the Network.
+Lighstorm::Node.all(limit: 10)
 Lighstorm::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
+
+# _key is helpful for reactive javascript frameworks.
+# Please don't consider it as a unique identifier
+# for the item. Instead, use it as a volatile key for
+# the item's current state that may change at any moment.
+node._key
 
 node.to_h
 
@@ -227,7 +311,14 @@ node.platform.lightning.version
 Lighstorm::Channel
 Lighstorm::Channel.mine # Your Node's Channels.
 Lighstorm::Channel.all # All 80k+ Channels on the Network.
+Lighstorm::Channel.all(limit: 10)
 Lighstorm::Channel.find_by_id('850099509773795329')
+
+# _key is helpful for reactive javascript frameworks.
+# Please don't consider it as a unique identifier
+# for the item. Instead, use it as a volatile key for
+# the item's current state that may change at any moment.
+channel._key 
 
 channel.to_h
 
@@ -257,6 +348,9 @@ channel.partners[1].node.alias
 channel.myself
 channel.myself.node.alias
 
+channel.transaction.funding.id
+channel.transaction.funding.index
+
 channel.partner
 channel.partner.node.alias
 
@@ -268,6 +362,7 @@ channel.partner.policy.fee.base.milisatoshis
 channel.partner.policy.fee.rate.parts_per_million
 channel.partner.policy.htlc.minimum.milisatoshis
 channel.partner.policy.htlc.maximum.milisatoshis
+channel.partner.policy.htlc.blocks.delta.minimum
 
 channel.myself.accounting.balance.milisatoshis
 channel.myself.node.alias
@@ -277,6 +372,7 @@ channel.myself.policy.fee.base.milisatoshis
 channel.myself.policy.fee.rate.parts_per_million
 channel.myself.policy.htlc.minimum.milisatoshis
 channel.myself.policy.htlc.maximum.milisatoshis
+channel.myself.policy.htlc.blocks.delta.minimum
 ```
 
 ### Operations
@@ -301,6 +397,145 @@ channel.myself.policy.fee.update(
 )
 ```
 
+## Invoice
+
+```ruby
+Lighstorm::Invoice
+Lighstorm::Invoice.all
+Lighstorm::Invoice.all(limit: 10)
+Lighstorm::Invoice.first
+Lighstorm::Invoice.last
+
+Lighstorm::Invoice.find_by_secret_hash(
+  '1d438b8100518c9fba0a607e3317d6b36f74ceef3a6591836eb2f679c6853501'
+)
+
+# _key is helpful for reactive javascript frameworks.
+# Please don't consider it as a unique identifier
+# for the item. Instead, use it as a volatile key for
+# the item's current state that may change at any moment.
+invoice._key
+
+invoice.created_at
+invoice.settle_at
+
+invoice.state
+
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+invoice.request.code # "lnbc20m1pv...qqdhhwkj"
+
+invoice.request.amount.milisatoshis
+
+invoice.request.description.memo
+invoice.request.description.hash
+
+# https://docs.lightning.engineering/the-lightning-network/multihop-payments
+invoice.request.secret.preimage
+invoice.request.secret.hash
+
+invoice.request.address
+```
+
+## Payment
+
+[![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
+<center style="margin-top: -1.4em;">
+  <a href="https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png" rel="noopener noreferrer" target="_blank">
+    click to zoom
+  </a>
+</center>
+
+```ruby
+Lighstorm::Payment
+Lighstorm::Payment.all
+Lighstorm::Payment.first
+Lighstorm::Payment.last
+Lighstorm::Payment.all(limit: 10, purpose: 'rebalance')
+
+# Possible Purposes:
+['self-payment', 'peer-to-peer', 'rebalance', 'payment']
+
+# _key is helpful for reactive javascript frameworks.
+# Please don't consider it as a unique identifier
+# for the item. Instead, use it as a volatile key for
+# the item's current state that may change at any moment.
+payment._key
+
+payment.status
+payment.created_at
+payment.settled_at
+payment.purpose
+
+payment.fee.milisatoshis
+payment.fee.parts_per_million(
+  payment.request.amount.milisatoshis
+)
+
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+payment.request.code # "lnbc20m1pv...qqdhhwkj"
+
+payment.request.amount.milisatoshis
+
+# https://docs.lightning.engineering/the-lightning-network/multihop-payments
+payment.request.secret.preimage
+payment.request.secret.hash
+
+payment.request.address
+
+payment.request.description.memo
+payment.request.description.hash
+
+payment.from.hop
+payment.from.amount.milisatoshis
+payment.from.fee.milisatoshis
+payment.from.fee.parts_per_million(payment.from.amount.milisatoshis)
+
+payment.from.channel.id
+
+payment.from.channel.target.public_key
+payment.from.channel.target.alias
+payment.from.channel.target.color
+
+payment.from.channel.exit.public_key
+payment.from.channel.exit.alias
+payment.from.channel.exit.color
+
+payment.to.hop
+payment.to.amount.milisatoshis
+payment.to.fee.milisatoshis
+payment.to.fee.parts_per_million(payment.to.amount.milisatoshis)
+
+payment.to.channel.id
+
+payment.to.channel.target.public_key
+payment.to.channel.target.alias
+payment.to.channel.target.color
+
+payment.to.channel.entry.public_key
+payment.to.channel.entry.alias
+payment.to.channel.entry.color
+
+payment.hops.size
+
+payment.hops[0].first?
+payment.hops[0].last?
+
+payment.hops[0].hop
+payment.hops[0].amount.milisatoshis
+payment.hops[0].fee.milisatoshis
+payment.hops[0].fee.parts_per_million(payment.hops[0].amount.milisatoshis)
+
+payment.hops[0].channel.id
+
+payment.hops[0].channel.target.public_key
+payment.hops[0].channel.target.alias
+payment.hops[0].channel.target.color
+
+payment.hops[0].channel.entry.public_key
+payment.hops[0].channel.entry.alias
+payment.hops[0].channel.entry.color
+```
+
 ## Forward
 
 [![This is an image representing Forward as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-forward.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-forward.png)
@@ -319,7 +554,12 @@ Lighstorm::Forward.all(limit: 10)
 
 forward.to_h
 
-forward.id
+# _key is helpful for reactive javascript frameworks.
+# Please don't consider it as a unique identifier
+# for the item. Instead, use it as a volatile key for
+# the item's current state that may change at any moment.
+forward._key
+
 forward.at
 
 forward.fee.milisatoshis
@@ -334,6 +574,8 @@ forward.in.channel.partner.node.alias
 forward.in.channel.partner.node.public_key
 forward.in.channel.partner.node.color
 
+forward.out.amount.milisatoshis
+
 forward.out.channel.id
 forward.out.channel.partner.node.alias
 forward.out.channel.partner.node.public_key
@@ -347,6 +589,12 @@ Lighstorm::Forward.group_by_channel(direction: :in, hours_ago: 24, limit: 5)
 
 group.to_h
 
+# _key is helpful for reactive javascript frameworks.
+# Please don't consider it as a unique identifier
+# for the item. Instead, use it as a volatile key for
+# the item's current state that may change at any moment.
+group._key
+
 group.last_at
 group.analysis.count
 group.analysis.sums.amount.milisatoshis
@@ -357,10 +605,10 @@ group.analysis.averages.fee.parts_per_million(
   group.analysis.averages.amount.milisatoshis
 )
 
-group.in.id
-group.in.partner.node.alias
-group.in.partner.node.public_key
-group.in.partner.node.color
+group.channel.id
+group.channel.partner.node.alias
+group.channel.partner.node.public_key
+group.channel.partner.node.color
 
 Lighstorm::Forward.group_by_channel(direction: :out)
 
@@ -369,76 +617,10 @@ group.to_h
 group.last_at
 group.analysis.count
 
-group.out.id
-group.out.partner.node.alias
-group.out.partner.node.public_key
-group.out.partner.node.color
-```
-
-## Payment
-
-[![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
-<center style="margin-top: -1.4em;">
-  <a href="https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png" rel="noopener noreferrer" target="_blank">
-    click to zoom
-  </a>
-</center>
-
-```ruby
-Lighstorm::Payment
-Lighstorm::Payment.all
-Lighstorm::Payment.first
-Lighstorm::Payment.last
-Lighstorm::Payment.all(limit: 10, purpose: 'rebalance', hops: false)
-
-payment.id
-payment.hash
-payment.created_at
-payment.purpose
-payment.status
-payment.amount.milisatoshis
-payment.fee.milisatoshis
-payment.fee.parts_per_million(
-  payment.amount.milisatoshis
-)
-
-payment.from.hop
-payment.from.amount.milisatoshis
-payment.from.fee.milisatoshis
-payment.from.fee.parts_per_million(
-  payment.from.amount.milisatoshis
-)
-
-payment.from.channel.id
-payment.from.channel.partner.node.alias
-payment.from.channel.partner.node.public_key
-payment.from.channel.partner.node.color
-
-payment.to.hop
-payment.to.amount.milisatoshis
-payment.to.fee.milisatoshis
-payment.to.fee.parts_per_million(
-  payment.to.amount.milisatoshis
-)
-
-payment.to.channel.id
-payment.to.channel.partner.node.alias
-payment.to.channel.partner.node.public_key
-payment.to.channel.partner.node.color
-
-payment.hops.size
-
-payment.hops[0].hop
-payment.hops[0].amount.milisatoshis
-payment.hops[0].fee.milisatoshis
-payment.hops[0].fee.parts_per_million(
-  payment.hops[0].amount.milisatoshis
-)
-
-payment.hops[0].channel.id
-payment.hops[0].channel.partner.node.alias
-payment.hops[0].channel.partner.node.public_key
-payment.hops[0].channel.partner.node.color
+group.channel.id
+group.channel.partner.node.alias
+group.channel.partner.node.public_key
+group.channel.partner.node.color
 ```
 
 ## Satoshis

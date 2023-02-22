@@ -5,23 +5,12 @@ require_relative '../../satoshis'
 module Lighstorm
   module Models
     class ChannelNodeAccounting
-      def initialize(channel, node)
-        @channel = channel
-        @node = node
+      def initialize(data)
+        @data = data
       end
 
       def balance
-        return nil unless @channel.data[:list_channels]
-
-        @balance ||= if @node.myself?
-                       Satoshis.new(milisatoshis: (
-                         @channel.data[:list_channels][:channels].first.local_balance.to_f * 1000.0
-                       ))
-                     else
-                       Satoshis.new(milisatoshis: (
-                         @channel.data[:list_channels][:channels].first.remote_balance.to_f * 1000.0
-                       ))
-                     end
+        @balance ||= Satoshis.new(milisatoshis: @data[:balance][:milisatoshis])
       end
 
       def to_h

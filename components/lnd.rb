@@ -4,6 +4,8 @@ require 'singleton'
 
 require 'lnd-client'
 
+require_relative '../ports/dsl/lighstorm/errors'
+
 module Lighstorm
   class LND
     include Singleton
@@ -23,7 +25,9 @@ module Lighstorm
     def client
       return @client if @client
 
-      raise 'missing credentials' if @config.nil? && ENV.fetch('LIGHSTORM_CERTIFICATE_PATH', nil).nil?
+      raise MissingCredentialsError, 'missing credentials' if @config.nil? && ENV.fetch(
+        'LIGHSTORM_CERTIFICATE_PATH', nil
+      ).nil?
 
       @client = if @config
                   create_client_from_config

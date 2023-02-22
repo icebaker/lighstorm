@@ -5,6 +5,7 @@ require 'singleton'
 require 'zache'
 
 require_relative '../static/cache'
+require_relative '../ports/dsl/lighstorm/errors'
 
 module Lighstorm
   class Cache
@@ -23,7 +24,7 @@ module Lighstorm
     def for(key, ttl: nil, params: {}, &block)
       if ttl.nil?
         ttl = Lighstorm::Static::CACHE[key.sub('lightning.', '').to_sym]
-        raise "missing ttl for #{key}" if ttl.nil?
+        raise MissingTTLError, "missing ttl for #{key} static/cache.rb" if ttl.nil?
 
         ttl = ttl[:ttl]
       end
@@ -36,7 +37,7 @@ module Lighstorm
     end
 
     def build_key_for(key, params)
-      return key unless params.size.positive?
+      return key unless !params.nil? && params.size.positive?
 
       key_params = []
       params.keys.sort.each do |param_key|

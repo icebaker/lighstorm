@@ -9,6 +9,18 @@ module Lighstorm
           base_fee_msat fee_per_mil
         ]
       },
+      decode_pay_req: {
+        ttl: 5 * 60
+      },
+      describe_graph: {
+        ttl: 0
+      },
+      lookup_invoice: {
+        ttl: 1
+      },
+      list_invoices: {
+        ttl: 1
+      },
       forwarding_history: {
         ttl: 1,
         properties: %i[

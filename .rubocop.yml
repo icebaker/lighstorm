@@ -9,6 +9,16 @@ Naming/FileName:
   Exclude:
     - 'ports/dsl/lighstorm.rb'
 
+Metrics/MethodLength:
+  Enabled: false
+
 Layout/LineLength:
   Exclude:
     - 'static/spec.rb'
+
+Security/MarshalLoad:
+  Exclude:
+    - 'spec/helpers/vcr.rb'
+
+require:
+ - rubocop-rspec
