@@ -16,6 +16,7 @@ Lighstorm::Channel.mine.first.myself.node.alias
 - [Usage](#usage)
   - [Documentation](https://icebaker.github.io/lighstorm)
 - [Development](#development)
+  - [Testing](#testing)
   - [Generating Documentation](#generating-documentation)
   - [Publish to RubyGems](#publish-to-rubygems)
 
@@ -57,6 +58,8 @@ Check the [full documentation](https://icebaker.github.io/lighstorm).
 
 ## Development
 
+Copy the `.env.example` file to `.env` and provide the required data.
+
 ```ruby
 # Gemfile
 gem 'lighstorm', path: '/home/user/lighstorm'
@@ -70,6 +73,16 @@ puts Lighstorm.version # => 0.0.3
 ```sh
 bundle
 rubocop -A
+```
+
+### Testing
+
+Copy the `.env.example` file to `.env` and provide the required data.
+
+```
+bundle
+
+bundle exec rspec
 ```
 
 ### Generating Documentation
