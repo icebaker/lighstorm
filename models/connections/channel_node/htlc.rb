@@ -8,23 +8,43 @@ require_relative '../../../components/lnd'
 module Lighstorm
   module Models
     class HTLC
-      attr_reader :minimum, :maximum
+      def initialize(data)
+        @data = data
+      end
 
-      def initialize(policy, channel, _node)
-        @channel = channel
-        @policy = policy
+      def minimum
+        @minimum ||= Satoshis.new(milisatoshis: @data[:minimum][:milisatoshis])
+      end
 
-        return unless policy.data
+      def maximum
+        @maximum ||= Satoshis.new(milisatoshis: @data[:maximum][:milisatoshis])
+      end
 
-        @minimum = Satoshis.new(milisatoshis: policy.data.min_htlc)
+      def blocks
+        @blocks ||= Struct.new(:data) do
+          def delta
+            Struct.new(:data) do
+              def minimum
+                data[:minimum]
+              end
 
-        @maximum = Satoshis.new(milisatoshis: policy.data.max_htlc_msat)
+              def to_h
+                { minimum: minimum }
+              end
+            end.new(data[:delta])
+          end
+
+          def to_h
+            { delta: delta.to_h }
+          end
+        end.new(@data[:blocks])
       end
 
       def to_h
         {
-          minimum: @minimum.to_h,
-          maximum: @maximum.to_h
+          minimum: minimum.to_h,
+          maximum: maximum.to_h,
+          blocks: blocks.to_h
         }
       end
     end

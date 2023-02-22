@@ -1,28 +1,17 @@
 # frozen_string_literal: true
 
-require_relative '../../../components/lnd'
-
 module Lighstorm
   module Models
     class Lightning
       IMPLEMENTATION = 'lnd'
 
-      def initialize(platform, node)
-        raise 'cannot provide platform details for a node that is not yours' unless node.myself?
+      attr_reader :implementation, :version
 
-        @platform = platform
-      end
+      def initialize(node)
+        raise Errors::NotYourNodeError unless node.myself?
 
-      def version
-        @version ||= @platform.data[:get_info].version
-      end
-
-      def raw
-        { get_info: @data[:get_info].to_h }
-      end
-
-      def implementation
-        @implementation ||= IMPLEMENTATION
+        @implementation = IMPLEMENTATION
+        @version = node.data[:platform][:lightning][:version]
       end
 
       def to_h

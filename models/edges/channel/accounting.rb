@@ -1,48 +1,56 @@
 # frozen_string_literal: true
 
 require_relative '../../satoshis'
+require_relative '../../errors'
 
 module Lighstorm
   module Models
     class ChannelAccounting
-      def initialize(channel)
-        @channel = channel
+      def initialize(data, is_mine)
+        @data = data
+        @is_mine = is_mine
       end
 
       def capacity
-        if @channel.data[:get_chan_info]
-          @capacity ||= Satoshis.new(milisatoshis: @channel.data[:get_chan_info].capacity * 1000)
-        elsif @channel.data[:describe_graph]
-          @capacity ||= Satoshis.new(milisatoshis: @channel.data[:describe_graph].capacity * 1000)
-        end
+        @capacity ||= if @data[:capacity]
+                        Satoshis.new(
+                          milisatoshis: @data[:capacity][:milisatoshis]
+                        )
+                      end
       end
 
       def sent
-        return nil unless @channel.data[:list_channels]
+        raise Errors::NotYourChannelError unless @is_mine
 
-        @sent ||= Satoshis.new(milisatoshis: (
-                         @channel.data[:list_channels][:channels].first.total_satoshis_sent.to_f * 1000.0
-                       ))
+        @sent ||= if @data[:sent]
+                    Satoshis.new(
+                      milisatoshis: @data[:sent][:milisatoshis]
+                    )
+                  end
       end
 
       def received
-        return nil unless @channel.data[:list_channels]
+        raise Errors::NotYourChannelError unless @is_mine
 
-        @received ||= Satoshis.new(milisatoshis: (
-                         @channel.data[:list_channels][:channels].first.total_satoshis_received.to_f * 1000.0
-                       ))
+        @received ||= if @data[:received]
+                        Satoshis.new(
+                          milisatoshis: @data[:received][:milisatoshis]
+                        )
+                      end
       end
 
       def unsettled
-        return nil unless @channel.data[:list_channels]
+        raise Errors::NotYourChannelError unless @is_mine
 
-        @unsettled ||= Satoshis.new(milisatoshis: (
-                         @channel.data[:list_channels][:channels].first.unsettled_balance.to_f * 1000.0
-                       ))
+        @unsettled ||= if @data[:unsettled]
+                         Satoshis.new(
+                           milisatoshis: @data[:unsettled][:milisatoshis]
+                         )
+                       end
       end
 
       def to_h
-        if @channel.data[:get_chan_info]
+        if @is_mine
           {
             capacity: capacity.to_h,
             sent: sent.to_h,

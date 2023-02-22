@@ -3,19 +3,19 @@
 module Lighstorm
   module Models
     class ChannelForwardsGroup
-      Analysis = Struct.new(:analysis) do
+      Analysis = Struct.new(:data) do
         def count
-          analysis[:count]
+          data[:count]
         end
 
         def sums
           Struct.new(:sums) do
             def amount
-              Satoshis.new(milisatoshis: sums[:amount])
+              Satoshis.new(milisatoshis: sums[:amount][:milisatoshis])
             end
 
             def fee
-              Satoshis.new(milisatoshis: sums[:fee])
+              Satoshis.new(milisatoshis: sums[:fee][:milisatoshis])
             end
 
             def to_h
@@ -27,20 +27,20 @@ module Lighstorm
                 }
               }
             end
-          end.new(analysis[:sums])
+          end.new(data[:sums])
         end
 
         def averages
-          Struct.new(:analysis) do
+          Struct.new(:data) do
             def amount
               Satoshis.new(
-                milisatoshis: analysis[:sums][:amount].to_f / analysis[:count]
+                milisatoshis: data[:sums][:amount][:milisatoshis].to_f / data[:count]
               )
             end
 
             def fee
               Satoshis.new(
-                milisatoshis: analysis[:sums][:fee].to_f / analysis[:count]
+                milisatoshis: data[:sums][:fee][:milisatoshis].to_f / data[:count]
               )
             end
 
@@ -53,7 +53,7 @@ module Lighstorm
                 }
               }
             end
-          end.new(analysis)
+          end.new(data)
         end
 
         def to_h

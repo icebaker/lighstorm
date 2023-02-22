@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../../../components/lnd'
-
 require_relative 'lightning'
+
+require_relative '../../..//ports/grpc'
+require_relative '../../../adapters/nodes/node'
 
 module Lighstorm
   module Models
@@ -11,26 +12,19 @@ module Lighstorm
 
       def initialize(node)
         @node = node
-
-        response = Cache.for('lightning.get_info') do
-          LND.instance.middleware('lightning.get_info') do
-            LND.instance.client.lightning.get_info
-          end
-        end
-
-        @data = { get_info: response }
+        @data = @node.data[:platform]
       end
 
       def blockchain
-        @blockchain ||= @data[:get_info].chains.first.chain
+        @blockchain ||= @data ? @data[:blockchain] : nil
       end
 
       def network
-        @network ||= @data[:get_info].chains.first.network
+        @network ||= @data ? @data[:network] : nil
       end
 
       def lightning
-        @lightning ||= Lightning.new(self, @node)
+        @lightning ||= Lightning.new(@node)
       end
 
       def to_h

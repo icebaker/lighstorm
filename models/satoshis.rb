@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require_relative '../ports/dsl/lighstorm/errors'
+
 module Lighstorm
   module Models
     class Satoshis
       def initialize(milisatoshis: nil)
-        raise 'missing milisatoshis' if milisatoshis.nil?
+        raise MissingMilisatoshisError, 'missing milisatoshis' if milisatoshis.nil?
 
         @amount_in_milisatoshis = milisatoshis
       end
@@ -15,8 +17,7 @@ module Lighstorm
             if reference_milisatoshis.zero?
               0
             else
-              @amount_in_milisatoshis.to_f /
-                        reference_milisatoshis
+              @amount_in_milisatoshis.to_f / reference_milisatoshis
             end
           ) * 1_000_000.0
         )
@@ -27,7 +28,7 @@ module Lighstorm
       end
 
       def satoshis
-        (@amount_in_milisatoshis.to_f / 1000.0).to_i
+        @amount_in_milisatoshis.to_f / 1000.0
       end
 
       def bitcoins
@@ -49,8 +50,6 @@ module Lighstorm
       def to_h
         {
           milisatoshis: milisatoshis
-          # satoshis: satoshis,
-          # bitcoins: bitcoins
         }
       end
     end

@@ -6,17 +6,19 @@ require_relative '../../static/spec'
 
 require_relative '../../models/satoshis'
 
-require_relative '../../models/nodes/node'
-
-require_relative '../../models/edges/channel'
-require_relative '../../models/edges/forward'
-require_relative '../../models/edges/payment'
+require_relative '../../controllers/node'
+require_relative '../../controllers/channel'
+require_relative '../../controllers/payment'
+require_relative '../../controllers/forward'
+require_relative '../../controllers/invoice'
 
 module Lighstorm
-  Node = Models::Node
-  Channel = Models::Channel
-  Forward = Models::Forward
-  Payment = Models::Payment
+  Node = Controllers::Node
+  Channel = Controllers::Channel
+  Payment = Controllers::Payment
+  Forward = Controllers::Forward
+  Invoice = Controllers::Invoice
+
   Satoshis = Models::Satoshis
 
   def self.config!(config)
