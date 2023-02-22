@@ -33,7 +33,7 @@ Although it tries to stay close to [Lightning's terminologies](https://docs.ligh
 Add to your `Gemfile`:
 
 ```ruby
-gem 'lighstorm', '~> 0.0.3'
+gem 'lighstorm', '~> 0.0.4'
 ```
 
 ```ruby
@@ -45,7 +45,7 @@ Lighstorm.config!(
   macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon',
 )
 
-puts Lighstorm.version # => 0.0.3
+puts Lighstorm.version # => 0.0.4
 
 Lighstorm::Satoshis.new(
   milisatoshis: 75_621_650
@@ -67,7 +67,7 @@ gem 'lighstorm', path: '/home/user/lighstorm'
 # demo.rb
 require 'lighstorm'
 
-puts Lighstorm.version # => 0.0.3
+puts Lighstorm.version # => 0.0.4
 ```
 
 ```sh
@@ -100,5 +100,5 @@ gem build lighstorm.gemspec
 
 gem signin
 
-gem push lighstorm-0.0.3.gem
+gem push lighstorm-0.0.4.gem
 ```

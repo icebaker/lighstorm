@@ -23,7 +23,7 @@ Lighstorm::Channel.mine.first.myself.node.alias
 Add to your `Gemfile`:
 
 ```ruby
-gem 'lighstorm', '~> 0.0.3'
+gem 'lighstorm', '~> 0.0.4'
 ```
 
 Run `bundle install`.
@@ -56,7 +56,7 @@ Lighstorm.config!(
 ```ruby
 require 'lighstorm'
 
-puts Lighstorm.version # => 0.0.3
+puts Lighstorm.version # => 0.0.4
 
 Lighstorm::Satoshis.new(
   milisatoshis: 75_621_650
@@ -461,6 +461,8 @@ Lighstorm::Payment.all(limit: 10, purpose: 'rebalance')
 # the item's current state that may change at any moment.
 payment._key
 
+payment.to_h
+
 payment.status
 payment.created_at
 payment.settled_at
@@ -645,7 +647,7 @@ satoshis.parts_per_million(reference_in_milisatoshis)
 _________________
 
 <center>
-  lighstorm 0.0.3
+  lighstorm 0.0.4
   |
   <a href="https://github.com/icebaker/lighstorm" rel="noopener noreferrer" target="_blank">GitHub</a>
   |
