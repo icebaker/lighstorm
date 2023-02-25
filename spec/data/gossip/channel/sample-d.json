@@ -1,0 +1,18 @@
+{
+  "chanId":"837471618647916545",
+  "chanPoint":{
+    "outputIndex":1,
+    "fundingTxidBytes":"yWGDrCo3J9R+dMg3VZdfRopb4v9k5MnZQyNrn1PXqhQ="
+  },
+  "capacity":"6000000",
+  "routingPolicy":{
+    "disabled":true,
+    "timeLockDelta":200,
+    "minHtlc":"1400",
+    "feeBaseMsat":"1700",
+    "feeRateMilliMsat":"800",
+    "maxHtlcMsat":"5950000000"
+  },
+  "advertisingNode":"037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba",
+  "connectingNode":"0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7"
+}

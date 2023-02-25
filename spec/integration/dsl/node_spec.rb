@@ -6,6 +6,18 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe 'Integration Tests' do
   context 'Node' do
     context 'fast' do
+      context 'non-existent node' do
+        it 'raises error' do
+          check_integration!
+
+          public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78000928'
+
+          expect do
+            Lighstorm::Node.find_by_public_key(public_key)
+          end.to raise_error GRPC::NotFound
+        end
+      end
+
       context 'myself' do
         it do
           check_integration!
@@ -33,7 +45,7 @@ RSpec.describe 'Integration Tests' do
           expect(channel.mine?).to be(true)
 
           expect(Contract.for(channel.id)).to eq('String:11..20')
-          expect(Contract.for(channel.opened_at)).to eq('DateTime')
+          expect(Contract.for(channel.opened_at)).to eq('Time')
 
           expect(Contract.for(myself.to_h)).to eq(
             { _key: 'String:50+',

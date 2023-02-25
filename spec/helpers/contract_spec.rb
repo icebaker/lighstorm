@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
-
 RSpec.describe Contract do
   describe 'generate' do
     it 'avoid unexpected config' do
@@ -17,7 +15,6 @@ RSpec.describe Contract do
 
       expect(described_class.contract_type(:a)).to eq('Symbol:0..10')
 
-      expect(described_class.contract_type(DateTime.now)).to eq('DateTime')
       expect(described_class.contract_type(Time.now)).to eq('Time')
 
       expect(described_class.contract_type('')).to eq('String:0..10')

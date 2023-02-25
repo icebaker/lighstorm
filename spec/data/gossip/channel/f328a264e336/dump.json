@@ -1,0 +1,69 @@
+{
+  "_source": "get_chan_info",
+  "_key": "8a320d836e57939ad5ae13f333283034a88bd92c645141c2a47230d4b228e43f",
+  "id": "855593769343254528",
+  "accounting": {
+    "capacity": {
+      "milisatoshis": 400000000
+    }
+  },
+  "partners": [
+    {
+      "_source": "get_chan_info",
+      "node": {
+        "_source": "get_node_info",
+        "_key": "ee01c24a28a205dc0b1aefcbf2b4a3b1e05d54c814ebda0265ba9395c22a600f",
+        "public_key": "024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf",
+        "alias": "deezy.io ⚡✨",
+        "color": "#3399ff",
+        "platform": {
+          "blockchain": "bitcoin",
+          "network": "mainnet"
+        },
+        "myself": false
+      }
+    },
+    {
+      "_source": "get_chan_info",
+      "node": {
+        "_source": "get_node_info",
+        "_key": "600d84866dba62eaefef8411f02b3017f29b4ed5b87040e5adb6dba82e273b9f",
+        "public_key": "027b09e124689d8a14b84140dad5fd514d50d4f806812f224b4dc65fdc0742a738",
+        "alias": "027b09e124689d8a14b8",
+        "color": "#3399ff",
+        "platform": {
+          "blockchain": "bitcoin",
+          "network": "mainnet"
+        },
+        "myself": false
+      },
+      "state": "active",
+      "policy": {
+        "fee": {
+          "base": {
+            "milisatoshis": 1000
+          },
+          "rate": {
+            "parts_per_million": 1
+          }
+        },
+        "htlc": {
+          "minimum": {
+            "milisatoshis": 1000
+          },
+          "maximum": {
+            "milisatoshis": 396000000
+          },
+          "blocks": {
+            "delta": {
+              "minimum": 40
+            }
+          }
+        }
+      }
+    }
+  ],
+  "known": true,
+  "mine": false,
+  "exposure": "public"
+}

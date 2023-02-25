@@ -40,16 +40,16 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(milisatoshis: 1000)
       end
 
-      let(:to_h_contract) { '3570554176dd53c0c07289f882646a289d56f04cd3e691a84cb79231fd310379' }
+      let(:to_h_contract) { '4ee153542ac915b26a51eb30d604814442b404055e33574660813f99e7e0ec34' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
 
         expect(payment.status).to eq('succeeded')
-        expect(payment.created_at).to be_a(DateTime)
-        expect(payment.created_at.to_s).to eq('2023-02-13T20:45:51-03:00')
-        expect(payment.settled_at).to be_a(DateTime)
-        expect(payment.settled_at.to_s).to eq('2023-02-13T20:45:59-03:00')
+        expect(payment.created_at).to be_a(Time)
+        expect(payment.created_at.utc.to_s).to eq('2023-02-13 23:45:51 UTC')
+        expect(payment.settled_at).to be_a(Time)
+        expect(payment.settled_at.utc.to_s).to eq('2023-02-13 23:45:59 UTC')
         expect(payment.purpose).to eq('self-payment')
         expect(payment.fee.milisatoshis).to eq(0)
         expect(payment.fee.satoshis).to eq(0.0)
@@ -131,15 +131,15 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(milisatoshis: 150_000)
       end
 
-      let(:to_h_contract) { '226560cd4feedcbe8e68899bd8a2f2023491d1b4119ce6677b593724d4faefda' }
+      let(:to_h_contract) { '7f6dea5712173d40358dac4ac2835f32a526bec21a9a6b50a8c7240ea4c42787' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
         expect(payment.status).to eq('succeeded')
-        expect(payment.created_at).to be_a(DateTime)
-        expect(payment.created_at.to_s).to eq('2023-01-25T14:16:07-03:00')
-        expect(payment.settled_at).to be_a(DateTime)
-        expect(payment.settled_at.to_s).to eq('2023-01-25T14:16:10-03:00')
+        expect(payment.created_at).to be_a(Time)
+        expect(payment.created_at.utc.to_s).to eq('2023-01-25 17:16:07 UTC')
+        expect(payment.settled_at).to be_a(Time)
+        expect(payment.settled_at.utc.to_s).to eq('2023-01-25 17:16:10 UTC')
         expect(payment.purpose).to eq('payment')
         expect(payment.fee.milisatoshis).to eq(0)
         expect(payment.fee.satoshis).to eq(0.0)
@@ -218,15 +218,15 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(milisatoshis: 3_050_000_000)
       end
 
-      let(:to_h_contract) { 'aebfba00ef1401f8c6e0ae42e5e1337b5c4a0d3fcdeffe687e5affa772331aee' }
+      let(:to_h_contract) { 'bda67a6a93a2b876bd8204d146b4cc39a92a4f4e6c117632dae12276d4423b4f' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
         expect(payment.status).to eq('succeeded')
-        expect(payment.created_at).to be_a(DateTime)
-        expect(payment.created_at.to_s).to eq('2023-01-23T08:05:45-03:00')
-        expect(payment.settled_at).to be_a(DateTime)
-        expect(payment.settled_at.to_s).to eq('2023-01-23T08:05:47-03:00')
+        expect(payment.created_at).to be_a(Time)
+        expect(payment.created_at.utc.to_s).to eq('2023-01-23 11:05:45 UTC')
+        expect(payment.settled_at).to be_a(Time)
+        expect(payment.settled_at.utc.to_s).to eq('2023-01-23 11:05:47 UTC')
         expect(payment.purpose).to eq('peer-to-peer')
         expect(payment.fee.milisatoshis).to eq(0)
         expect(payment.fee.satoshis).to eq(0.0)
@@ -306,15 +306,15 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(milisatoshis: 137_000)
       end
 
-      let(:to_h_contract) { '1f76983a7934b068a3dfa0d5d1bdc5c1cb4d1cdd55ac2e2d7fc9896af91a3c47' }
+      let(:to_h_contract) { '28424e383631e945f7bf8487d5812d3c466c16096fe4a9ddd5b8215349246595' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
         expect(payment.status).to eq('succeeded')
-        expect(payment.created_at).to be_a(DateTime)
-        expect(payment.created_at.to_s).to eq('2023-02-02T22:49:13-03:00')
-        expect(payment.settled_at).to be_a(DateTime)
-        expect(payment.settled_at.to_s).to eq('2023-02-02T22:49:18-03:00')
+        expect(payment.created_at).to be_a(Time)
+        expect(payment.created_at.utc.to_s).to eq('2023-02-03 01:49:13 UTC')
+        expect(payment.settled_at).to be_a(Time)
+        expect(payment.settled_at.utc.to_s).to eq('2023-02-03 01:49:18 UTC')
         expect(payment.purpose).to eq('rebalance')
         expect(payment.fee.milisatoshis).to eq(193)
         expect(payment.fee.satoshis).to eq(0.193)
@@ -398,15 +398,15 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(milisatoshis: 130_000_000)
       end
 
-      let(:to_h_contract) { '9404b3fafe59616898c4c1992d0e9de70b8dca058355e248ad27b9fe18d775e8' }
+      let(:to_h_contract) { 'e3200c2141b352d5dc86e89badedeb3e2e110bce2fc3f0e984489e68feeebda1' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
         expect(payment.status).to eq('succeeded')
-        expect(payment.created_at).to be_a(DateTime)
-        expect(payment.created_at.to_s).to eq('2023-01-15T19:47:51-03:00')
-        expect(payment.settled_at).to be_a(DateTime)
-        expect(payment.settled_at.to_s).to eq('2023-01-15T19:48:01-03:00')
+        expect(payment.created_at).to be_a(Time)
+        expect(payment.created_at.utc.to_s).to eq('2023-01-15 22:47:51 UTC')
+        expect(payment.settled_at).to be_a(Time)
+        expect(payment.settled_at.utc.to_s).to eq('2023-01-15 22:48:01 UTC')
         expect(payment.purpose).to eq('rebalance')
         expect(payment.fee.milisatoshis).to eq(260)
         expect(payment.fee.satoshis).to eq(0.26)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
 require 'digest'
 
 module Lighstorm
@@ -10,7 +9,7 @@ module Lighstorm
         {
           _source: :forwarding_history,
           _key: _key(grpc),
-          at: DateTime.parse(Time.at(grpc[:timestamp_ns] / 1e+9).to_s),
+          at: Time.at(grpc[:timestamp_ns] / 1e+9),
           fee: { milisatoshis: grpc[:fee_msat] },
           in: {
             amount: { milisatoshis: grpc[:amt_in_msat] },

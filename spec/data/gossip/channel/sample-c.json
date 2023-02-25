@@ -1,0 +1,13 @@
+{
+  "chanId":"838301749944647681",
+  "chanPoint":{
+    "outputIndex":1,
+    "fundingTxidBytes":"mOtK5s47jZJL3w/Ey4z02agoxu8xCcqC7nSEPMlrQtw="
+  },
+  "capacity":"350000",
+  "routingPolicy":{
+    "disabled":true
+  },
+  "advertisingNode":"023ad453e0ab3767112427b654247bbdd337864532d38967485ab622d05f5d26db",
+  "connectingNode":"03055d3f08f9bf7725dc0644192f045e3466995db33c7464b0e32fb3542d866b87"
+}

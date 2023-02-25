@@ -110,7 +110,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel = described_class.new(data[0])
 
         Contract.expect(
-          channel.dump, '9f8c0a6458464c0bd746bbfec6f3975c1bbbee687d4f1d67792a9eefd2b45fb3'
+          channel.dump, '1f2a02bb64e45f2521eac46247740a88fe21f881d14a9984c16d641a215d40af'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -128,7 +128,7 @@ RSpec.describe Lighstorm::Models::Channel do
               id: 'String:11..20',
               known: 'Boolean',
               mine: 'Boolean',
-              opened_at: 'DateTime',
+              opened_at: 'Time',
               partners: [
                 { _source: 'Symbol:11..20',
                   accounting: { balance: { milisatoshis: 'Integer:0..10' } },
@@ -183,7 +183,7 @@ RSpec.describe Lighstorm::Models::Channel do
               ],
               state: 'String:0..10',
               transaction: { funding: { id: 'String:50+', index: 'Integer:0..10' } },
-              up_at: 'DateTime' }
+              up_at: 'Time' }
           )
         end
 

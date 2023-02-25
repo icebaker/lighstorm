@@ -1,0 +1,6 @@
+{
+:	_keyI"String:50+:ET:_sourceI"Symbol:21..30;T:accounting{:capacity{:milisatoshisI"Integer:0..10;T:idI"String:11..20;T:partners[{;I"Symbol:21..30;T:	node{:public_keyI"String:50+;T:policy{;I"Symbol:21..30;T:fee{:	base{;
+I"Integer:0..10;T:	rate{:parts_per_millionI"Integer:0..10;T:	htlc{:blocks{:
+delta{:minimumI"Integer:0..10;T:maximum{;
+I"Integer:0..10;T;{;
+I"Integer:0..10;T{;{;I"String:50+;T

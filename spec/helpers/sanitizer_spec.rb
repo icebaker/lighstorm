@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
-
 RSpec.describe Sanitizer do
   describe 'obfuscate' do
     context 'bytes' do

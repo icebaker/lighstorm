@@ -1,0 +1,69 @@
+{
+  "_source": "get_chan_info",
+  "_key": "6592651f0de5cbc26172998e4ebf155d9ed263018d6a5c4038a24baa4e67603e",
+  "id": "855506907953627136",
+  "accounting": {
+    "capacity": {
+      "milisatoshis": 16770000000
+    }
+  },
+  "partners": [
+    {
+      "_source": "get_chan_info",
+      "node": {
+        "_source": "get_node_info",
+        "_key": "7ac267d3cb85c28ceb64b9c35d85ee90782ec7aac6740ea475f3046a7b6bd900",
+        "public_key": "02e1221434a21b8ce5818e92c6ec76301824dc87ed94b4628242e4b1f4a6ff445f",
+        "alias": "",
+        "color": "#007f00",
+        "platform": {
+          "blockchain": "bitcoin",
+          "network": "mainnet"
+        },
+        "myself": false
+      }
+    },
+    {
+      "_source": "get_chan_info",
+      "node": {
+        "_source": "get_node_info",
+        "_key": "eb641bafc1e416d79379bd7f6ac431f591e7a6aee6775b4ca3d04e85057a4e2d",
+        "public_key": "036b53093df5a932deac828cca6d663472dbc88322b05eec1d42b26ab9b16caa1c",
+        "alias": "okcoin",
+        "color": "#3399ff",
+        "platform": {
+          "blockchain": "bitcoin",
+          "network": "mainnet"
+        },
+        "myself": false
+      },
+      "state": "active",
+      "policy": {
+        "fee": {
+          "base": {
+            "milisatoshis": 0
+          },
+          "rate": {
+            "parts_per_million": 500
+          }
+        },
+        "htlc": {
+          "minimum": {
+            "milisatoshis": 1000
+          },
+          "maximum": {
+            "milisatoshis": 1677000000
+          },
+          "blocks": {
+            "delta": {
+              "minimum": 40
+            }
+          }
+        }
+      }
+    }
+  ],
+  "known": true,
+  "mine": false,
+  "exposure": "public"
+}

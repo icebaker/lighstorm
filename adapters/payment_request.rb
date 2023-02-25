@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
 require 'digest'
 
 require_relative '../ports/dsl/lighstorm/errors'

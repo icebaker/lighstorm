@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
 require 'digest'
 
 require 'fileutils'
@@ -128,7 +127,7 @@ module Contract
       size = contract_size(node.to_s.size)
     when String
       size = contract_size(node.size)
-    when NilClass, Time, DateTime
+    when NilClass, Time
     when FalseClass, TrueClass
       return 'Boolean'
     else

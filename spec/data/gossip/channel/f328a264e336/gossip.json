@@ -1,0 +1,14 @@
+{
+  "chanId": "855593769343254528",
+  "chanPoint": {
+    "fundingTxidBytes": "D0qaKdWuFdRO2GhBqGDbtdWcUunkjwv4L3dfHlDUtX8="
+  },
+  "capacity": "400000",
+  "routingPolicy": {
+    "timeLockDelta": 144,
+    "minHtlc": "1000",
+    "maxHtlcMsat": "396000000"
+  },
+  "advertisingNode": "024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf",
+  "connectingNode": "027b09e124689d8a14b84140dad5fd514d50d4f806812f224b4dc65fdc0742a738"
+}

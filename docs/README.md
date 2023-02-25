@@ -251,16 +251,23 @@ end
 ```ruby
 LighstormError
 
+IncoherentGossipError
+
+TooManyArgumentsError
 MissingCredentialsError
+MissingGossipHandlerError
 MissingMilisatoshisError
 MissingPartsPerMillionError
 MissingTTLError
+
 NegativeNotAllowedError
+
 NotYourChannelError
 NotYourNodeError
+UnknownChannelError
+
 OperationNotAllowedError
 UnexpectedNumberOfHTLCsError
-UnknownChannelError
 UpdateChannelPolicyError
 ```
 
@@ -327,7 +334,8 @@ channel.mine?
 channel.id
 channel.opened_at
 channel.up_at
-channel.active
+channel.state
+channel.active?
 channel.exposure
 
 channel.accounting.capacity.milisatoshis
@@ -345,31 +353,39 @@ channel.partners[1]
 channel.partners[1].node.alias
 
 # Channels that belong to you:
-channel.myself
-channel.myself.node.alias
-
 channel.transaction.funding.id
 channel.transaction.funding.index
 
 channel.partner
+channel.partner.state
+channel.partner.active?
+
+channel.partner.node.public_key
 channel.partner.node.alias
+channel.partner.node.color
 
 channel.partner.accounting.balance.milisatoshis
-channel.partner.node.alias
-channel.partner.node.public_key
-channel.partner.node.color
+
 channel.partner.policy.fee.base.milisatoshis
 channel.partner.policy.fee.rate.parts_per_million
+
 channel.partner.policy.htlc.minimum.milisatoshis
 channel.partner.policy.htlc.maximum.milisatoshis
 channel.partner.policy.htlc.blocks.delta.minimum
 
-channel.myself.accounting.balance.milisatoshis
-channel.myself.node.alias
+channel.myself
+channel.myself.state
+channel.myself.active?
+
 channel.myself.node.public_key
+channel.myself.node.alias
 channel.myself.node.color
+
+channel.myself.accounting.balance.milisatoshis
+
 channel.myself.policy.fee.base.milisatoshis
 channel.myself.policy.fee.rate.parts_per_million
+
 channel.myself.policy.htlc.minimum.milisatoshis
 channel.myself.policy.htlc.maximum.milisatoshis
 channel.myself.policy.htlc.blocks.delta.minimum
@@ -623,6 +639,55 @@ group.channel.id
 group.channel.partner.node.alias
 group.channel.partner.node.public_key
 group.channel.partner.node.color
+```
+
+## Gossip
+
+[The Gossip Network](https://docs.lightning.engineering/the-lightning-network/the-gossip-network)
+
+### Node
+
+```ruby
+gossip = {
+  'identityKey' => '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
+  'alias' => 'icebaker',
+  'color' => '#eb34a4'
+}
+
+Lighstorm::Node.adapt(gossip: gossip)
+
+node = Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+)
+
+diff = node.apply!(gossip: gossip)
+
+Lighstorm::Node.adapt(dump: node.dump)
+```
+
+### Channel
+
+```ruby
+gossip = {
+  'chanId' => '850099509773795329',
+  'capacity' => '5000000',
+  'routingPolicy' => {
+    'timeLockDelta' => 144,
+    'minHtlc' => '1000',
+    'feeBaseMsat' => '1000',
+    'feeRateMilliMsat' => '300',
+    'maxHtlcMsat' => '4950000000'
+  },
+  'advertisingNode' => '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+}
+
+Lighstorm::Channel.adapt(gossip: gossip)
+
+channel = Lighstorm::Channel.find_by_id('850099509773795329')
+
+diff = channel.apply!(gossip: gossip)
+
+Lighstorm::Channel.adapt(dump: channel.dump)
 ```
 
 ## Satoshis
