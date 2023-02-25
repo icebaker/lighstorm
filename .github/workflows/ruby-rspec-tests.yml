@@ -7,7 +7,7 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-name: Ruby
+name: RSpec Tests
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
         with:
           ruby-version: '3.0.0'
           bundler-cache: true
-      - name: Install dependencies
+      - name: Install Dependencies
         run: bundle install
-      - name: Run rspec tests
+      - name: Run RSpec Tests
         run: bundle exec rspec
