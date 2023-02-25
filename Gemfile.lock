@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lighstorm (0.0.4)
+    lighstorm (0.0.5)
       dotenv (~> 2.8, >= 2.8.1)
       lnd-client (~> 0.0.5)
       zache (~> 0.12.0)

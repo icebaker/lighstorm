@@ -4,7 +4,7 @@ require_relative '../../../ports/dsl/lighstorm'
 
 RSpec.describe 'DSL' do
   it 'provides expected methods' do
-    expect(Lighstorm.version).to eq('0.0.4')
+    expect(Lighstorm.version).to eq('0.0.5')
     expect(Lighstorm).to respond_to(:config!, :inject_middleware!)
 
     expect(Lighstorm::Node).to respond_to(:myself, :all, :find_by_public_key)
