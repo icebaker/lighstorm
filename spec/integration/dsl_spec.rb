@@ -16,7 +16,6 @@ RSpec.describe 'Integration Tests' do
 
   context 'TODO' do
     it 'raises TODOError' do
-      expect { Lighstorm::Invoice.create }.to raise_error(ToDoError)
       expect { Lighstorm::Models::Invoice.new({}).pay! }.to raise_error(
         ToDoError, 'Lighstorm::Controllers::Invoice::Pay'
       )

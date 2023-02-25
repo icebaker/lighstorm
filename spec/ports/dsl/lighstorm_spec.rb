@@ -11,7 +11,7 @@ RSpec.describe 'DSL' do
     expect(Lighstorm::Channel).to respond_to(:mine, :all, :find_by_id)
     expect(Lighstorm::Forward).to respond_to(:all, :first, :last, :group_by_channel)
     expect(Lighstorm::Payment).to respond_to(:all, :first, :last)
-    expect(Lighstorm::Invoice).to respond_to(:all, :find_by_secret_hash)
+    expect(Lighstorm::Invoice).to respond_to(:all, :find_by_secret_hash, :create)
     expect(Lighstorm::Satoshis).to respond_to(:new)
   end
 end
