@@ -417,6 +417,8 @@ channel.myself.policy.fee.update(
 
 ## Invoice
 
+[Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
+
 ```ruby
 Lighstorm::Invoice
 Lighstorm::Invoice.all
@@ -455,6 +457,8 @@ invoice.request.address
 ```
 
 ### Operations
+
+[Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
 
 ```ruby
 # 'preview' let you check the expected operation
