@@ -6,6 +6,18 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe 'Integration Tests' do
   context 'Node' do
     context 'fast' do
+      context 'non-existent node' do
+        it 'raises error' do
+          check_integration!
+
+          public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78000928'
+
+          expect do
+            Lighstorm::Node.find_by_public_key(public_key)
+          end.to raise_error GRPC::NotFound
+        end
+      end
+
       context 'myself' do
         it do
           check_integration!
