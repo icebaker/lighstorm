@@ -73,7 +73,7 @@ module Lighstorm
         def self.transform(data, adapted)
           [0, 1].each do |i|
             adapted[:list_channels].each_index do |c|
-              if adapted[:list_channels][c][:partners][i][:node][:public_key].nil?
+              if adapted[:list_channels][c][:partners][i][:node].nil?
                 adapted[:list_channels][c][:partners][i][:node] = adapted[:get_info]
               end
             end

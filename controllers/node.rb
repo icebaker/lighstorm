@@ -18,6 +18,10 @@ module Lighstorm
       def self.find_by_public_key(public_key)
         FindByPublicKey.model(FindByPublicKey.data(public_key))
       end
+
+      def self.adapt(dump: nil, gossip: nil)
+        Models::Node.adapt(dump: dump, gossip: gossip)
+      end
     end
   end
 end

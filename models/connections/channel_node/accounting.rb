@@ -16,6 +16,10 @@ module Lighstorm
       def to_h
         { balance: balance.to_h }
       end
+
+      def dump
+        Marshal.load(Marshal.dump(@data))
+      end
     end
   end
 end

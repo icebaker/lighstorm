@@ -33,7 +33,8 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.up_at).to be_a(DateTime)
       expect(channel.up_at).to be > channel.opened_at
       expect(channel.up_at.to_s.size).to eq(25)
-      expect(channel.active).to be(true)
+      expect(channel.state).to be('active')
+      expect(channel.active?).to be(true)
       expect(channel.exposure).to eq('public')
 
       expect(channel.transaction.funding.id.class).to eq(String)
@@ -145,7 +146,7 @@ RSpec.describe Lighstorm::Models::Channel do
       )
 
       Contract.expect(
-        channel.to_h, '68766c3c3d1e2ac98062cd88bebf513aa35f9a5731246c0a0c6e4a9547788fef'
+        channel.to_h, '727cfffebcc4a3cb627aa8b3eacb04c932215caf217220873887e502bdfd38cf'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -175,7 +176,8 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.opened_at.to_s.size).to eq(25)
         expect(channel.up_at).to be_a(DateTime)
         expect(channel.up_at.to_s.size).to eq(25)
-        expect(channel.active).to be(true)
+        expect(channel.state).to be('active')
+        expect(channel.active?).to be(true)
         expect(channel.exposure).to eq('public')
 
         expect(channel.accounting.capacity.milisatoshis).to eq(6_200_000_000)
@@ -280,7 +282,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.to_h, '68766c3c3d1e2ac98062cd88bebf513aa35f9a5731246c0a0c6e4a9547788fef'
+          channel.to_h, '727cfffebcc4a3cb627aa8b3eacb04c932215caf217220873887e502bdfd38cf'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -306,7 +308,8 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.opened_at }.to raise_error(NotYourChannelError)
         expect { channel.up_at }.to raise_error(NotYourChannelError)
-        expect { channel.active }.to raise_error(NotYourChannelError)
+        expect { channel.state }.to raise_error(NotYourChannelError)
+        expect { channel.active? }.to raise_error(NotYourChannelError)
 
         expect(channel.exposure).to eq('public')
 
@@ -327,8 +330,11 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.partners[0].accounting }.to raise_error(NotYourChannelError)
 
-        expect(channel.partners[0].policy.fee).to be_nil
-        expect(channel.partners[0].policy.htlc).to be_nil
+        expect(channel.partners[0].policy.fee.base).to be_nil
+        expect(channel.partners[0].policy.fee.rate).to be_nil
+        expect(channel.partners[0].policy.htlc.minimum).to be_nil
+        expect(channel.partners[0].policy.htlc.maximum).to be_nil
+        expect(channel.partners[0].policy.htlc.blocks.delta.minimum).to be_nil
         expect(channel.partners[0].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[0].node.platform.network).to eq('mainnet')
 
@@ -344,8 +350,11 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.partners[1].accounting }.to raise_error(NotYourChannelError)
 
-        expect(channel.partners[1].policy.fee).to be_nil
-        expect(channel.partners[1].policy.htlc).to be_nil
+        expect(channel.partners[1].policy.fee.base).to be_nil
+        expect(channel.partners[1].policy.fee.rate).to be_nil
+        expect(channel.partners[1].policy.htlc.minimum).to be_nil
+        expect(channel.partners[1].policy.htlc.maximum).to be_nil
+        expect(channel.partners[1].policy.htlc.blocks.delta.minimum).to be_nil
 
         expect(channel.partners[1].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[1].node.platform.network).to eq('mainnet')
@@ -353,7 +362,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, 'b12045f9300c1894db3a42e624d062b20c3b02b71e3a31e0f2ac32eaa89d66c3'
+          channel.to_h, '05f7283abe9bbb861f4e0c56aa0d45bd49ee3164123412f375d115c833327d70'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -379,7 +388,8 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.opened_at }.to raise_error(NotYourChannelError)
         expect { channel.up_at }.to raise_error(NotYourChannelError)
-        expect { channel.active }.to raise_error(NotYourChannelError)
+        expect { channel.state }.to raise_error(NotYourChannelError)
+        expect { channel.active? }.to raise_error(NotYourChannelError)
 
         expect(channel.exposure).to eq('public')
 
@@ -446,7 +456,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '66cb139e20123723491f8fc3d6a5029d1c2887cbf7c99a264ad0c7894bf1267c'
+          channel.to_h, '168edbce05294fb68511b986c7b0da7f85045928b426c3731d18011455e76b90'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -485,7 +495,8 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.opened_at }.to raise_error(NotYourChannelError)
         expect { channel.up_at }.to raise_error(NotYourChannelError)
-        expect { channel.active }.to raise_error(NotYourChannelError)
+        expect { channel.state }.to raise_error(NotYourChannelError)
+        expect { channel.active? }.to raise_error(NotYourChannelError)
 
         expect(channel.exposure).to eq('public')
 
@@ -505,8 +516,11 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.partners[0].accounting }.to raise_error(NotYourChannelError)
 
-        expect(channel.partners[0].policy.fee).to be_nil
-        expect(channel.partners[0].policy.htlc).to be_nil
+        expect(channel.partners[0].policy.fee.base).to be_nil
+        expect(channel.partners[0].policy.fee.rate).to be_nil
+        expect(channel.partners[0].policy.htlc.minimum).to be_nil
+        expect(channel.partners[0].policy.htlc.maximum).to be_nil
+        expect(channel.partners[0].policy.htlc.blocks.delta.minimum).to be_nil
 
         expect(channel.partners[0].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[0].node.platform.network).to eq('mainnet')
@@ -526,8 +540,11 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.partners[1].accounting }.to raise_error(NotYourChannelError)
 
-        expect(channel.partners[1].policy.fee).to be_nil
-        expect(channel.partners[1].policy.htlc).to be_nil
+        expect(channel.partners[1].policy.fee.base).to be_nil
+        expect(channel.partners[1].policy.fee.rate).to be_nil
+        expect(channel.partners[1].policy.htlc.minimum).to be_nil
+        expect(channel.partners[1].policy.htlc.maximum).to be_nil
+        expect(channel.partners[1].policy.htlc.blocks.delta.minimum).to be_nil
 
         expect(channel.partners[1].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[1].node.platform.network).to eq('mainnet')
@@ -535,7 +552,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '7c818c1a0aefee3fb3a2765804a2f3eecb363202c210571bcf7444d7ea21aacd'
+          channel.to_h, 'db4d187e10fdf9461f0a6818ec78787f0bd9f5675e344ad785ff1293eac3e8e3'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -557,7 +574,8 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.opened_at.to_s.size).to eq(25)
         expect(channel.up_at).to be_a(DateTime)
         expect(channel.up_at.to_s.size).to eq(25)
-        expect(channel.active).to be(true)
+        expect(channel.state).to eq('active')
+        expect(channel.active?).to be(true)
         expect(channel.exposure).to eq('public')
 
         expect(channel.accounting.capacity.milisatoshis).to eq(6_500_000_000)
@@ -650,7 +668,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '14d7ea0645d1cf9282e6715019bb55117256505b0b9acfd23f8e2de6e5d30c78'
+          channel.to_h, '21df298a1220ec2d5dbeeb545d02b7676a8bb0fb9f7d2312dcf620b11cb808dc'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

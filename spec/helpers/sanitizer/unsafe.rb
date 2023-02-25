@@ -47,8 +47,6 @@ module Sanitizer
     'day_fee_sum <= fee_report' => true,
     'destination <= decode_pay_req' => true,
     'destination' => true,
-    'disabled <= node1_policy' => true,
-    'disabled <= node2_policy' => true,
     'dust_limit_sat <= local_constraints' => true,
     'dust_limit_sat <= remote_constraints' => true,
     'expiration_height <= pending_htlcs' => true,

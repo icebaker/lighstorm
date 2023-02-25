@@ -12,6 +12,7 @@ require_relative '../../components/cache'
 require_relative '../nodes/node'
 require_relative 'channel/accounting'
 
+require_relative '../../controllers/channel/actions/apply_gossip'
 require_relative '../connections/channel_node'
 require_relative '../satoshis'
 
@@ -20,7 +21,7 @@ require_relative '../errors'
 module Lighstorm
   module Models
     class Channel
-      attr_reader :data, :_key, :id, :opened_at, :up_at, :active, :exposure
+      attr_reader :data, :_key, :id
 
       def initialize(data)
         @data = data
@@ -57,10 +58,16 @@ module Lighstorm
         @data[:up_at]
       end
 
-      def active
+      def active?
         ensure_mine!
 
-        @data[:active]
+        @data[:state] == 'active'
+      end
+
+      def state
+        ensure_mine!
+
+        @data[:state]
       end
 
       def accounting
@@ -126,7 +133,7 @@ module Lighstorm
             id: id,
             opened_at: opened_at,
             up_at: up_at,
-            active: active,
+            state: state,
             exposure: exposure,
             accounting: accounting.to_h,
             partner: partner.to_h,
@@ -146,6 +153,34 @@ module Lighstorm
             partners: partners.map(&:to_h)
           }
         end
+      end
+
+      def dump
+        result = Marshal.load(Marshal.dump(@data)).merge(
+          { partners: partners.map(&:dump) }
+        )
+
+        result[:accounting] = accounting.dump if known?
+
+        result
+      end
+
+      def self.adapt(gossip: nil, dump: nil)
+        raise TooManyArgumentsError, 'you need to pass gossip: or dump:, not both' if !gossip.nil? && !dump.nil?
+
+        raise ArgumentError, 'missing gossip: or dump:' if gossip.nil? && dump.nil?
+
+        if !gossip.nil?
+          new(Adapter::Channel.subscribe_channel_graph(gossip))
+        elsif !dump.nil?
+          new(dump)
+        end
+      end
+
+      def apply!(gossip:)
+        Controllers::Channel::ApplyGossip.perform(
+          self, gossip
+        )
       end
 
       private

@@ -52,7 +52,8 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           expect(group.channel.up_at).to be_a(DateTime)
           expect(group.channel.up_at.to_s.size).to eq(25)
           expect(group.channel.up_at).to be > group.channel.opened_at
-          expect(group.channel.active).to be(true)
+          expect(group.channel.state).to be('active')
+          expect(group.channel.active?).to be(true)
           expect(group.channel.exposure).to eq('public')
 
           expect(group.channel.accounting.capacity.milisatoshis).to eq(6_200_000_000)
@@ -111,7 +112,7 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           )
 
           Contract.expect(
-            group.to_h, '1ae33175b0a6e2e748b08cbcd765ff632749ac5ed33459ee63af283283f2afa7'
+            group.to_h, '3d35f885c6592b8c49607e13be7727a68c6eb96030770c1db2ff7e40c4f3680f'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -150,7 +151,8 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           expect { group.channel.mine? }.to raise_error(UnknownChannelError)
           expect { group.channel.opened_at }.to raise_error(UnknownChannelError)
           expect { group.channel.up_at }.to raise_error(UnknownChannelError)
-          expect { group.channel.active }.to raise_error(UnknownChannelError)
+          expect { group.channel.state }.to raise_error(UnknownChannelError)
+          expect { group.channel.active? }.to raise_error(UnknownChannelError)
           expect { group.channel.exposure }.to raise_error(UnknownChannelError)
           expect { group.channel.accounting }.to raise_error(UnknownChannelError)
           expect { group.channel.myself }.to raise_error(UnknownChannelError)

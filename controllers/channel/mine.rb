@@ -63,7 +63,7 @@ module Lighstorm
 
         def self.transform(data, adapted)
           [0, 1].each do |i|
-            data[:partners][i][:node] = adapted[:get_info] if data[:partners][i][:node][:public_key].nil?
+            data[:partners][i][:node] = adapted[:get_info] if data[:partners][i][:node].nil?
 
             adapted[:get_chan_info][data[:id].to_i][:partners].each do |partner|
               if data[:partners][i][:node][:public_key] == partner[:node][:public_key]

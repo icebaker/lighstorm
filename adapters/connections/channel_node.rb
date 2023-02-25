@@ -1,16 +1,22 @@
 # frozen_string_literal: true
 
 require_relative '../nodes/node'
+require_relative 'channel_node/policy'
 
 module Lighstorm
   module Adapter
     class ChannelNode
       def self.list_channels(grpc, key)
-        {
+        data = {
           _source: :list_channels,
+          state: grpc[:active] ? 'active' : 'inactive',
           accounting: { balance: { milisatoshis: grpc[:"#{key}_balance"] * 1000 } },
           node: Node.list_channels(grpc, key)
         }
+
+        data.delete(:node) if data[:node].nil?
+
+        data
       end
 
       def self.get_chan_info(grpc, index)
@@ -20,32 +26,48 @@ module Lighstorm
         }
 
         if grpc[:"node#{index}_policy"]
-          data[:policy] = {
-            fee: {
-              base: { milisatoshis: grpc[:"node#{index}_policy"][:fee_base_msat] },
-              rate: { parts_per_million: grpc[:"node#{index}_policy"][:fee_rate_milli_msat] }
-            },
-            htlc: {
-              minimum: { milisatoshis: grpc[:"node#{index}_policy"][:min_htlc] },
-              maximum: { milisatoshis: grpc[:"node#{index}_policy"][:max_htlc_msat] },
-              # https://github.com/lightning/bolts/blob/master/02-peer-protocol.md#cltv_expiry_delta-selection
-              blocks: {
-                delta: {
-                  minimum: grpc[:"node#{index}_policy"][:time_lock_delta] # aka cltv_expiry_delta
-                }
-              }
-            }
-          }
+          data[:state] = grpc[:"node#{index}_policy"][:disabled] ? 'inactive' : 'active'
+          data[:policy] = Policy.get_chan_info(grpc[:"node#{index}_policy"])
         end
+
+        data.delete(:node) if data[:node].nil?
 
         data
       end
 
       def self.describe_graph(grpc, index)
-        {
+        data = {
           _source: :describe_graph,
           node: Node.describe_graph_from_channel(grpc, index)
         }
+
+        # TODO: No examples to validate the correctness of this scenario.
+        if grpc[:"node#{index}_policy"]
+          data[:state] = grpc[:"node#{index}_policy"][:disabled] ? 'inactive' : 'active'
+          data[:policy] = Policy.get_chan_info(grpc[:"node#{index}_policy"])
+        end
+
+        data.delete(:node) if data[:node].nil?
+
+        data
+      end
+
+      def self.subscribe_channel_graph(json)
+        data = {
+          _source: :subscribe_channel_graph,
+          node: {
+            public_key: json['advertisingNode']
+          },
+          policy: Policy.subscribe_channel_graph(json)
+        }
+
+        unless json['routingPolicy']['disabled'].nil?
+          data[:state] = json['routingPolicy']['disabled'] ? 'inactive' : 'active'
+        end
+
+        data.delete(:policy) if data[:policy].nil?
+
+        data
       end
     end
   end

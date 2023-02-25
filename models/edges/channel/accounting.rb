@@ -2,10 +2,13 @@
 
 require_relative '../../satoshis'
 require_relative '../../errors'
+require_relative '../../concerns/protectable'
 
 module Lighstorm
   module Models
     class ChannelAccounting
+      include Protectable
+
       def initialize(data, is_mine)
         @data = data
         @is_mine = is_mine
@@ -62,6 +65,20 @@ module Lighstorm
             capacity: capacity.to_h
           }
         end
+      end
+
+      def dump
+        Marshal.load(Marshal.dump(@data))
+      end
+
+      def capacity=(value)
+        protect!(value)
+
+        @capacity = value[:value]
+
+        @data[:capacity][:milisatoshis] = @capacity.milisatoshis
+
+        capacity
       end
     end
   end

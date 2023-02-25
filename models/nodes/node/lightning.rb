@@ -20,6 +20,12 @@ module Lighstorm
           version: version
         }
       end
+
+      def dump
+        Marshal.load(
+          Marshal.dump({ implementation: implementation, version: version })
+        )
+      end
     end
   end
 end

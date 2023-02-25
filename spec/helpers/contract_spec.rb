@@ -3,6 +3,12 @@
 require 'date'
 
 RSpec.describe Contract do
+  describe 'generate' do
+    it 'avoid unexpected config' do
+      expect(Contract::GENERATE).to be(false)
+    end
+  end
+
   describe 'contract_type' do
     it 'generates type' do
       expect(described_class.contract_type(nil)).to eq('Nil')

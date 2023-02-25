@@ -6,6 +6,9 @@ module Lighstorm
 
     class ToDoError < LighstormError; end
 
+    class TooManyArgumentsError < LighstormError; end
+    class IncoherentGossipError < LighstormError; end
+    class MissingGossipHandlerError < LighstormError; end
     class MissingCredentialsError < LighstormError; end
     class MissingMilisatoshisError < LighstormError; end
     class MissingPartsPerMillionError < LighstormError; end

@@ -23,7 +23,8 @@ RSpec.describe 'Integration Tests' do
           expect(Contract.for(channel.id)).to eq('String:11..20')
           expect(Contract.for(channel.opened_at)).to eq('DateTime')
           expect(Contract.for(channel.up_at)).to eq('DateTime')
-          expect(Contract.for(channel.active)).to eq('Boolean')
+          expect(Contract.for(channel.state)).to eq('String:0..10')
+          expect(Contract.for(channel.active?)).to eq('Boolean')
           expect(Contract.for(channel.exposure)).to eq('String:0..10')
 
           expect(Contract.for(channel.transaction.funding.id)).to eq('String:50+')
@@ -75,7 +76,8 @@ RSpec.describe 'Integration Tests' do
 
           expect { channel.opened_at }.to raise_error(NotYourChannelError)
           expect { channel.up_at }.to raise_error(NotYourChannelError)
-          expect { channel.active }.to raise_error(NotYourChannelError)
+          expect { channel.state }.to raise_error(NotYourChannelError)
+          expect { channel.active? }.to raise_error(NotYourChannelError)
 
           expect(Contract.for(channel.exposure)).to eq('String:0..10')
 
@@ -95,42 +97,46 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel.partners[0].node.public_key)).to eq('String:50+')
 
-          expect(Contract.for(channel.partners[0].policy.fee)).to eq('Nil')
-          expect(Contract.for(channel.partners[0].policy.htlc)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.fee.base)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.fee.rate)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.htlc.minimum)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.htlc.maximum)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.htlc.blocks.delta.minimum)).to eq('Nil')
 
           expect { channel.partners[1].accounting }.to raise_error(NotYourChannelError)
           expect(channel.partners[1].node.myself?).to be(false)
 
           expect(Contract.for(channel.partners[1].node.public_key)).to eq('String:50+')
 
-          expect(Contract.for(channel.partners[1].policy.fee)).to eq('Nil')
-          expect(Contract.for(channel.partners[1].policy.htlc)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.fee.base)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.fee.rate)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.htlc.minimum)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.htlc.maximum)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.htlc.blocks.delta.minimum)).to eq('Nil')
 
           expect(Contract.for(channel.to_h)).to eq(
             { _key: 'String:50+',
-              accounting: { capacity: { milisatoshis: 'Integer:0..10' } },
+              accounting: {
+                capacity: { milisatoshis: 'Integer:0..10' }
+              },
               id: 'String:11..20',
               partners: [
                 { node: {
-                  _key: 'String:50+',
-                  alias: 'String:0..10',
-                  color: 'String:0..10',
-                  platform: {
-                    blockchain: 'String:0..10',
-                    network: 'String:0..10'
+                    _key: 'String:50+',
+                    alias: 'String:0..10',
+                    color: 'String:0..10',
+                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                    public_key: 'String:50+'
                   },
-                  public_key: 'String:50+'
-                } },
+                  state: 'Nil' },
                 { node: {
-                  _key: 'String:50+',
-                  alias: 'String:0..10',
-                  color: 'String:0..10',
-                  platform: {
-                    blockchain: 'String:0..10',
-                    network: 'String:0..10'
+                    _key: 'String:50+',
+                    alias: 'String:0..10',
+                    color: 'String:0..10',
+                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                    public_key: 'String:50+'
                   },
-                  public_key: 'String:50+'
-                } }
+                  state: 'Nil' }
               ] }
           )
         end
@@ -160,7 +166,8 @@ RSpec.describe 'Integration Tests' do
 
           expect { channel.opened_at }.to raise_error(NotYourChannelError)
           expect { channel.up_at }.to raise_error(NotYourChannelError)
-          expect { channel.active }.to raise_error(NotYourChannelError)
+          expect { channel.state }.to raise_error(NotYourChannelError)
+          expect { channel.active? }.to raise_error(NotYourChannelError)
 
           expect(Contract.for(channel.exposure)).to eq('String:0..10')
 
@@ -180,16 +187,22 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel.partners[0].node.public_key)).to eq('String:50+')
 
-          expect(Contract.for(channel.partners[0].policy.fee)).to eq('Nil')
-          expect(Contract.for(channel.partners[0].policy.htlc)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.fee.base)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.fee.rate)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.htlc.minimum)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.htlc.maximum)).to eq('Nil')
+          expect(Contract.for(channel.partners[0].policy.htlc.blocks.delta.minimum)).to eq('Nil')
 
           expect { channel.partners[1].accounting }.to raise_error(NotYourChannelError)
           expect(channel.partners[1].node.myself?).to be(false)
 
           expect(Contract.for(channel.partners[1].node.public_key)).to eq('String:50+')
 
-          expect(Contract.for(channel.partners[1].policy.fee)).to eq('Nil')
-          expect(Contract.for(channel.partners[1].policy.htlc)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.fee.base)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.fee.rate)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.htlc.minimum)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.htlc.maximum)).to eq('Nil')
+          expect(Contract.for(channel.partners[1].policy.htlc.blocks.delta.minimum)).to eq('Nil')
 
           expect(Contract.for(channel.to_h)).to eq(
             { _key: 'String:50+',
@@ -197,15 +210,19 @@ RSpec.describe 'Integration Tests' do
               id: 'String:11..20',
               partners: [
                 { node: {
-                  _key: 'String:50+',
-                  platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                  public_key: 'String:50+'
-                } },
-                { node: {
-                  _key: 'String:50+',
-                  platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                  public_key: 'String:50+'
-                } }
+                    _key: 'String:50+',
+                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                    public_key: 'String:50+'
+                  },
+                  state: 'Nil' },
+                {
+                  node: {
+                    _key: 'String:50+',
+                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                    public_key: 'String:50+'
+                  },
+                  state: 'Nil'
+                }
               ] }
           )
         end

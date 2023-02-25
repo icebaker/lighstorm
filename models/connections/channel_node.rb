@@ -9,10 +9,19 @@ require_relative '../errors'
 module Lighstorm
   module Models
     class ChannelNode
+      include Protectable
+
+      attr_reader :state
+
       def initialize(data, is_mine, transaction)
         @data = data
+        @state = data[:state]
         @is_mine = is_mine
         @transaction = transaction
+      end
+
+      def active?
+        state == 'active'
       end
 
       def node
@@ -30,12 +39,35 @@ module Lighstorm
       end
 
       def to_h
-        restult = { node: node.to_h }
+        restult = { state: state, node: node.to_h }
 
         restult[:accounting] = accounting.to_h if @is_mine
         restult[:policy] = policy.to_h if @data[:policy]
 
         restult
+      end
+
+      def dump
+        result = Marshal.load(Marshal.dump(@data)).merge(
+          {
+            node: node.dump,
+            policy: policy.dump
+          }
+        )
+
+        result[:accounting] = accounting.dump if @is_mine
+        result.delete(:policy) if result[:policy].nil?
+
+        result
+      end
+
+      def state=(value)
+        protect!(value)
+
+        @state = value[:value]
+        @data[:state] = @state
+
+        state
       end
     end
   end

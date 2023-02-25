@@ -14,15 +14,24 @@ module Lighstorm
       end
 
       def fee
-        @fee ||= @data ? Fee.new(self, @data[:fee]) : nil
+        @fee ||= Fee.new(self, @data ? @data[:fee] : {})
       end
 
       def htlc
-        @htlc ||= @data ? HTLC.new(@data[:htlc]) : nil
+        @htlc ||= HTLC.new(@data ? @data[:htlc] : {})
       end
 
       def to_h
         { fee: fee.to_h, htlc: htlc.to_h }
+      end
+
+      def dump
+        result = Marshal.load(Marshal.dump(@data))
+
+        result = result.merge({ fee: fee.dump }) if @data && @data[:fee]
+        result = result.merge({ htlc: htlc.dump }) if @data && @data[:htlc]
+
+        result
       end
     end
   end
