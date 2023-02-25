@@ -5,7 +5,7 @@
 - Make your Satoshis flow.
 - Unleash the power of Graphs.
 
-0.0.5
+0.0.6
 
 [Documentation](README)
 [GitHub](https://github.com/icebaker/lighstorm)
