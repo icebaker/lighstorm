@@ -2,13 +2,15 @@
 
 require_relative '../components/cache'
 require_relative '../components/lnd'
+require_relative 'grpc/session'
 
 module Lighstorm
   module Ports
     class GRPC
-      def initialize(service, service_key)
+      def initialize(service, service_key, &handler)
         @service = service
         @service_key = service_key
+        @handler = handler
       end
 
       def call!(call_key, *args, &block)
@@ -17,12 +19,24 @@ module Lighstorm
         if block.nil?
           response = Cache.for(key, params: args&.first) do
             LND.instance.middleware(key) do
-              @service.send(call_key, *args, &block)
+              if @handler
+                @handler.call(call_key) do
+                  @service.send(call_key, *args, &block)
+                end
+              else
+                @service.send(call_key, *args, &block)
+              end
             end
           end
         else
           LND.instance.middleware(key) do
-            @service.send(call_key, *args, &block)
+            if @handler
+              @handler.call(call_key) do
+                @service.send(call_key, *args, &block)
+              end
+            else
+              @service.send(call_key, *args, &block)
+            end
           end
         end
       end
@@ -41,7 +55,11 @@ module Lighstorm
         @service.respond_to?(call_key) || super
       end
 
-      def self.method_missing(method_name, *_args)
+      def self.session
+        GRPCSession.new(self)
+      end
+
+      def self.method_missing(method_name, *_args, &block)
         service_key = method_name.to_sym
 
         unless LND.instance.client.respond_to?(service_key)
@@ -49,7 +67,7 @@ module Lighstorm
                 "Method `#{method_name}` doesn't exist."
         end
 
-        new(LND.instance.client.send(service_key), service_key)
+        new(LND.instance.client.send(service_key), service_key, &block)
       end
 
       def self.respond_to_missing?(method_name, include_private = false)

@@ -30,11 +30,15 @@ module VCR
     replay(key, params, &block)
   end
 
-  def self.build_path_for(key, params)
+  def self.build_path_for(key, params, partial: false)
     if params.size.positive?
       key_params = []
       params.keys.sort.each do |param_key|
-        key_params << "#{param_key}/#{params[param_key]}"
+        key_params << if params[param_key].is_a?(Hash)
+                        "#{param_key}#{build_path_for('', params[param_key], partial: true)}"
+                      else
+                        "#{param_key}/#{params[param_key]}"
+                      end
       end
 
       path = "#{key}/#{key_params.sort.join('/')}"
@@ -47,6 +51,8 @@ module VCR
     end.map do |item|
       item.size > 64 ? [item[0..64], Digest::SHA256.hexdigest(item)] : item
     end.flatten
+
+    return path.join('/') if partial
 
     "spec/data/tapes/#{path.join('/')}.bin"
   end

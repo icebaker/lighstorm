@@ -2,6 +2,14 @@
 
 module Sanitizer
   SAFE = {
+    'lookup_invoice <= @meta' => true,
+    'get_info <= @meta' => true,
+    'list_payments <= @meta' => true,
+    'fee_report <= @meta' => true,
+    'decode_pay_req <= @meta' => true,
+    'get_chan_info <= @meta' => true,
+    'get_node_info <= @meta' => true,
+    'list_channels <= @meta' => true,
     'accept_time <= htlcs' => true,
     'active <= list_channels' => true,
     'active' => true,

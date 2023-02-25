@@ -25,5 +25,16 @@ RSpec.describe VCR do
         )
       end
     end
+
+    context 'common' do
+      let(:key) { 'lightning.lookup_invoice' }
+      let(:params) { { fetch: { lookup_invoice: false } } }
+
+      it 'builds' do
+        expect(described_class.build_path_for(key, params)).to eq(
+          'spec/data/tapes/lightning/lookup_invoice/fetch/lookup_invoice/false.bin'
+        )
+      end
+    end
   end
 end

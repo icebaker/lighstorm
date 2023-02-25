@@ -68,6 +68,7 @@ module Sanitizer
 
   def self.path_to_key(path)
     parts = path.join('/')
+                .sub(%r{@meta/.*?/}, '@meta/')
                 .sub(%r{/\d+/}, '/[]/')
                 .sub(%r{/\d+$}, '/[]')
                 .sub(%r{^\d/}, '[]/')
