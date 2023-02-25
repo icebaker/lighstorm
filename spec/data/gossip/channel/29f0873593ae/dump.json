@@ -1,0 +1,87 @@
+{
+  "_source": "describe_graph",
+  "_key": "d727f0e4ecfd1a468a554a6f329e7c568a76999cf2a55d3cae231ec716537ed4",
+  "id": "766802707818938369",
+  "exposure": "public",
+  "accounting": {
+    "capacity": {
+      "milisatoshis": 1000000000
+    }
+  },
+  "partners": [
+    {
+      "_source": "describe_graph",
+      "node": {
+        "_source": "describe_graph",
+        "_key": "cadc7f4c88ef79881be3a615826bb5acb133e2fb4dc3b54555acbccd14f3fd2a",
+        "public_key": "02170ffa14bc0486252ad0213e698570cb5492955f6f6cd5ab97145a94e11ae696",
+        "platform": {
+          "blockchain": "bitcoin",
+          "network": "mainnet"
+        }
+      },
+      "state": "active",
+      "policy": {
+        "fee": {
+          "base": {
+            "milisatoshis": 0
+          },
+          "rate": {
+            "parts_per_million": 100
+          }
+        },
+        "htlc": {
+          "minimum": {
+            "milisatoshis": 1000
+          },
+          "maximum": {
+            "milisatoshis": 990000000
+          },
+          "blocks": {
+            "delta": {
+              "minimum": 40
+            }
+          }
+        }
+      }
+    },
+    {
+      "_source": "describe_graph",
+      "node": {
+        "_source": "describe_graph",
+        "_key": "167daf8b0defa455623cd1040bd0c8c9e160352a0038f36b872104c6a36f9aa4",
+        "public_key": "03d5099461761b1b4d3f3d2edfe9c929c71ad384ac18abe58a7188890964c8390a",
+        "platform": {
+          "blockchain": "bitcoin",
+          "network": "mainnet"
+        }
+      },
+      "state": "active",
+      "policy": {
+        "fee": {
+          "base": {
+            "milisatoshis": 0
+          },
+          "rate": {
+            "parts_per_million": 100
+          }
+        },
+        "htlc": {
+          "minimum": {
+            "milisatoshis": 1000
+          },
+          "maximum": {
+            "milisatoshis": 990000000
+          },
+          "blocks": {
+            "delta": {
+              "minimum": 40
+            }
+          }
+        }
+      }
+    }
+  ],
+  "known": true,
+  "mine": false
+}

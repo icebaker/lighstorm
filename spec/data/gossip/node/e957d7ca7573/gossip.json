@@ -1,0 +1,75 @@
+{
+  "addresses": [
+    "k6nx6kl3ysip3a3nu774bd7xhmpln4ctb3czr3c65gunn5kdd4uhm7yd.onion:9735"
+  ],
+  "identityKey": "023c047f51141b345db60fb4bf7a6a863ed9e010fa8eaba0d596322565a6b9a73b",
+  "alias": "Gerdtrudroepke",
+  "color": "#ff5000",
+  "nodeAddresses": [
+    {
+      "network": "tcp",
+      "addr": "k6nx6kl3ysip3a3nu774bd7xhmpln4ctb3czr3c65gunn5kdd4uhm7yd.onion:9735"
+    }
+  ],
+  "features": {
+    "0": {
+      "name": "data-loss-protect",
+      "isRequired": true,
+      "isKnown": true
+    },
+    "5": {
+      "name": "upfront-shutdown-script",
+      "isKnown": true
+    },
+    "7": {
+      "name": "gossip-queries",
+      "isKnown": true
+    },
+    "9": {
+      "name": "tlv-onion",
+      "isKnown": true
+    },
+    "12": {
+      "name": "static-remote-key",
+      "isRequired": true,
+      "isKnown": true
+    },
+    "14": {
+      "name": "payment-addr",
+      "isRequired": true,
+      "isKnown": true
+    },
+    "17": {
+      "name": "multi-path-payments",
+      "isKnown": true
+    },
+    "19": {
+      "name": "wumbo-channels",
+      "isKnown": true
+    },
+    "23": {
+      "name": "anchors-zero-fee-htlc-tx",
+      "isKnown": true
+    },
+    "27": {
+      "name": "shutdown-any-segwit",
+      "isKnown": true
+    },
+    "31": {
+      "name": "amp",
+      "isKnown": true
+    },
+    "45": {
+      "name": "explicit-commitment-type",
+      "isKnown": true
+    },
+    "55": {
+      "name": "keysend",
+      "isKnown": true
+    },
+    "2023": {
+      "name": "script-enforced-lease",
+      "isKnown": true
+    }
+  }
+}

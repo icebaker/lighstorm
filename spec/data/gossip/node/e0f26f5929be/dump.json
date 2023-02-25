@@ -1,0 +1,12 @@
+{
+  "_source": "describe_graph",
+  "_key": "8b8b460416bc384260ca166233827f361a0c0da7b632c68a2720e08fbe3f528c",
+  "public_key": "023c047f51141b345db60fb4bf7a6a863ed9e010fa8eaba0d596322565a6b9a73b",
+  "alias": "Gerdtrudroepke",
+  "color": "#ff5000",
+  "platform": {
+    "blockchain": "bitcoin",
+    "network": "mainnet"
+  },
+  "myself": false
+}
