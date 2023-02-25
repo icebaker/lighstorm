@@ -35,5 +35,5 @@ jobs:
           bundler-cache: true
       - name: Install dependencies
         run: bundle install
-      - name: Run tests
+      - name: Run rspec tests
         run: bundle exec rspec
