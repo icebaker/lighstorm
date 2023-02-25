@@ -7,12 +7,12 @@ require_relative './helpers/contract'
 require_relative './helpers/sanitizer'
 
 def check_integration!(slow: false)
-  if ENV.fetch('LIGHSTORM_RUN_INTEGRATION_TESTS') != 'true'
+  if ENV.fetch('LIGHSTORM_RUN_INTEGRATION_TESTS', 'false') != 'true'
     skip('integration tests are inactive')
     return
   end
 
-  return unless slow && ENV.fetch('LIGHSTORM_RUN_INTEGRATION_TESTS_SLOW') != 'true'
+  return unless slow && ENV.fetch('LIGHSTORM_RUN_INTEGRATION_TESTS_SLOW', 'false') != 'true'
 
   skip('slow integration tests are inactive')
 end
