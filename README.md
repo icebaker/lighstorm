@@ -1,4 +1,4 @@
-# Lighstorm
+# Lighstorm [![Gem Version](https://badge.fury.io/rb/lighstorm.svg)](https://badge.fury.io/rb/lighstorm) ![RSpec Tests Status](https://github.com/icebaker/lighstorm/actions/workflows/ruby-rspec-tests.yml/badge.svg)
 
 > ⚠️ Warning: Early-stage, breaking changes are expected.
 
