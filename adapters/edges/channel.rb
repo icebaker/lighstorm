@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
 require 'digest'
 
 require_relative '../connections/channel_node'
@@ -26,8 +25,8 @@ module Lighstorm
               index: grpc[:channel_point].split(':').last.to_i
             }
           },
-          opened_at: DateTime.parse((at - grpc[:lifetime]).to_s),
-          up_at: DateTime.parse((at - grpc[:uptime]).to_s),
+          opened_at: at - grpc[:lifetime],
+          up_at: at - grpc[:uptime],
           state: grpc[:active] ? 'active' : 'inactive',
           exposure: grpc[:private] ? 'private' : 'public',
           accounting: {

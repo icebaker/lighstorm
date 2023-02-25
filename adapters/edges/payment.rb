@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'digest'
-require 'date'
 
 require_relative '../connections/payment_channel'
 require_relative 'payment/purpose'
@@ -30,7 +29,7 @@ module Lighstorm
         data = {
           _source: :list_payments,
           _key: _key(grpc),
-          created_at: DateTime.parse(Time.at(grpc[:creation_time_ns] / 1e+9).to_s),
+          created_at: Time.at(grpc[:creation_time_ns] / 1e+9),
           status: grpc[:status].to_s.downcase,
           fee: { milisatoshis: grpc[:fee_msat] },
           purpose: Purpose.list_payments(grpc, node_get_info),
@@ -42,9 +41,7 @@ module Lighstorm
           end
         }
 
-        if grpc[:htlcs].first[:resolve_time_ns]
-          data[:settled_at] = DateTime.parse(Time.at(grpc[:htlcs].first[:resolve_time_ns] / 1e+9).to_s)
-        end
+        data[:settled_at] = Time.at(grpc[:htlcs].first[:resolve_time_ns] / 1e+9) if grpc[:htlcs].first[:resolve_time_ns]
 
         data
       end

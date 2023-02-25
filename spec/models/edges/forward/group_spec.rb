@@ -23,8 +23,8 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
           expect(group._key.size).to eq(64)
 
-          expect(group.last_at).to be_a(DateTime)
-          expect(group.last_at.to_s).to eq('2023-02-14T02:30:05-03:00')
+          expect(group.last_at).to be_a(Time)
+          expect(group.last_at.utc.to_s).to eq('2023-02-14 05:30:05 UTC')
 
           # ------------------------------------------------------------------
 
@@ -47,10 +47,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           expect(group.channel.mine?).to be(true)
 
           expect(group.channel.id).to eq('850111604344029185')
-          expect(group.channel.opened_at).to be_a(DateTime)
-          expect(group.channel.opened_at.to_s.size).to eq(25)
-          expect(group.channel.up_at).to be_a(DateTime)
-          expect(group.channel.up_at.to_s.size).to eq(25)
+          expect(group.channel.opened_at).to be_a(Time)
+          expect(group.channel.opened_at.utc.to_s.size).to eq(23)
+          expect(group.channel.up_at).to be_a(Time)
+          expect(group.channel.up_at.utc.to_s.size).to eq(23)
           expect(group.channel.up_at).to be > group.channel.opened_at
           expect(group.channel.state).to be('active')
           expect(group.channel.active?).to be(true)
@@ -112,7 +112,7 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           )
 
           Contract.expect(
-            group.to_h, '3d35f885c6592b8c49607e13be7727a68c6eb96030770c1db2ff7e40c4f3680f'
+            group.to_h, '1144b03296b4b3177224a985542970b0a17c61860e3821b3c987fc05e14d284c'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -126,8 +126,8 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
           expect(group._key.size).to eq(64)
 
-          expect(group.last_at).to be_a(DateTime)
-          expect(group.last_at.to_s).to eq('2023-01-17T11:47:11-03:00')
+          expect(group.last_at).to be_a(Time)
+          expect(group.last_at.utc.to_s).to eq('2023-01-17 14:47:11 UTC')
 
           # ------------------------------------------------------------------
 
@@ -159,7 +159,7 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           expect { group.channel.partner }.to raise_error(UnknownChannelError)
 
           Contract.expect(
-            group.to_h, '83cfed6066fda909f3c9e073be46ffbfa6aab74a5062a14e94ac54ff9743b768'
+            group.to_h, '604f66b36cc7ccc3b2257c56f317056bc0826c6caa102859c82579de79b394a4'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)

@@ -33,7 +33,7 @@ RSpec.describe 'Integration Tests' do
           expect(channel.mine?).to be(true)
 
           expect(Contract.for(channel.id)).to eq('String:11..20')
-          expect(Contract.for(channel.opened_at)).to eq('DateTime')
+          expect(Contract.for(channel.opened_at)).to eq('Time')
 
           expect(Contract.for(myself.to_h)).to eq(
             { _key: 'String:50+',

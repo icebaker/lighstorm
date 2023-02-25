@@ -31,11 +31,11 @@ RSpec.describe Lighstorm::Models::Invoice do
 
         expect(invoice._key.size).to eq(64)
 
-        expect(invoice.created_at).to be_a(DateTime)
-        expect(invoice.created_at.to_s).to eq('2023-01-16T06:29:02-03:00')
+        expect(invoice.created_at).to be_a(Time)
+        expect(invoice.created_at.utc.to_s).to eq('2023-01-16 09:29:02 UTC')
 
-        expect(invoice.settle_at).to be_a(DateTime)
-        expect(invoice.settle_at.to_s).to eq('2023-01-16T06:29:17-03:00')
+        expect(invoice.settle_at).to be_a(Time)
+        expect(invoice.settle_at.utc.to_s).to eq('2023-01-16 09:29:17 UTC')
 
         expect(invoice.state).to eq('settled')
 
@@ -52,19 +52,19 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, '45241f7af3c82af35d58160759453041b17dc91643b113ff7e712ab2f69f78fd'
+          invoice.to_h, '0d75019411cea11336f7d0c9f18a4820044cc409536c6651834006ab1248a068'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
           expect(actual.contract).to eq(
             { _key: 'String:50+',
-              created_at: 'DateTime',
+              created_at: 'Time',
               request: { _key: 'String:50+',
                          amount: { milisatoshis: 'Integer:0..10' },
                          code: 'String:50+',
                          description: { hash: 'Nil', memo: 'String:21..30' },
                          secret: { hash: 'String:50+' } },
-              settle_at: 'DateTime',
+              settle_at: 'Time',
               state: 'String:0..10' }
           )
         end
@@ -84,11 +84,11 @@ RSpec.describe Lighstorm::Models::Invoice do
 
       expect(invoice._key.size).to eq(64)
 
-      expect(invoice.created_at).to be_a(DateTime)
-      expect(invoice.created_at.to_s).to eq('2023-01-16T06:29:02-03:00')
+      expect(invoice.created_at).to be_a(Time)
+      expect(invoice.created_at.utc.to_s).to eq('2023-01-16 09:29:02 UTC')
 
-      expect(invoice.settle_at).to be_a(DateTime)
-      expect(invoice.settle_at.to_s).to eq('2023-01-16T06:29:17-03:00')
+      expect(invoice.settle_at).to be_a(Time)
+      expect(invoice.settle_at.utc.to_s).to eq('2023-01-16 09:29:17 UTC')
 
       expect(invoice.state).to eq('settled')
 
@@ -105,18 +105,18 @@ RSpec.describe Lighstorm::Models::Invoice do
       expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
       Contract.expect(
-        invoice.to_h, '45241f7af3c82af35d58160759453041b17dc91643b113ff7e712ab2f69f78fd'
+        invoice.to_h, '0d75019411cea11336f7d0c9f18a4820044cc409536c6651834006ab1248a068'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(
           { _key: 'String:50+',
-            created_at: 'DateTime',
+            created_at: 'Time',
             request: { _key: 'String:50+',
                        amount: { milisatoshis: 'Integer:0..10' },
                        code: 'String:50+',
                        description: { hash: 'Nil', memo: 'String:21..30' },
                        secret: { hash: 'String:50+' } },
-            settle_at: 'DateTime',
+            settle_at: 'Time',
             state: 'String:0..10' }
         )
       end

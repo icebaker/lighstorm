@@ -21,8 +21,8 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel._key)).to eq('String:50+')
           expect(Contract.for(channel.id)).to eq('String:11..20')
-          expect(Contract.for(channel.opened_at)).to eq('DateTime')
-          expect(Contract.for(channel.up_at)).to eq('DateTime')
+          expect(Contract.for(channel.opened_at)).to eq('Time')
+          expect(Contract.for(channel.up_at)).to eq('Time')
           expect(Contract.for(channel.state)).to eq('String:0..10')
           expect(Contract.for(channel.active?)).to eq('Boolean')
           expect(Contract.for(channel.exposure)).to eq('String:0..10')

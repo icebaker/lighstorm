@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
 require 'digest'
 
 require_relative 'payment_request'
@@ -29,8 +28,8 @@ module Lighstorm
       def self.list_or_lookup(grpc)
         {
           _key: _key(grpc),
-          created_at: DateTime.parse(Time.at(grpc[:creation_date]).to_s),
-          settle_at: DateTime.parse(Time.at(grpc[:settle_date]).to_s),
+          created_at: Time.at(grpc[:creation_date]),
+          settle_at: Time.at(grpc[:settle_date]),
           state: grpc[:state].to_s.downcase
         }
       end

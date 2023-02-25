@@ -33,8 +33,8 @@ RSpec.describe Lighstorm::Models::Forward do
 
         expect(forward._key.size).to eq(64)
 
-        expect(forward.at).to be_a(DateTime)
-        expect(forward.at.to_s).to eq('2023-01-22T22:02:28-03:00')
+        expect(forward.at).to be_a(Time)
+        expect(forward.at.utc.to_s).to eq('2023-01-23 01:02:28 UTC')
 
         expect(forward.fee.milisatoshis).to eq(350)
         expect(forward.fee.satoshis).to eq(0.35)
@@ -56,10 +56,10 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.in.channel.mine?).to be(true)
 
         expect(forward.in.channel.id).to eq('850099509773795329')
-        expect(forward.in.channel.opened_at).to be_a(DateTime)
-        expect(forward.in.channel.opened_at.to_s.size).to eq(25)
-        expect(forward.in.channel.up_at).to be_a(DateTime)
-        expect(forward.in.channel.up_at.to_s.size).to eq(25)
+        expect(forward.in.channel.opened_at).to be_a(Time)
+        expect(forward.in.channel.opened_at.utc.to_s.size).to eq(23)
+        expect(forward.in.channel.up_at).to be_a(Time)
+        expect(forward.in.channel.up_at.utc.to_s.size).to eq(23)
         expect(forward.in.channel.up_at).to be > forward.in.channel.opened_at
         expect(forward.in.channel.state).to be('active')
         expect(forward.in.channel.active?).to be(true)
@@ -127,10 +127,10 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.out.channel.mine?).to be(true)
 
         expect(forward.out.channel.id).to eq('848916435345801217')
-        expect(forward.out.channel.opened_at).to be_a(DateTime)
-        expect(forward.out.channel.opened_at.to_s.size).to eq(25)
-        expect(forward.out.channel.up_at).to be_a(DateTime)
-        expect(forward.out.channel.up_at.to_s.size).to eq(25)
+        expect(forward.out.channel.opened_at).to be_a(Time)
+        expect(forward.out.channel.opened_at.utc.to_s.size).to eq(23)
+        expect(forward.out.channel.up_at).to be_a(Time)
+        expect(forward.out.channel.up_at.utc.to_s.size).to eq(23)
         expect(forward.out.channel.up_at).to be > forward.out.channel.opened_at
         expect(forward.out.channel.state).to be('active')
         expect(forward.out.channel.active?).to be(true)
@@ -197,7 +197,7 @@ RSpec.describe Lighstorm::Models::Forward do
 
         Contract.expect(
           forward.to_h,
-          '6a176182716537a27e16ccac679f5b9f8d1c6e1b63bb089a040740e8925d5a64'
+          'd22c4690dcb9cdfc20d787b41eda9e194aa62ff3848d4c1df847488590e19df4'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -228,8 +228,8 @@ RSpec.describe Lighstorm::Models::Forward do
 
         expect(forward._key.size).to eq(64)
 
-        expect(forward.at).to be_a(DateTime)
-        expect(forward.at.to_s).to eq('2023-01-16T11:49:43-03:00')
+        expect(forward.at).to be_a(Time)
+        expect(forward.at.utc.to_s).to eq('2023-01-16 14:49:43 UTC')
 
         expect(forward.fee.milisatoshis).to eq(5206)
         expect(forward.fee.satoshis).to eq(5.206)
@@ -279,7 +279,7 @@ RSpec.describe Lighstorm::Models::Forward do
         expect { forward.out.channel.partner }.to raise_error(UnknownChannelError)
 
         Contract.expect(
-          forward.to_h, '7d9f3ba0083982184d4baab3c82f722ba001efdc53ab3b5ceb7c7d3b6dbb6a4a'
+          forward.to_h, '9942d7f65337dd2c49cf57072e81da86a9d3fc973ffa0a5b253e23d8aa68f06a'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

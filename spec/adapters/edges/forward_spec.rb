@@ -20,14 +20,14 @@ RSpec.describe Lighstorm::Adapter::Forward do
 
       adapted = described_class.forwarding_history(raw)
 
-      expect(adapted[:at]).to be_a(DateTime)
+      expect(adapted[:at]).to be_a(Time)
 
-      adapted[:at] = adapted[:at].to_s
+      adapted[:at] = adapted[:at].utc.to_s
 
       expect(adapted).to eq(
         { _source: :forwarding_history,
           _key: '9cdae1a0727397e187eae315e49d9254ffa6a4aac60be5575b16eecb47a019ff',
-          at: '2023-01-16T11:49:43-03:00',
+          at: '2023-01-16 14:49:43 UTC',
           fee: { milisatoshis: 5206 },
           in: {
             amount: { milisatoshis: 69_428_816 },

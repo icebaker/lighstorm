@@ -2,7 +2,6 @@
 
 require 'securerandom'
 
-require 'date'
 require 'digest'
 
 require 'fileutils'

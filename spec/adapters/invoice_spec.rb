@@ -22,7 +22,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       adapted = described_class.list_invoices(raw)
 
       Contract.expect(
-        adapted, '626f7aebf929043b3c6d372da5c630c161aed1b5fcd93f7f14a1e6b7e22d2f3e'
+        adapted, '896e46ed54278c8d5c0ccab4f551665c2253aa4494ca9122555d9b082d4f65e1'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -30,7 +30,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         expect(actual.contract).to eq(
           { _key: 'String:50+',
             _source: 'Symbol:11..20',
-            created_at: 'DateTime',
+            created_at: 'Time',
             request: {
               _source: 'Symbol:11..20',
               address: 'String:50+',
@@ -39,7 +39,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
               description: { hash: 'Nil', memo: 'String:21..30' },
               secret: { hash: 'String:50+', preimage: 'String:50+' }
             },
-            settle_at: 'DateTime',
+            settle_at: 'Time',
             state: 'String:0..10' }
         )
       end
@@ -66,7 +66,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       adapted = described_class.lookup_invoice(raw)
 
       Contract.expect(
-        adapted, '626f7aebf929043b3c6d372da5c630c161aed1b5fcd93f7f14a1e6b7e22d2f3e'
+        adapted, '896e46ed54278c8d5c0ccab4f551665c2253aa4494ca9122555d9b082d4f65e1'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -74,7 +74,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         expect(actual.contract).to eq(
           { _key: 'String:50+',
             _source: 'Symbol:11..20',
-            created_at: 'DateTime',
+            created_at: 'Time',
             request: {
               _source: 'Symbol:11..20',
               address: 'String:50+',
@@ -83,7 +83,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
               description: { hash: 'Nil', memo: 'String:21..30' },
               secret: { hash: 'String:50+', preimage: 'String:50+' }
             },
-            settle_at: 'DateTime',
+            settle_at: 'Time',
             state: 'String:0..10' }
         )
       end

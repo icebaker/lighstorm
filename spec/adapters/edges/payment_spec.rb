@@ -25,7 +25,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
       adapted = described_class.list_payments(raw, node_get_info)
 
       Contract.expect(
-        adapted, 'a5e8708e400d78885e6b41716b1a024ede1bff692e7ba2702be708c53dbe2688'
+        adapted, '880eed1f59206bb3e51a6f996a9ffaf50ad7c03e91ffc761e3e7e00c7c65545f'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -33,7 +33,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
         expect(actual.contract).to eq(
           { _key: 'String:50+',
             _source: 'Symbol:11..20',
-            created_at: 'DateTime',
+            created_at: 'Time',
             fee: { milisatoshis: 'Integer:0..10' },
             hops: [
               { _source: 'Symbol:11..20',
@@ -65,7 +65,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
               code: 'String:50+',
               secret: { hash: 'String:50+', preimage: 'String:50+' }
             },
-            settled_at: 'DateTime',
+            settled_at: 'Time',
             status: 'String:0..10' }
         )
       end

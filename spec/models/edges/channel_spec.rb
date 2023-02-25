@@ -28,11 +28,11 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.mine?).to be(true)
 
       expect(channel.id).to eq('850111604344029185')
-      expect(channel.opened_at).to be_a(DateTime)
-      expect(channel.opened_at.to_s.size).to eq(25)
-      expect(channel.up_at).to be_a(DateTime)
+      expect(channel.opened_at).to be_a(Time)
+      expect(channel.opened_at.utc.to_s.size).to eq(23)
+      expect(channel.up_at).to be_a(Time)
       expect(channel.up_at).to be > channel.opened_at
-      expect(channel.up_at.to_s.size).to eq(25)
+      expect(channel.up_at.utc.to_s.size).to eq(23)
       expect(channel.state).to be('active')
       expect(channel.active?).to be(true)
       expect(channel.exposure).to eq('public')
@@ -146,7 +146,7 @@ RSpec.describe Lighstorm::Models::Channel do
       )
 
       Contract.expect(
-        channel.to_h, '727cfffebcc4a3cb627aa8b3eacb04c932215caf217220873887e502bdfd38cf'
+        channel.to_h, 'e800b26eea91e4c7ce5084261ca42c67b844ee414fd0cc5fb39baae973360c65'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -172,10 +172,10 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.mine?).to be(true)
 
         expect(channel.id).to eq(channel_id)
-        expect(channel.opened_at).to be_a(DateTime)
-        expect(channel.opened_at.to_s.size).to eq(25)
-        expect(channel.up_at).to be_a(DateTime)
-        expect(channel.up_at.to_s.size).to eq(25)
+        expect(channel.opened_at).to be_a(Time)
+        expect(channel.opened_at.utc.to_s.size).to eq(23)
+        expect(channel.up_at).to be_a(Time)
+        expect(channel.up_at.utc.to_s.size).to eq(23)
         expect(channel.state).to be('active')
         expect(channel.active?).to be(true)
         expect(channel.exposure).to eq('public')
@@ -282,7 +282,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.to_h, '727cfffebcc4a3cb627aa8b3eacb04c932215caf217220873887e502bdfd38cf'
+          channel.to_h, 'e800b26eea91e4c7ce5084261ca42c67b844ee414fd0cc5fb39baae973360c65'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -570,10 +570,10 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.id).to eq('848916435345801217')
 
-        expect(channel.opened_at).to be_a(DateTime)
-        expect(channel.opened_at.to_s.size).to eq(25)
-        expect(channel.up_at).to be_a(DateTime)
-        expect(channel.up_at.to_s.size).to eq(25)
+        expect(channel.opened_at).to be_a(Time)
+        expect(channel.opened_at.utc.to_s.size).to eq(23)
+        expect(channel.up_at).to be_a(Time)
+        expect(channel.up_at.utc.to_s.size).to eq(23)
         expect(channel.state).to eq('active')
         expect(channel.active?).to be(true)
         expect(channel.exposure).to eq('public')
@@ -668,7 +668,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '21df298a1220ec2d5dbeeb545d02b7676a8bb0fb9f7d2312dcf620b11cb808dc'
+          channel.to_h, '821c7e20ce85a6c1947b39fcd30012c4fdee6fa2bf288920cdec28e15f93d76d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
