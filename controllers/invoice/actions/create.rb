@@ -30,10 +30,6 @@ module Lighstorm
                      end
 
           Invoice.find_by_secret_hash(response[:r_hash].unpack1('H*'))
-
-          # TODO
-          # find_by_secret_hash(response[:r_hash].unpack1('H*'))
-          # response
         end
       end
     end
