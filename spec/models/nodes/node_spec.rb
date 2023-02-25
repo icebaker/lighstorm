@@ -98,6 +98,18 @@ RSpec.describe Lighstorm::Models::Node do
         end
       end
     end
+
+    context 'non-existent node' do
+      it 'models' do
+        public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78000928'
+
+        expect do
+          data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
+            VCR.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
+          end
+        end.to raise_error GRPC::NotFound
+      end
+    end
   end
 
   describe '.all' do

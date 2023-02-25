@@ -18,6 +18,10 @@ module Lighstorm
       def self.find_by_id(id)
         FindById.model(FindById.data(id))
       end
+
+      def self.adapt(dump: nil, gossip: nil)
+        Models::Channel.adapt(dump: dump, gossip: gossip)
+      end
     end
   end
 end

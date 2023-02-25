@@ -37,6 +37,12 @@ module Lighstorm
 
         response
       end
+
+      def dump
+        data = Marshal.load(Marshal.dump(@data))
+        data.merge(lightning: lightning.dump) if @node.myself?
+        data
+      end
     end
   end
 end

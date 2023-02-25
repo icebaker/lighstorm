@@ -4,6 +4,7 @@ require 'securerandom'
 
 require_relative '../../satoshis'
 require_relative '../../rate'
+require_relative '../../concerns/protectable'
 
 require_relative '../../../components/lnd'
 require_relative '../../../controllers/channel/actions/update_fee'
@@ -11,24 +12,38 @@ require_relative '../../../controllers/channel/actions/update_fee'
 module Lighstorm
   module Models
     class Fee
+      include Protectable
+
       def initialize(policy, data)
         @policy = policy
         @data = data
       end
 
       def base
+        return nil unless @data[:base]
+
         @base ||= Satoshis.new(milisatoshis: @data[:base][:milisatoshis])
       end
 
       def rate
+        return nil unless @data[:rate]
+
         @rate ||= Rate.new(parts_per_million: @data[:rate][:parts_per_million])
       end
 
       def to_h
-        {
-          base: base.to_h,
-          rate: rate.to_h
-        }
+        result = {}
+
+        result[:base] = base.to_h if @data[:base]
+        result[:rate] = rate.to_h if @data[:rate]
+
+        return nil if result.empty?
+
+        result
+      end
+
+      def dump
+        Marshal.load(Marshal.dump(@data))
       end
 
       def update(params, preview: false, fake: false)
@@ -38,29 +53,23 @@ module Lighstorm
       end
 
       def base=(value)
-        validate_token!(value)
+        protect!(value)
 
         @base = value[:value]
+
+        @data[:base] = { milisatoshis: @base.milisatoshis }
+
+        base
       end
 
       def rate=(value)
-        validate_token!(value)
+        protect!(value)
 
         @rate = value[:value]
-      end
 
-      def prepare_token!(token)
-        @token = token
-      end
+        @data[:rate] = { parts_per_million: @rate.parts_per_million }
 
-      private
-
-      def validate_token!(value)
-        token = value.is_a?(Hash) ? value[:token] : nil
-
-        raise OperationNotAllowedError if token.nil? || @token.nil? || token != @token
-
-        @token = nil
+        rate
       end
     end
   end

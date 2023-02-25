@@ -6,11 +6,13 @@ require 'digest'
 require 'fileutils'
 
 module Contract
+  GENERATE = false
+
   def self.expect!(actual_data, expected_hash, &block)
     expect(actual_data, expected_hash, generate: true, &block)
   end
 
-  def self.expect(actual_data, expected_hash, generate: false, &block)
+  def self.expect(actual_data, expected_hash, generate: GENERATE, &block)
     actual_contract = generate(actual_data)
     actual_hash = hash(actual_contract, save_to_disk: generate)
 

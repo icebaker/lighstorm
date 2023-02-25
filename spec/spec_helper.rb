@@ -8,13 +8,26 @@ require_relative './helpers/sanitizer'
 
 def check_integration!(slow: false)
   if ENV.fetch('LIGHSTORM_RUN_INTEGRATION_TESTS') != 'true'
-    skip('integration tests are disabled')
+    skip('integration tests are inactive')
     return
   end
 
   return unless slow && ENV.fetch('LIGHSTORM_RUN_INTEGRATION_TESTS_SLOW') != 'true'
 
-  skip('slow integration tests are disabled')
+  skip('slow integration tests are inactive')
+end
+
+def symbolize_keys(object)
+  case object
+  when Hash
+    object.each_with_object({}) do |(key, value), result|
+      result[key.to_sym] = symbolize_keys(value)
+    end
+  when Array
+    object.map { |e| symbolize_keys(e) }
+  else
+    object
+  end
 end
 
 RSpec.configure do |config|

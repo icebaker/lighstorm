@@ -104,7 +104,7 @@ RSpec.describe Lighstorm::Models::Invoice do
       expect(invoice.request.secret.preimage.size).to eq(64)
       expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
-      Contract.expect!(
+      Contract.expect(
         invoice.to_h, '45241f7af3c82af35d58160759453041b17dc91643b113ff7e712ab2f69f78fd'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)

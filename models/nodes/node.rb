@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require_relative '../../controllers/node/actions/apply_gossip'
 require_relative '../../controllers/channel'
+require_relative '../../adapters/nodes/node'
+require_relative '../concerns/protectable'
 require_relative '../errors'
 
 require_relative 'node/platform'
@@ -8,6 +11,8 @@ require_relative 'node/platform'
 module Lighstorm
   module Models
     class Node
+      include Protectable
+
       attr_reader :data, :_key, :alias, :public_key, :color
 
       def initialize(data)
@@ -45,6 +50,52 @@ module Lighstorm
         result[:platform] = platform.to_h if @data[:platform]
 
         result
+      end
+
+      def dump
+        result = Marshal.load(Marshal.dump(@data))
+
+        result[:platform] = platform.dump if @data[:platform]
+
+        result
+      end
+
+      def alias=(value)
+        protect!(value)
+
+        @alias = value[:value]
+
+        @data[:alias] = @alias
+
+        self.alias
+      end
+
+      def color=(value)
+        protect!(value)
+
+        @color = value[:value]
+
+        @data[:color] = @color
+
+        color
+      end
+
+      def self.adapt(gossip: nil, dump: nil)
+        raise TooManyArgumentsError, 'you need to pass gossip: or dump:, not both' if !gossip.nil? && !dump.nil?
+
+        raise ArgumentError, 'missing gossip: or dump:' if gossip.nil? && dump.nil?
+
+        if !gossip.nil?
+          new(Adapter::Node.subscribe_channel_graph(gossip))
+        elsif !dump.nil?
+          new(dump)
+        end
+      end
+
+      def apply!(gossip:)
+        Controllers::Node::ApplyGossip.perform(
+          self, gossip
+        )
       end
     end
   end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+
 require_relative '../../../adapters/nodes/node'
 require_relative '../../../ports/grpc'
 
@@ -190,6 +192,30 @@ RSpec.describe Lighstorm::Adapter::Node do
             color: '#000000' }
         )
       end
+    end
+  end
+
+  context 'subscribe_channel_graph' do
+    it 'adapts' do
+      raw = JSON.parse(File.read('spec/data/gossip/node/sample-a.json'))
+
+      Contract.expect(
+        raw,
+        '4c2391f8606f0b8da3c846fe510dd1202a9cfd9df5f7523583c54b55c1026a5b'
+      ) do |actual, expected|
+        expect(actual.hash).to eq(expected.hash)
+        expect(actual.contract).to eq(expected.contract)
+      end
+
+      adapted = described_class.subscribe_channel_graph(raw)
+
+      expect(adapted).to eq(
+        { _source: :subscribe_channel_graph,
+          _key: '8b8b460416bc384260ca166233827f361a0c0da7b632c68a2720e08fbe3f528c',
+          public_key: '023c047f51141b345db60fb4bf7a6a863ed9e010fa8eaba0d596322565a6b9a73b',
+          alias: 'SampleNode',
+          color: '#ff5002' }
+      )
     end
   end
 end

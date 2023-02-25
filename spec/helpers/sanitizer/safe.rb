@@ -2,8 +2,6 @@
 
 module Sanitizer
   SAFE = {
-    'time_lock_delta <= node1_policy' => true,
-    'time_lock_delta <= node2_policy' => true,
     'accept_time <= htlcs' => true,
     'active <= list_channels' => true,
     'active' => true,
@@ -74,6 +72,8 @@ module Sanitizer
     'description_hash <= list_invoices' => true,
     'description_hash <= lookup_invoice' => true,
     'description_hash' => true,
+    'disabled <= node1_policy' => true,
+    'disabled <= node2_policy' => true,
     'expiry <= decode_pay_req' => true,
     'expiry <= hops' => true,
     'expiry <= list_invoices' => true,
@@ -167,6 +167,8 @@ module Sanitizer
     'status <= htlcs' => true,
     'status <= list_payments' => true,
     'status' => true,
+    'time_lock_delta <= node1_policy' => true,
+    'time_lock_delta <= node2_policy' => true,
     'timestamp <= decode_pay_req' => true,
     'timestamp <= forwarding_history' => true,
     'timestamp' => true,
