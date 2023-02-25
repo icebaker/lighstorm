@@ -13,20 +13,139 @@ RSpec.describe Lighstorm::Models::Payment do
   describe 'all' do
     let(:data) do
       Lighstorm::Controllers::Payment::All.data do |fetch|
-        VCR.replay("Controllers::Payment.all/#{preimage_hash}") do
+        VCR.replay("Controllers::Payment.all/#{secret_hash}") do
           data = fetch.call
           data[:list_payments] = [
-            data[:list_payments].find { |payment| payment[:payment_hash] == preimage_hash }
+            data[:list_payments].find { |payment| payment[:payment_hash] == secret_hash }
           ]
           data
         end
       end
     end
 
-    let(:payment) { described_class.new(data[0]) }
+    let(:payment) { described_class.new(data[:data][0]) }
+
+    context 'no invoice' do
+      let(:fetch_options) do
+        {
+          get_node_info: false,
+          lookup_invoice: false,
+          decode_pay_req: false,
+          get_chan_info: false
+        }
+      end
+
+      let(:data) do
+        Lighstorm::Controllers::Payment::All.data(fetch: fetch_options) do |fetch|
+          VCR.replay("Controllers::Payment.all/#{secret_hash}", { fetch: fetch_options }) do
+            data = fetch.call
+            data[:list_payments] = [
+              data[:list_payments].find { |payment| payment[:payment_hash] == secret_hash }
+            ]
+            data
+          end
+        end
+      end
+
+      let(:secret_hash) { '8e798fbcca7baccab5029f70717fea13d86de2534ab8c7669472813b8da3da16' }
+
+      let(:from) do
+        { channel: '850181973150531585', target: nil, exit: nil }
+      end
+
+      let(:to) do
+        { channel: '850181973150531585', target: 'icebaker/old-stone', entry: nil }
+      end
+
+      let(:amount) do
+        Lighstorm::Models::Satoshis.new(milisatoshis: 1000)
+      end
+
+      let(:to_h_contract) { 'ed9a6699ae46a02071bd435a0f3ab945120e028a0831f9260575a20f413c4545' }
+
+      it 'models' do
+        expect(data[:meta][:calls][:decode_pay_req]).to be_nil
+        expect(data[:meta][:calls][:get_chan_info]).to be_nil
+        expect(data[:meta][:calls][:get_node_info]).to be_nil
+        expect(data[:meta][:calls][:list_channels]).to be_nil
+        expect(data[:meta][:calls][:lookup_invoice]).to be_nil
+
+        expect(payment._key.size).to eq(64)
+
+        expect(payment.status).to eq('succeeded')
+        expect(payment.created_at).to be_a(Time)
+        expect(payment.created_at.utc.to_s).to eq('2023-02-13 23:45:51 UTC')
+        expect(payment.settled_at).to be_a(Time)
+        expect(payment.settled_at.utc.to_s).to eq('2023-02-13 23:45:59 UTC')
+        expect(payment.purpose).to eq('self-payment')
+        expect(payment.fee.milisatoshis).to eq(0)
+        expect(payment.fee.satoshis).to eq(0.0)
+
+        expect(payment.request._key.size).to eq(64)
+
+        expect(payment.request.code).to eq('lnbc10n1p374ja0pp53eucl0x20wkv4dgznac8zll2z0vxmcjnf2uvwe55w2qnhrdrmgtqdq0gd5x7cm0d3shgegcqzpgxqyz5vqsp5s5e5gfehafdhx0wvfle05qhhfkuhp0xdj3lwlv8k8tv4m8jrmj4q9qyyssqqr2575r8c4hthdkhgkyj2a6ttvpa35umndlfzncz8mtkxwcvfcj97shyeh88t8yjdeaaj5ah9f9z2qleq8jrn5u63ap2qkrpyg8w4lqqh8med5')
+        expect(payment.request.amount.milisatoshis).to eq(amount.milisatoshis)
+        expect(payment.request.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.request.secret.preimage.class).to eq(String)
+        expect(payment.request.secret.preimage.size).to eq(64)
+        expect(payment.request.secret.hash).to eq('8e798fbcca7baccab5029f70717fea13d86de2534ab8c7669472813b8da3da16')
+        expect(payment.request.address.class).to eq(String)
+        expect(payment.request.address.size).to eq(64)
+        expect(payment.request.description.memo).to be_nil
+        expect(payment.request.description.hash).to be_nil
+
+        expect(payment.hops.size).to eq(2)
+
+        expect(payment.from.first?).to be(true)
+        expect(payment.from.last?).to be(false)
+        expect(payment.from.hop).to eq(1)
+        expect(payment.from.amount.milisatoshis).to eq(amount.milisatoshis)
+        expect(payment.from.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.from.fee.milisatoshis).to eq(0)
+        expect(payment.from.fee.satoshis).to eq(0)
+        expect(payment.from.channel._key.size).to eq(64)
+        expect(payment.from.channel.id).to eq(from[:channel])
+        expect(payment.from.channel.target.alias).to eq(from[:target])
+        expect(payment.from.channel.target.public_key.size).to eq(66)
+        expect(payment.from.channel.target._key.size).to eq(64)
+
+        expect(payment.hops[0].channel.id).to eq(from[:channel])
+
+        expect(payment.from.channel.exit.alias).to eq(from[:exit])
+        expect(payment.from.channel.exit.public_key.size).to eq(66)
+        expect(payment.from.channel.exit._key.size).to eq(64)
+        expect(payment.from.channel.entry).to be_nil
+
+        expect(payment.to.first?).to be(false)
+        expect(payment.to.last?).to be(true)
+        expect(payment.to.hop).to eq(2)
+        expect(payment.to.amount.milisatoshis).to eq(amount.milisatoshis)
+        expect(payment.to.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.to.fee.milisatoshis).to eq(0)
+        expect(payment.to.fee.satoshis).to eq(0)
+        expect(payment.to.channel._key.size).to eq(64)
+        expect(payment.to.channel.id).to eq(to[:channel])
+        expect(payment.to.channel.target.alias).to eq(to[:target])
+        expect(payment.to.channel.target.public_key.size).to eq(66)
+        expect(payment.to.channel.target._key.size).to eq(64)
+
+        expect(payment.hops[1].channel.id).to eq(to[:channel])
+
+        expect(payment.to.channel.entry.alias).to eq(to[:entry])
+        expect(payment.to.channel.entry.public_key.size).to eq(66)
+        expect(payment.to.channel.entry._key.size).to eq(64)
+
+        expect(payment.to.channel.exit).to be_nil
+
+        Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
+          expect(actual.hash).to eq(expected.hash)
+          expect(actual.contract).to eq(expected.contract)
+        end
+      end
+    end
 
     context 'self-payment' do
-      let(:preimage_hash) { '8e798fbcca7baccab5029f70717fea13d86de2534ab8c7669472813b8da3da16' }
+      let(:secret_hash) { '8e798fbcca7baccab5029f70717fea13d86de2534ab8c7669472813b8da3da16' }
 
       let(:from) do
         { channel: '850181973150531585', target: 'icebaker/old-stone', exit: 'BCash_Is_Trash' }
@@ -43,6 +162,10 @@ RSpec.describe Lighstorm::Models::Payment do
       let(:to_h_contract) { '4ee153542ac915b26a51eb30d604814442b404055e33574660813f99e7e0ec34' }
 
       it 'models' do
+        expect(data[:meta][:calls].keys).to eq(
+          %i[decode_pay_req lookup_invoice get_node_info get_chan_info list_channels]
+        )
+
         expect(payment._key.size).to eq(64)
 
         expect(payment.status).to eq('succeeded')
@@ -60,7 +183,7 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.request.amount.satoshis).to eq(amount.satoshis)
         expect(payment.request.secret.preimage.class).to eq(String)
         expect(payment.request.secret.preimage.size).to eq(64)
-        expect(payment.request.secret.hash).to eq(preimage_hash)
+        expect(payment.request.secret.hash).to eq(secret_hash)
         expect(payment.request.address.class).to eq(String)
         expect(payment.request.address.size).to eq(64)
         expect(payment.request.description.memo).to eq('Chocolate')
@@ -117,7 +240,7 @@ RSpec.describe Lighstorm::Models::Payment do
     end
 
     context 'payment' do
-      let(:preimage_hash) { '9b674ed7ebe54c5395f9e1f7ccb51f4bf9931e5c308e1e1fd25c3195be565d16' }
+      let(:secret_hash) { '9b674ed7ebe54c5395f9e1f7ccb51f4bf9931e5c308e1e1fd25c3195be565d16' }
 
       let(:from) do
         { channel: '850111604344029185', target: 'deezy.io ⚡✨', exit: 'deezy.io ⚡✨' }
@@ -150,7 +273,7 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.request.amount.satoshis).to eq(amount.satoshis)
         expect(payment.request.secret.preimage.class).to eq(String)
         expect(payment.request.secret.preimage.size).to eq(64)
-        expect(payment.request.secret.hash).to eq(preimage_hash)
+        expect(payment.request.secret.hash).to eq(secret_hash)
         expect(payment.request.address.class).to eq(String)
         expect(payment.request.address.size).to eq(64)
         expect(payment.request.description.memo).to eq('Read: How to use BalanceOfSatoshis to ')
@@ -204,7 +327,7 @@ RSpec.describe Lighstorm::Models::Payment do
     end
 
     context 'p2p' do
-      let(:preimage_hash) { 'b0c63d4ac56e17818c68d516357629351b35df4ec5605495659a200c184801ed' }
+      let(:secret_hash) { 'b0c63d4ac56e17818c68d516357629351b35df4ec5605495659a200c184801ed' }
 
       let(:from) do
         { channel: '850111604344029185', target: 'deezy.io ⚡✨', exit: 'deezy.io ⚡✨' }
@@ -237,7 +360,7 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.request.amount.satoshis).to eq(amount.satoshis)
         expect(payment.request.secret.preimage.class).to eq(String)
         expect(payment.request.secret.preimage.size).to eq(64)
-        expect(payment.request.secret.hash).to eq(preimage_hash)
+        expect(payment.request.secret.hash).to eq(secret_hash)
         expect(payment.request.address.class).to eq(String)
         expect(payment.request.address.size).to eq(64)
         expect(payment.request.description.memo).to eq('if paid deezy will send 3045893 sats at 1 sats/vb to bc1qpyycq33xqdzmxlan3n35mh05psqnsp5hq36nty')
@@ -292,7 +415,7 @@ RSpec.describe Lighstorm::Models::Payment do
     end
 
     context 'rebalance' do
-      let(:preimage_hash) { '697173cd5d0b97e6b047d37f30b8c96abbfab943880f606aedb2ab7b319cb7ec' }
+      let(:secret_hash) { '697173cd5d0b97e6b047d37f30b8c96abbfab943880f606aedb2ab7b319cb7ec' }
 
       let(:from) do
         { channel: '850111604344029185', target: 'deezy.io ⚡✨', exit: 'deezy.io ⚡✨' }
@@ -325,7 +448,7 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.request.amount.satoshis).to eq(amount.satoshis)
         expect(payment.request.secret.preimage.class).to eq(String)
         expect(payment.request.secret.preimage.size).to eq(64)
-        expect(payment.request.secret.hash).to eq(preimage_hash)
+        expect(payment.request.secret.hash).to eq(secret_hash)
         expect(payment.request.address.class).to eq(String)
         expect(payment.request.address.size).to eq(64)
         expect(payment.request.description.memo).to eq('Rebalance of channel with ID 848916435345801217')
@@ -384,7 +507,7 @@ RSpec.describe Lighstorm::Models::Payment do
     end
 
     context 'rebalance lost channel' do
-      let(:preimage_hash) { 'b116147b08e782b27be196811c6e56327a2728dcb4b95a94877e827cc48ba886' }
+      let(:secret_hash) { 'b116147b08e782b27be196811c6e56327a2728dcb4b95a94877e827cc48ba886' }
 
       let(:from) do
         { channel: '848962614654730241', target: 'BCash_Is_Trash', exit: 'BCash_Is_Trash' }
@@ -417,7 +540,7 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.request.amount.satoshis).to eq(amount.satoshis)
         expect(payment.request.secret.preimage.class).to eq(String)
         expect(payment.request.secret.preimage.size).to eq(64)
-        expect(payment.request.secret.hash).to eq(preimage_hash)
+        expect(payment.request.secret.hash).to eq(secret_hash)
         expect(payment.request.address.class).to eq(String)
         expect(payment.request.address.size).to eq(64)
         expect(payment.request.description.memo).to eq('')

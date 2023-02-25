@@ -12,16 +12,19 @@ module Lighstorm
   module Controllers
     module Payment
       module All
-        def self.fetch(purpose: nil, limit: nil)
+        def self.fetch(purpose: nil, limit: nil, fetch: {})
           at = Time.now
-          get_info = Ports::GRPC.lightning.get_info.to_h
+
+          grpc = Ports::GRPC.session
+
+          get_info = grpc.lightning.get_info.to_h
 
           last_offset = 0
 
           payments = []
 
           loop do
-            response = Ports::GRPC.lightning.list_payments(
+            response = grpc.lightning.list_payments(
               index_offset: last_offset
             )
 
@@ -64,8 +67,8 @@ module Lighstorm
 
           data = {
             at: at,
-            get_info: Ports::GRPC.lightning.get_info.to_h,
-            fee_report: Ports::GRPC.lightning.fee_report.to_h,
+            get_info: get_info,
+            fee_report: grpc.lightning.fee_report.to_h,
             list_payments: payments,
             list_channels: {},
             get_chan_info: {},
@@ -75,15 +78,15 @@ module Lighstorm
           }
 
           payments.each do |payment|
-            unless payment[:payment_request] == '' || data[:decode_pay_req][payment[:payment_request]]
-              data[:decode_pay_req][payment[:payment_request]] = Ports::GRPC.lightning.decode_pay_req(
+            unless fetch[:decode_pay_req] == false || payment[:payment_request] == '' || data[:decode_pay_req][payment[:payment_request]]
+              data[:decode_pay_req][payment[:payment_request]] = grpc.lightning.decode_pay_req(
                 pay_req: payment[:payment_request]
               ).to_h
             end
 
-            unless data[:lookup_invoice][payment[:payment_hash]]
+            unless fetch[:lookup_invoice] == false || data[:lookup_invoice][payment[:payment_hash]]
               begin
-                data[:lookup_invoice][payment[:payment_hash]] = Ports::GRPC.lightning.lookup_invoice(
+                data[:lookup_invoice][payment[:payment_hash]] = grpc.lightning.lookup_invoice(
                   r_hash_str: payment[:payment_hash]
                 ).to_h
               rescue StandardError => e
@@ -93,9 +96,9 @@ module Lighstorm
 
             payment[:htlcs].each do |htlc|
               htlc[:route][:hops].each do |hop|
-                unless data[:get_chan_info][hop[:chan_id]]
+                unless fetch[:get_chan_info] == false || data[:get_chan_info][hop[:chan_id]]
                   begin
-                    data[:get_chan_info][hop[:chan_id]] = Ports::GRPC.lightning.get_chan_info(
+                    data[:get_chan_info][hop[:chan_id]] = grpc.lightning.get_chan_info(
                       chan_id: hop[:chan_id]
                     ).to_h
                   rescue GRPC::Unknown => e
@@ -103,23 +106,25 @@ module Lighstorm
                   end
                 end
 
-                next if data[:get_node_info][hop[:pub_key]]
+                next if fetch[:get_node_info] == false || data[:get_node_info][hop[:pub_key]]
 
-                data[:get_node_info][hop[:pub_key]] = Ports::GRPC.lightning.get_node_info(
+                data[:get_node_info][hop[:pub_key]] = grpc.lightning.get_node_info(
                   pub_key: hop[:pub_key]
                 ).to_h
               end
             end
           end
 
-          data[:lookup_invoice].each_value do |invoice|
-            if invoice[:_error] || invoice[:payment_request] == '' || data[:decode_pay_req][invoice[:payment_request]]
-              next
-            end
+          if fetch[:lookup_invoice] != false
+            data[:lookup_invoice].each_value do |invoice|
+              if fetch[:decode_pay_req] == false || invoice[:_error] || invoice[:payment_request] == '' || data[:decode_pay_req][invoice[:payment_request]]
+                next
+              end
 
-            data[:decode_pay_req][invoice[:payment_request]] = Ports::GRPC.lightning.decode_pay_req(
-              pay_req: invoice[:payment_request]
-            ).to_h
+              data[:decode_pay_req][invoice[:payment_request]] = grpc.lightning.decode_pay_req(
+                pay_req: invoice[:payment_request]
+              ).to_h
+            end
           end
 
           list_channels_done = {}
@@ -135,7 +140,7 @@ module Lighstorm
               partner = partners.find { |p| p != data[:get_info][:identity_pubkey] }
 
               unless list_channels_done[partner]
-                Ports::GRPC.lightning.list_channels(
+                grpc.lightning.list_channels(
                   peer: [partner].pack('H*')
                 ).channels.map(&:to_h).each do |list_channels|
                   data[:list_channels][list_channels[:chan_id]] = list_channels
@@ -145,26 +150,28 @@ module Lighstorm
               end
             end
 
-            unless data[:get_node_info][channel[:node1_pub]]
-              data[:get_node_info][channel[:node1_pub]] = Ports::GRPC.lightning.get_node_info(
+            unless fetch[:get_node_info] == false || data[:get_node_info][channel[:node1_pub]]
+              data[:get_node_info][channel[:node1_pub]] = grpc.lightning.get_node_info(
                 pub_key: channel[:node1_pub]
               ).to_h
             end
 
-            next if data[:get_node_info][channel[:node2_pub]]
+            next if fetch[:get_node_info] == false || data[:get_node_info][channel[:node2_pub]]
 
-            data[:get_node_info][channel[:node2_pub]] = Ports::GRPC.lightning.get_node_info(
+            data[:get_node_info][channel[:node2_pub]] = grpc.lightning.get_node_info(
               pub_key: channel[:node2_pub]
             ).to_h
           end
 
           data[:list_channels].each_value do |channel|
-            next if data[:get_node_info][channel[:remote_pubkey]]
+            next if fetch[:get_node_info] == false || data[:get_node_info][channel[:remote_pubkey]]
 
-            data[:get_node_info][channel[:remote_pubkey]] = Ports::GRPC.lightning.get_node_info(
+            data[:get_node_info][channel[:remote_pubkey]] = grpc.lightning.get_node_info(
               pub_key: channel[:remote_pubkey]
             ).to_h
           end
+
+          data[:@meta] = { calls: grpc.calls }
 
           data
         end
@@ -256,11 +263,17 @@ module Lighstorm
               adapted[:fee_report].each do |channel|
                 next unless data[:id] == channel[:id]
 
-                data[:partners][i][:policy][:fee] = channel[:partner][:policy][:fee]
+                if data[:partners][i][:policy].nil?
+                  data[:partners][i][:policy] = channel[:partner][:policy]
+                else
+                  data[:partners][i][:policy][:fee] = channel[:partner][:policy][:fee]
+                end
                 break
               end
             else
-              data[:partners][i][:node] = adapted[:get_node_info][data[:partners][i][:node][:public_key]]
+              if adapted[:get_node_info][data[:partners][i][:node][:public_key]]
+                data[:partners][i][:node] = adapted[:get_node_info][data[:partners][i][:node][:public_key]]
+              end
               data[:partners][i][:node][:platform] = {
                 blockchain: adapted[:get_info][:platform][:blockchain],
                 network: adapted[:get_info][:platform][:network]
@@ -327,22 +340,25 @@ module Lighstorm
           list_payments
         end
 
-        def self.data(purpose: nil, limit: nil, &vcr)
+        def self.data(purpose: nil, limit: nil, fetch: {}, &vcr)
           raw = if vcr.nil?
-                  fetch(purpose: purpose, limit: limit)
+                  self.fetch(purpose: purpose, limit: limit, fetch: fetch)
                 else
-                  vcr.call(-> { fetch(purpose: purpose, limit: limit) })
+                  vcr.call(-> { self.fetch(purpose: purpose, limit: limit, fetch: fetch) })
                 end
 
           adapted = adapt(raw)
 
-          adapted[:list_payments].map do |data|
-            transform(data, adapted)
-          end
+          {
+            data: adapted[:list_payments].map do |data|
+              transform(data, adapted)
+            end,
+            meta: raw[:@meta]
+          }
         end
 
         def self.model(data)
-          data.map do |node_data|
+          data[:data].map do |node_data|
             Lighstorm::Models::Payment.new(node_data)
           end
         end

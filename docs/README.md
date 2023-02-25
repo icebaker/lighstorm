@@ -553,6 +553,17 @@ payment.hops[0].channel.entry.public_key
 payment.hops[0].channel.entry.alias
 payment.hops[0].channel.entry.color
 ```
+### Performance
+Avoid fetching data that you don't need:
+```ruby
+Lighstorm::Payment.all(
+  fetch: {
+    get_node_info: false,
+    lookup_invoice: false,
+    decode_pay_req: false,
+    get_chan_info: false }
+)
+```
 
 ## Forward
 

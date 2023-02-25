@@ -136,6 +136,16 @@ RSpec.describe Sanitizer do
         expect(key).to eq('num_channels <= get_node_info')
       end
     end
+
+    context 'scenario E' do
+      it 'path to key' do
+        key = described_class.path_to_key(
+          %i[@meta calls list_payments]
+        )
+
+        expect(key).to eq('list_payments <= @meta')
+      end
+    end
   end
 
   describe 'protect' do

@@ -11,7 +11,10 @@ module Lighstorm
       def initialize(data)
         @data = data
 
-        @_key = Digest::SHA256.hexdigest(data[:code])
+        @_key = data[:_key] || Digest::SHA256.hexdigest(
+          data[:code] || "#{data[:code][:amount][:milisatoshis]}#{Time.now}"
+        )
+
         @code = data[:code]
 
         @address = data[:address]
@@ -34,7 +37,7 @@ module Lighstorm
           def to_h
             { memo: memo, hash: hash }
           end
-        end.new(@data[:description])
+        end.new(@data[:description] || {})
       end
 
       def secret
@@ -51,7 +54,7 @@ module Lighstorm
             # Don't expose 'secret' by default: Security
             { hash: hash }
           end
-        end.new(@data[:secret])
+        end.new(@data[:secret] || {})
       end
 
       def to_h
