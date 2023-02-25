@@ -396,6 +396,8 @@ channel.myself.policy.htlc.blocks.delta.minimum
 ```ruby
 channel = Lighstorm::Channel.mine.first
 
+# 'preview' let you check the expected operation
+# before actually performing it for debug purposes
 channel.myself.policy.fee.update(
   { rate: { parts_per_million: 25 } }, preview: true
 )
@@ -414,6 +416,8 @@ channel.myself.policy.fee.update(
 ```
 
 ## Invoice
+
+[Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
 
 ```ruby
 Lighstorm::Invoice
@@ -450,6 +454,22 @@ invoice.request.secret.preimage
 invoice.request.secret.hash
 
 invoice.request.address
+```
+
+### Operations
+
+[Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
+
+```ruby
+# 'preview' let you check the expected operation
+# before actually performing it for debug purposes
+invoice = Lighstorm::Invoice.create(
+  milisatoshis: 1000, description: 'Coffee', preview: true
+)
+
+invoice = Lighstorm::Invoice.create(
+  milisatoshis: 1000, description: 'Piña Colada'
+)
 ```
 
 ## Payment

@@ -29,7 +29,7 @@ module Lighstorm
         {
           _key: _key(grpc),
           created_at: Time.at(grpc[:creation_date]),
-          settle_at: Time.at(grpc[:settle_date]),
+          settle_at: grpc[:settle_date].nil? || !grpc[:settle_date].positive? ? nil : Time.at(grpc[:settle_date]),
           state: grpc[:state].to_s.downcase
         }
       end
