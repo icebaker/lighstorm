@@ -14,7 +14,7 @@ RSpec.describe Lighstorm::Models::Channel do
   describe '.mine' do
     it 'models' do
       data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
-        VCR.replay('Controllers::Channel.mine') do
+        VCR.tape.replay('Controllers::Channel.mine') do
           data = fetch.call
           data[:list_channels] = [data[:list_channels][0].to_h]
           data
@@ -160,7 +160,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '850111604344029185'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -295,7 +295,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '553951550347608065'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -375,7 +375,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '853996178921881601'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -468,7 +468,7 @@ RSpec.describe Lighstorm::Models::Channel do
   describe 'all' do
     let :data do
       Lighstorm::Controllers::Channel::All.data do |fetch|
-        VCR.replay('Controllers::Channel.all') do
+        VCR.tape.replay('Controllers::Channel.all') do
           data = fetch.call
 
           mine = Lighstorm::Controllers::Channel::Mine.data.map { |c| c[:id] }

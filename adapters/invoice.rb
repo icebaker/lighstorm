@@ -7,6 +7,21 @@ require_relative 'payment_request'
 module Lighstorm
   module Adapter
     class Invoice
+      def self.add_invoice(grpc)
+        {
+          _source: :add_invoice,
+          _key: Digest::SHA256.hexdigest(
+            [
+              grpc[:r_hash],
+              grpc[:add_index],
+              grpc[:payment_request],
+              grpc[:payment_addr]
+            ].join('/')
+          ),
+          request: PaymentRequest.add_invoice(grpc)
+        }
+      end
+
       def self.lookup_invoice(grpc)
         adapted = list_or_lookup(grpc)
 

@@ -13,7 +13,7 @@ RSpec.describe Lighstorm::Models::Forward do
     context 'known peer' do
       it 'models' do
         data = Lighstorm::Controllers::Forward::All.data do |fetch|
-          VCR.replay('Controllers::Forward.all.last/known-peer') do
+          VCR.tape.replay('Controllers::Forward.all.last/known-peer') do
             data = fetch.call
 
             channels = data[:get_chan_info].keys.filter do |key|
@@ -208,7 +208,7 @@ RSpec.describe Lighstorm::Models::Forward do
     context 'lost peer' do
       it 'models' do
         data = Lighstorm::Controllers::Forward::All.data do |fetch|
-          VCR.replay('Controllers::Forward.all.last/lost-peer') do
+          VCR.tape.replay('Controllers::Forward.all.last/lost-peer') do
             data = fetch.call
 
             channels = data[:get_chan_info].keys.filter do |key|

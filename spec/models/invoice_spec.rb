@@ -14,7 +14,7 @@ RSpec.describe Lighstorm::Models::Invoice do
     context 'settled' do
       it 'models' do
         data = Lighstorm::Controllers::Invoice::All.data do |fetch|
-          VCR.replay('Controllers::Invoice.all.last/memo/settled') do
+          VCR.tape.replay('Controllers::Invoice.all.last/memo/settled') do
             data = fetch.call
 
             data[:list_invoices] = [
@@ -78,7 +78,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         secret_hash = '7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba'
 
         data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
-          VCR.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
+          VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
         invoice = described_class.new(data)
@@ -129,7 +129,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         secret_hash = '3055894c40aac008121ad045475a3b124f7214e5e08ec42902a63ef28f59e4fc'
 
         data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
-          VCR.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
+          VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
         invoice = described_class.new(data)

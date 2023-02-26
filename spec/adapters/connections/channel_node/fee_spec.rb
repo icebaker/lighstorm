@@ -6,7 +6,7 @@ require_relative '../../../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Fee do
   context 'list_channels' do
     it 'adapts' do
-      raw = VCR.replay('lightning.fee_report.channel_fees.first') do
+      raw = VCR.tape.replay('lightning.fee_report.channel_fees.first') do
         Lighstorm::Ports::GRPC.lightning.fee_report.channel_fees.first.to_h
       end
 

@@ -13,7 +13,7 @@ RSpec.describe Lighstorm::Models::Payment do
   describe 'all' do
     let(:data) do
       Lighstorm::Controllers::Payment::All.data do |fetch|
-        VCR.replay("Controllers::Payment.all/#{secret_hash}") do
+        VCR.tape.replay("Controllers::Payment.all/#{secret_hash}") do
           data = fetch.call
           data[:list_payments] = [
             data[:list_payments].find { |payment| payment[:payment_hash] == secret_hash }
@@ -37,7 +37,7 @@ RSpec.describe Lighstorm::Models::Payment do
 
       let(:data) do
         Lighstorm::Controllers::Payment::All.data(fetch: fetch_options) do |fetch|
-          VCR.replay("Controllers::Payment.all/#{secret_hash}", { fetch: fetch_options }) do
+          VCR.tape.replay("Controllers::Payment.all/#{secret_hash}", fetch: fetch_options) do
             data = fetch.call
             data[:list_payments] = [
               data[:list_payments].find { |payment| payment[:payment_hash] == secret_hash }

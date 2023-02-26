@@ -12,7 +12,7 @@ RSpec.describe Lighstorm::Models::Channel do
   describe '.apply!' do
     let(:channel) do
       data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-        VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+        VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
       end
 
       described_class.new(data)

@@ -12,7 +12,7 @@ RSpec.describe Lighstorm::Models::Node do
   describe '.apply!' do
     let(:node) do
       data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
-        VCR.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
+        VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
       end
 
       described_class.new(data)

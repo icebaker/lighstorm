@@ -1,6 +1,38 @@
 # frozen_string_literal: true
 
 RSpec.describe VCR do
+  REPLAY_EXCLAMATION_ALLOWED = [
+    'spec/helpers/vcr.rb',
+    'spec/helpers/vcr_spec.rb'
+  ].freeze
+
+  EXPECT_EXCLAMATION_ALLOWED = [
+    'spec/helpers/contract.rb',
+    'spec/helpers/vcr_spec.rb'
+  ].freeze
+
+  describe 'ensure no replay!' do
+    it 'ensures no replay!' do
+      Dir.glob('spec/**/*.rb').each do |file|
+        content = File.read(file)
+        if content =~ (/replay!/) && !REPLAY_EXCLAMATION_ALLOWED.include?(file)
+          expect { raise "replay! not allowed, but found at '#{file}'" }.not_to raise_error
+        end
+      end
+    end
+  end
+
+  describe 'ensure no expect!' do
+    it 'ensures no expect!' do
+      Dir.glob('spec/**/*.rb').each do |file|
+        content = File.read(file)
+        if content =~ (/expect!/) && !EXPECT_EXCLAMATION_ALLOWED.include?(file)
+          expect { raise "expect! not allowed, but found at '#{file}'" }.not_to raise_error
+        end
+      end
+    end
+  end
+
   describe 'build_path_for' do
     context 'too long' do
       let(:key) do
@@ -26,13 +58,24 @@ RSpec.describe VCR do
       end
     end
 
-    context 'common' do
+    context '2 levels' do
       let(:key) { 'lightning.lookup_invoice' }
       let(:params) { { fetch: { lookup_invoice: false } } }
 
       it 'builds' do
         expect(described_class.build_path_for(key, params)).to eq(
           'spec/data/tapes/lightning/lookup_invoice/fetch/lookup_invoice/false.bin'
+        )
+      end
+    end
+
+    context 'reels' do
+      let(:key) { 'lightning.list_invoices.first/memo/settled' }
+      let(:params) { { limit: 5 } }
+
+      it 'builds' do
+        expect(described_class.build_path_for(key, params, kind: :reels)).to eq(
+          'spec/data/reels/lightning/list_invoices/first/memo/settled/limit/5.bin'
         )
       end
     end

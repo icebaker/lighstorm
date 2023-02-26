@@ -8,7 +8,7 @@ require_relative '../../models/payment_request'
 RSpec.describe Lighstorm::Models::PaymentRequest do
   context 'list_invoices' do
     it 'adapts' do
-      raw = VCR.replay('lightning.list_invoices.first/memo/settled') do
+      raw = VCR.tape.replay('lightning.list_invoices.first/memo/settled') do
         Lighstorm::Ports::GRPC.lightning.list_invoices.invoices.find do |invoice|
           invoice.memo != '' && invoice.state == :SETTLED
         end.to_h

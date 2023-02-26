@@ -10,7 +10,7 @@ require_relative '../../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
   let(:channel) do
     data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
-      VCR.replay('Controllers::Channel.mine') do
+      VCR.tape.replay('Controllers::Channel.mine') do
         data = fetch.call
         data[:list_channels] = [data[:list_channels][0].to_h]
         data
