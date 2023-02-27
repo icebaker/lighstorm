@@ -5,7 +5,7 @@
   "exposure": "public",
   "accounting": {
     "capacity": {
-      "milisatoshis": 1000000000
+      "millisatoshis": 1000000000
     }
   },
   "partners": [
@@ -24,7 +24,7 @@
       "policy": {
         "fee": {
           "base": {
-            "milisatoshis": 0
+            "millisatoshis": 0
           },
           "rate": {
             "parts_per_million": 100
@@ -32,10 +32,10 @@
         },
         "htlc": {
           "minimum": {
-            "milisatoshis": 1000
+            "millisatoshis": 1000
           },
           "maximum": {
-            "milisatoshis": 990000000
+            "millisatoshis": 990000000
           },
           "blocks": {
             "delta": {
@@ -60,7 +60,7 @@
       "policy": {
         "fee": {
           "base": {
-            "milisatoshis": 0
+            "millisatoshis": 0
           },
           "rate": {
             "parts_per_million": 100
@@ -68,10 +68,10 @@
         },
         "htlc": {
           "minimum": {
-            "milisatoshis": 1000
+            "millisatoshis": 1000
           },
           "maximum": {
-            "milisatoshis": 990000000
+            "millisatoshis": 990000000
           },
           "blocks": {
             "delta": {

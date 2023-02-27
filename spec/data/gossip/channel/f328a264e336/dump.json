@@ -4,7 +4,7 @@
   "id": "855593769343254528",
   "accounting": {
     "capacity": {
-      "milisatoshis": 400000000
+      "millisatoshis": 400000000
     }
   },
   "partners": [
@@ -41,7 +41,7 @@
       "policy": {
         "fee": {
           "base": {
-            "milisatoshis": 1000
+            "millisatoshis": 1000
           },
           "rate": {
             "parts_per_million": 1
@@ -49,10 +49,10 @@
         },
         "htlc": {
           "minimum": {
-            "milisatoshis": 1000
+            "millisatoshis": 1000
           },
           "maximum": {
-            "milisatoshis": 396000000
+            "millisatoshis": 396000000
           },
           "blocks": {
             "delta": {
