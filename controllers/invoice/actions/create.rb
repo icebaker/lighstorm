@@ -53,7 +53,7 @@ module Lighstorm
 
           adapted = adapt(response)
 
-          data = fetch(adapted)
+          data = fetch(adapted, &vcr)
           model = self.model(data)
 
           Action::Output.new({ response: response, result: model })
