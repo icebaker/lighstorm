@@ -3,28 +3,12 @@
 require_relative '../../../ports/grpc'
 require_relative '../../../models/errors'
 require_relative '../../invoice'
+require_relative '../../action'
 
 module Lighstorm
   module Controllers
     module Invoice
       module Create
-        OUTPUT = Struct.new(:data) do
-          def response
-            data[:response]
-          end
-
-          def result
-            data[:result]
-          end
-
-          def to_h
-            {
-              response: response,
-              result: result.to_h
-            }
-          end
-        end
-
         def self.call(grpc_request)
           Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
             grpc_request[:method], grpc_request[:params]
@@ -72,7 +56,7 @@ module Lighstorm
           data = fetch(adapted)
           model = self.model(data)
 
-          OUTPUT.new({ response: response, result: model })
+          Action::Output.new({ response: response, result: model })
         end
       end
     end

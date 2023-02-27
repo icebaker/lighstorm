@@ -23,12 +23,12 @@ module Lighstorm
         FindBySecretHash.model(FindBySecretHash.data(secret_hash))
       end
 
-      def self.create(description: nil, milisatoshis: nil, preview: false, fake: nil)
+      def self.create(description: nil, milisatoshis: nil, preview: false, &vcr)
         Create.perform(
           description: description,
           milisatoshis: milisatoshis,
           preview: preview,
-          fake: fake
+          &vcr
         )
       end
     end

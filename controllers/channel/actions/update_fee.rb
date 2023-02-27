@@ -4,28 +4,12 @@ require_relative '../../../ports/grpc'
 require_relative '../../../models/errors'
 require_relative '../../../models/satoshis'
 require_relative '../../../models/rate'
+require_relative '../../action'
 
 module Lighstorm
   module Controllers
     module Channel
       module UpdateFee
-        OUTPUT = Struct.new(:data) do
-          def response
-            data[:response]
-          end
-
-          def result
-            data[:result]
-          end
-
-          def to_h
-            {
-              response: response,
-              result: result.to_h
-            }
-          end
-        end
-
         def self.prepare(policy, transaction, params)
           grpc_request = {
             service: :lightning,
@@ -95,7 +79,7 @@ module Lighstorm
             token: token
           }
 
-          OUTPUT.new({ response: response, result: policy })
+          Action::Output.new({ response: response, result: policy })
         end
       end
     end
