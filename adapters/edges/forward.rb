@@ -10,15 +10,15 @@ module Lighstorm
           _source: :forwarding_history,
           _key: _key(grpc),
           at: Time.at(grpc[:timestamp_ns] / 1e+9),
-          fee: { milisatoshis: grpc[:fee_msat] },
+          fee: { millisatoshis: grpc[:fee_msat] },
           in: {
-            amount: { milisatoshis: grpc[:amt_in_msat] },
+            amount: { millisatoshis: grpc[:amt_in_msat] },
             channel: {
               id: grpc[:chan_id_in].to_s
             }
           },
           out: {
-            amount: { milisatoshis: grpc[:amt_out_msat] },
+            amount: { millisatoshis: grpc[:amt_out_msat] },
             channel: {
               id: grpc[:chan_id_out].to_s
             }

@@ -12,7 +12,7 @@ module Lighstorm
         @data = data
 
         @_key = data[:_key] || Digest::SHA256.hexdigest(
-          data[:code] || "#{data[:code][:amount][:milisatoshis]}#{Time.now}"
+          data[:code] || "#{data[:code][:amount][:millisatoshis]}#{Time.now}"
         )
 
         @code = data[:code]
@@ -21,7 +21,7 @@ module Lighstorm
       end
 
       def amount
-        @amount ||= Satoshis.new(milisatoshis: @data[:amount][:milisatoshis])
+        @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
       end
 
       def description

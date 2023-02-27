@@ -8,18 +8,18 @@ require_relative '../../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Controllers::Invoice::Create do
   describe 'create invoice' do
     let(:vcr_key) { 'Controllers::Invoice::Create' }
-    let(:params) { { milisatoshis: 1_000, description: 'Coffee' } }
+    let(:params) { { millisatoshis: 1_000, description: 'Coffee' } }
 
     context 'gradual' do
       it 'flows' do
         request = described_class.prepare(
-          milisatoshis: params[:milisatoshis], description: params[:description]
+          millisatoshis: params[:millisatoshis], description: params[:description]
         )
 
         expect(request).to eq(
           { service: :lightning,
             method: :add_invoice,
-            params: { memo: params[:description], value_msat: params[:milisatoshis] } }
+            params: { memo: params[:description], value_msat: params[:millisatoshis] } }
         )
 
         response = described_class.dispatch(request) do |grpc|
@@ -30,11 +30,11 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
 
         expect(adapted).to eq(
           { _source: :add_invoice,
-            _key: '25897e871b90d2e633fe3ebaab1628bca0a5590cd784672bc193b04604bbebc2',
+            _key: 'f10abc2e32c031c90e5068622a0aef380a17b6cf286d75fb82d7e61e902dd5be',
             request: { _source: :add_invoice,
-                       code: 'lnbc10n1p3l6f7xpp5qymvk7957ssmqmdq06wvx2fgcck9s70ygkpn9snga5y8x47e5cmsdq2gdhkven9v5cqzpgxqyz5vqsp5cmzc02huyakh875kkw75s5c9zynn5pf0n9n70vxhuq86hq3wwf6s9qyyssqjzv4msfp37ryvdtnysaydwwvn6erdzvhk8jwttkf32ats8ue42tx3uxrjka4f9qqamk8ksgvgew2ef74js97k3yxevcn9tyvcgnd4cqqjuxrys',
-                       address: 'ccfae18fcafc620c9d19ce4510f6310aa9d50aff29de010cc3b35daae35d41c2',
-                       secret: { hash: '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637' } } }
+                       code: 'lnbc10n1p3l6wdupp5dgstcxacvxcxre2qu26w3lcja8lqlqwruhq5prc0k4uk24xpnvmqdq2gdhkven9v5cqzpgxqyz5vqsp5l4y3uzdmyavxluwsmxnzupkl2qj48s09evq7jfmajagu680jtals9qyyssqcadv32367amqafweqwlwtf0rkrxq4qlnpahxznerkx9nrtdfjgsskrdj607lkaugrsh4wfx3997th9npyd58v7rtdk3zzaw5fgfhk5sq59z4lv',
+                       address: '6c51d2cfefb35c2644bde0c9abf2deaa943fd429df498110680737c027342c28',
+                       secret: { hash: '6a20bc1bb861b061e540e2b4e8ff12e9fe0f81c3e5c1408f0fb5796554c19b36' } } }
         )
 
         data = described_class.fetch(adapted) do |fetch|
@@ -45,17 +45,17 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         data[:created_at] = data[:created_at].utc.to_s
 
         expect(data).to eq(
-          { _key: '37453ee1b7f70121e413cf98cb103babcb370170468bb4f400c9b3b48b1850f6',
-            created_at: '2023-02-27 21:59:34 UTC',
+          { _key: 'd76dcb9e5ec73ba443415733c1942937eeb4ad53a741b2c5c948e05b2ad0d50c',
+            created_at: '2023-02-27 23:16:12 UTC',
             settle_at: nil,
             state: 'open',
             _source: :lookup_invoice,
-            request: { code: 'lnbc10n1p3l6f7xpp5qymvk7957ssmqmdq06wvx2fgcck9s70ygkpn9snga5y8x47e5cmsdq2gdhkven9v5cqzpgxqyz5vqsp5cmzc02huyakh875kkw75s5c9zynn5pf0n9n70vxhuq86hq3wwf6s9qyyssqjzv4msfp37ryvdtnysaydwwvn6erdzvhk8jwttkf32ats8ue42tx3uxrjka4f9qqamk8ksgvgew2ef74js97k3yxevcn9tyvcgnd4cqqjuxrys',
-                       amount: { milisatoshis: 1000 },
+            request: { code: 'lnbc10n1p3l6wdupp5dgstcxacvxcxre2qu26w3lcja8lqlqwruhq5prc0k4uk24xpnvmqdq2gdhkven9v5cqzpgxqyz5vqsp5l4y3uzdmyavxluwsmxnzupkl2qj48s09evq7jfmajagu680jtals9qyyssqcadv32367amqafweqwlwtf0rkrxq4qlnpahxznerkx9nrtdfjgsskrdj607lkaugrsh4wfx3997th9npyd58v7rtdk3zzaw5fgfhk5sq59z4lv',
+                       amount: { millisatoshis: 1000 },
                        description: { memo: 'Coffee', hash: nil },
-                       address: '31b6937881a7f26c7b7b57beeedd6cf4b46b2c7520c032beb230cc8935de9df2',
-                       secret: { preimage: 'e00f8ad7457542b8afa7589d9ab6ab48e2058ac5ef6491b2655729638f7927bb',
-                                 hash: '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637' },
+                       address: 'e49bbd7d315dc4ea39104271b17fb14a897130de2d54c75cb3f9cb4ad0e58fa2',
+                       secret: { preimage: '4d8784e6d4ca0d2a84916f7e483a5bc20a48aff2773a0b73baa182be4760ba17',
+                                 hash: '6a20bc1bb861b061e540e2b4e8ff12e9fe0f81c3e5c1408f0fb5796554c19b36' },
                        _source: :lookup_invoice },
             known: true }
         )
@@ -63,15 +63,15 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         model = described_class.model(data)
 
         expect(model.to_h).to eq(
-          { _key: '37453ee1b7f70121e413cf98cb103babcb370170468bb4f400c9b3b48b1850f6',
-            created_at: '2023-02-27 21:59:34 UTC',
+          { _key: 'd76dcb9e5ec73ba443415733c1942937eeb4ad53a741b2c5c948e05b2ad0d50c',
+            created_at: '2023-02-27 23:16:12 UTC',
             settle_at: nil,
             state: 'open',
-            request: { _key: 'fb8849b965501c503bc40740246129f231f3fc1b084febf833c8051afb0ed0e9',
-                       code: 'lnbc10n1p3l6f7xpp5qymvk7957ssmqmdq06wvx2fgcck9s70ygkpn9snga5y8x47e5cmsdq2gdhkven9v5cqzpgxqyz5vqsp5cmzc02huyakh875kkw75s5c9zynn5pf0n9n70vxhuq86hq3wwf6s9qyyssqjzv4msfp37ryvdtnysaydwwvn6erdzvhk8jwttkf32ats8ue42tx3uxrjka4f9qqamk8ksgvgew2ef74js97k3yxevcn9tyvcgnd4cqqjuxrys',
-                       amount: { milisatoshis: 1000 },
+            request: { _key: 'ec0271464606009e857a2cc5decc27477e27061fd404174cf3aa191941704325',
+                       code: 'lnbc10n1p3l6wdupp5dgstcxacvxcxre2qu26w3lcja8lqlqwruhq5prc0k4uk24xpnvmqdq2gdhkven9v5cqzpgxqyz5vqsp5l4y3uzdmyavxluwsmxnzupkl2qj48s09evq7jfmajagu680jtals9qyyssqcadv32367amqafweqwlwtf0rkrxq4qlnpahxznerkx9nrtdfjgsskrdj607lkaugrsh4wfx3997th9npyd58v7rtdk3zzaw5fgfhk5sq59z4lv',
+                       amount: { millisatoshis: 1000 },
                        description: { memo: 'Coffee', hash: nil },
-                       secret: { hash: '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637' } } }
+                       secret: { hash: '6a20bc1bb861b061e540e2b4e8ff12e9fe0f81c3e5c1408f0fb5796554c19b36' } } }
         )
       end
     end
@@ -80,13 +80,13 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
-            milisatoshis: 1_000, description: 'Coffee', preview: true
+            millisatoshis: 1_000, description: 'Coffee', preview: true
           )
 
           expect(request).to eq(
             { service: :lightning,
               method: :add_invoice,
-              params: { memo: params[:description], value_msat: params[:milisatoshis] } }
+              params: { memo: params[:description], value_msat: params[:millisatoshis] } }
           )
         end
       end
@@ -94,7 +94,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
       context 'perform' do
         it 'performs' do
           action = described_class.perform(
-            milisatoshis: params[:milisatoshis], description: params[:description]
+            millisatoshis: params[:millisatoshis], description: params[:description]
           ) do |fn, from = :fetch|
             VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
           end
@@ -107,15 +107,15 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           result_to_h[:created_at] = result_to_h[:created_at].utc.to_s
 
           expect(result_to_h).to eq(
-            { _key: '37453ee1b7f70121e413cf98cb103babcb370170468bb4f400c9b3b48b1850f6',
-              created_at: '2023-02-27 21:59:34 UTC',
+            { _key: 'd76dcb9e5ec73ba443415733c1942937eeb4ad53a741b2c5c948e05b2ad0d50c',
+              created_at: '2023-02-27 23:16:12 UTC',
               settle_at: nil,
               state: 'open',
-              request: { _key: 'fb8849b965501c503bc40740246129f231f3fc1b084febf833c8051afb0ed0e9',
-                         code: 'lnbc10n1p3l6f7xpp5qymvk7957ssmqmdq06wvx2fgcck9s70ygkpn9snga5y8x47e5cmsdq2gdhkven9v5cqzpgxqyz5vqsp5cmzc02huyakh875kkw75s5c9zynn5pf0n9n70vxhuq86hq3wwf6s9qyyssqjzv4msfp37ryvdtnysaydwwvn6erdzvhk8jwttkf32ats8ue42tx3uxrjka4f9qqamk8ksgvgew2ef74js97k3yxevcn9tyvcgnd4cqqjuxrys',
-                         amount: { milisatoshis: 1000 },
+              request: { _key: 'ec0271464606009e857a2cc5decc27477e27061fd404174cf3aa191941704325',
+                         code: 'lnbc10n1p3l6wdupp5dgstcxacvxcxre2qu26w3lcja8lqlqwruhq5prc0k4uk24xpnvmqdq2gdhkven9v5cqzpgxqyz5vqsp5l4y3uzdmyavxluwsmxnzupkl2qj48s09evq7jfmajagu680jtals9qyyssqcadv32367amqafweqwlwtf0rkrxq4qlnpahxznerkx9nrtdfjgsskrdj607lkaugrsh4wfx3997th9npyd58v7rtdk3zzaw5fgfhk5sq59z4lv',
+                         amount: { millisatoshis: 1000 },
                          description: { memo: 'Coffee', hash: nil },
-                         secret: { hash: '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637' } } }
+                         secret: { hash: '6a20bc1bb861b061e540e2b4e8ff12e9fe0f81c3e5c1408f0fb5796554c19b36' } } }
           )
 
           Contract.expect(
@@ -133,7 +133,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           end
 
           Contract.expect(
-            action.to_h, '77da43095a93121d7989d59a428db8dbc0bba5f33329739e8bf897f446202bfb'
+            action.to_h, '373bb94f7c86028b586b8babb36ee6c8efd9c0f65fa56d2692455a25c8664b92'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
 
@@ -149,7 +149,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
                   created_at: 'Time',
                   request: {
                     _key: 'String:50+',
-                    amount: { milisatoshis: 'Integer:0..10' },
+                    amount: { millisatoshis: 'Integer:0..10' },
                     code: 'String:50+',
                     description: { hash: 'Nil', memo: 'String:0..10' },
                     secret: { hash: 'String:50+' }

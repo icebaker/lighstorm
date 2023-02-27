@@ -15,13 +15,13 @@ module Lighstorm
           ).to_h
         end
 
-        def self.prepare(description: nil, milisatoshis: nil)
+        def self.prepare(description: nil, millisatoshis: nil)
           {
             service: :lightning,
             method: :add_invoice,
             params: {
               memo: description,
-              value_msat: milisatoshis
+              value_msat: millisatoshis
             }
           }
         end
@@ -42,9 +42,9 @@ module Lighstorm
           FindBySecretHash.model(data)
         end
 
-        def self.perform(description: nil, milisatoshis: nil, preview: false, &vcr)
+        def self.perform(description: nil, millisatoshis: nil, preview: false, &vcr)
           grpc_request = prepare(
-            description: description, milisatoshis: milisatoshis
+            description: description, millisatoshis: millisatoshis
           )
 
           return grpc_request if preview

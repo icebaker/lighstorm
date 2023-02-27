@@ -27,7 +27,7 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
   let(:params) do
     {
       rate: { parts_per_million: policy.fee.rate.parts_per_million + 1 },
-      base: { milisatoshis: policy.fee.base.milisatoshis + 1 }
+      base: { millisatoshis: policy.fee.base.millisatoshis + 1 }
     }
   end
 
@@ -70,7 +70,7 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       end.to raise_error(NegativeNotAllowedError, "fee rate can't be negative: -1")
 
       expect do
-        policy.fee.update({ base: { milisatoshis: -5 } }, preview: true)
+        policy.fee.update({ base: { millisatoshis: -5 } }, preview: true)
       end.to raise_error(NegativeNotAllowedError, "fee base can't be negative: -5")
 
       preview = policy.fee.update({}, preview: true)
@@ -84,10 +84,10 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
               output_index: channel.transaction.funding.index
             },
             fee_rate_ppm: policy.fee.rate.parts_per_million,
-            base_fee_msat: policy.fee.base.milisatoshis,
+            base_fee_msat: policy.fee.base.millisatoshis,
             time_lock_delta: policy.htlc.blocks.delta.minimum,
-            max_htlc_msat: policy.htlc.maximum.milisatoshis,
-            min_htlc_msat: policy.htlc.minimum.milisatoshis
+            max_htlc_msat: policy.htlc.maximum.millisatoshis,
+            min_htlc_msat: policy.htlc.minimum.millisatoshis
           } }
       )
 
@@ -106,15 +106,15 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
               output_index: channel.transaction.funding.index
             },
             fee_rate_ppm: params[:rate][:parts_per_million],
-            base_fee_msat: policy.fee.base.milisatoshis,
+            base_fee_msat: policy.fee.base.millisatoshis,
             time_lock_delta: policy.htlc.blocks.delta.minimum,
-            max_htlc_msat: policy.htlc.maximum.milisatoshis,
-            min_htlc_msat: policy.htlc.minimum.milisatoshis
+            max_htlc_msat: policy.htlc.maximum.millisatoshis,
+            min_htlc_msat: policy.htlc.minimum.millisatoshis
           } }
       )
 
       params = {
-        base: { milisatoshis: policy.fee.base.milisatoshis + 7 }
+        base: { millisatoshis: policy.fee.base.millisatoshis + 7 }
       }
 
       preview = policy.fee.update(params, preview: true)
@@ -128,16 +128,16 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
               output_index: channel.transaction.funding.index
             },
             fee_rate_ppm: policy.fee.rate.parts_per_million,
-            base_fee_msat: params[:base][:milisatoshis],
+            base_fee_msat: params[:base][:millisatoshis],
             time_lock_delta: policy.htlc.blocks.delta.minimum,
-            max_htlc_msat: policy.htlc.maximum.milisatoshis,
-            min_htlc_msat: policy.htlc.minimum.milisatoshis
+            max_htlc_msat: policy.htlc.maximum.millisatoshis,
+            min_htlc_msat: policy.htlc.minimum.millisatoshis
           } }
       )
 
       params = {
         rate: { parts_per_million: policy.fee.rate.parts_per_million + 5 },
-        base: { milisatoshis: policy.fee.base.milisatoshis + 7 }
+        base: { millisatoshis: policy.fee.base.millisatoshis + 7 }
       }
 
       preview = policy.fee.update(params, preview: true)
@@ -151,10 +151,10 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
               output_index: channel.transaction.funding.index
             },
             fee_rate_ppm: params[:rate][:parts_per_million],
-            base_fee_msat: params[:base][:milisatoshis],
+            base_fee_msat: params[:base][:millisatoshis],
             time_lock_delta: policy.htlc.blocks.delta.minimum,
-            max_htlc_msat: policy.htlc.maximum.milisatoshis,
-            min_htlc_msat: policy.htlc.minimum.milisatoshis
+            max_htlc_msat: policy.htlc.maximum.millisatoshis,
+            min_htlc_msat: policy.htlc.minimum.millisatoshis
           } }
       )
     end
@@ -164,8 +164,8 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
         params[:rate][:parts_per_million]
       )
 
-      expect(channel.myself.policy.fee.base.milisatoshis).not_to eq(
-        params[:base][:milisatoshis]
+      expect(channel.myself.policy.fee.base.millisatoshis).not_to eq(
+        params[:base][:millisatoshis]
       )
 
       action = policy.fee.update(params) do |grpc|
@@ -174,12 +174,12 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
 
       expect(action.result.to_h).to eq(
         { fee: {
-            base: { milisatoshis: 1 },
+            base: { millisatoshis: 1 },
             rate: { parts_per_million: 95 }
           },
           htlc: {
-            minimum: { milisatoshis: 1000 },
-            maximum: { milisatoshis: 6_045_000_000 },
+            minimum: { millisatoshis: 1000 },
+            maximum: { millisatoshis: 6_045_000_000 },
             blocks: { delta: { minimum: 40 } }
           } }
       )
@@ -192,8 +192,8 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
         params[:rate][:parts_per_million]
       )
 
-      expect(channel.myself.policy.fee.base.milisatoshis).to eq(
-        params[:base][:milisatoshis]
+      expect(channel.myself.policy.fee.base.millisatoshis).to eq(
+        params[:base][:millisatoshis]
       )
     end
   end
@@ -203,15 +203,15 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       policy = channel.myself.policy
 
       previous = {
-        base: policy.fee.base.milisatoshis,
+        base: policy.fee.base.millisatoshis,
         rate: policy.fee.rate.parts_per_million
       }
 
-      expect(channel.myself.policy.fee.base.milisatoshis).to eq(previous[:base])
+      expect(channel.myself.policy.fee.base.millisatoshis).to eq(previous[:base])
       expect(channel.myself.policy.fee.rate.parts_per_million).to eq(previous[:rate])
 
       expect do
-        policy.fee.base = Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2)
+        policy.fee.base = Lighstorm::Models::Satoshis.new(millisatoshis: previous[:base] + 2)
       end.to raise_error(OperationNotAllowedError)
 
       expect do
@@ -222,13 +222,13 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
 
       expect do
         policy.fee.base = {
-          value: Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2),
+          value: Lighstorm::Models::Satoshis.new(millisatoshis: previous[:base] + 2),
           token: 'token-x'
         }
       end.to raise_error(OperationNotAllowedError)
 
       policy.fee.base = {
-        value: Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2),
+        value: Lighstorm::Models::Satoshis.new(millisatoshis: previous[:base] + 2),
         token: 'token-a'
       }
 
@@ -246,7 +246,7 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
         token: 'token-b'
       }
 
-      expect(channel.myself.policy.fee.base.milisatoshis).to eq(previous[:base] + 2)
+      expect(channel.myself.policy.fee.base.millisatoshis).to eq(previous[:base] + 2)
       expect(channel.myself.policy.fee.rate.parts_per_million).to eq(previous[:rate] + 3)
     end
   end

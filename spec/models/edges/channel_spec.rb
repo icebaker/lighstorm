@@ -41,13 +41,13 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.transaction.funding.id.size).to eq(64)
       expect(channel.transaction.funding.index.class).to eq(Integer)
 
-      expect(channel.accounting.capacity.milisatoshis).to eq(6_200_000_000)
+      expect(channel.accounting.capacity.millisatoshis).to eq(6_200_000_000)
       expect(channel.accounting.capacity.satoshis).to eq(6_200_000)
-      expect(channel.accounting.sent.milisatoshis).to eq(39_143_662_000)
+      expect(channel.accounting.sent.millisatoshis).to eq(39_143_662_000)
       expect(channel.accounting.sent.satoshis).to eq(39_143_662)
-      expect(channel.accounting.received.milisatoshis).to eq(33_041_910_000)
+      expect(channel.accounting.received.millisatoshis).to eq(33_041_910_000)
       expect(channel.accounting.received.satoshis).to eq(33_041_910)
-      expect(channel.accounting.unsettled.milisatoshis).to eq(0)
+      expect(channel.accounting.unsettled.millisatoshis).to eq(0)
       expect(channel.accounting.unsettled.satoshis).to eq(0)
 
       expect(channel.myself.node._key.size).to eq(64)
@@ -55,17 +55,17 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.myself.node.alias).to eq('icebaker/old-stone')
       expect(channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
       expect(channel.myself.node.color).to eq('#ff338f')
-      expect(channel.myself.accounting.balance.milisatoshis).to be > 10_000_000
-      expect(channel.myself.accounting.balance.milisatoshis).to be < 200_000_000
+      expect(channel.myself.accounting.balance.millisatoshis).to be > 10_000_000
+      expect(channel.myself.accounting.balance.millisatoshis).to be < 200_000_000
       expect(channel.myself.accounting.balance.satoshis).to be > 10_000
       expect(channel.myself.accounting.balance.satoshis).to be < 200_000
-      expect(channel.myself.policy.fee.base.milisatoshis).to eq(0)
+      expect(channel.myself.policy.fee.base.millisatoshis).to eq(0)
       expect(channel.myself.policy.fee.base.satoshis).to eq(0)
       expect(channel.myself.policy.fee.rate.parts_per_million).to eq(94)
       expect(channel.myself.policy.fee.rate.percentage).to eq(0.0094)
-      expect(channel.myself.policy.htlc.minimum.milisatoshis).to eq(1000)
+      expect(channel.myself.policy.htlc.minimum.millisatoshis).to eq(1000)
       expect(channel.myself.policy.htlc.minimum.satoshis).to eq(1)
-      expect(channel.myself.policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+      expect(channel.myself.policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
       expect(channel.myself.policy.htlc.maximum.satoshis).to eq(6_045_000)
 
       expect(channel.myself.policy.htlc.blocks.delta.minimum).to eq(40)
@@ -80,17 +80,17 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.partners[0].node.alias).to eq('icebaker/old-stone')
       expect(channel.partners[0].node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
       expect(channel.partners[0].node.color).to eq('#ff338f')
-      expect(channel.partners[0].accounting.balance.milisatoshis).to be > 10_000_000
-      expect(channel.partners[0].accounting.balance.milisatoshis).to be < 200_000_000
+      expect(channel.partners[0].accounting.balance.millisatoshis).to be > 10_000_000
+      expect(channel.partners[0].accounting.balance.millisatoshis).to be < 200_000_000
       expect(channel.partners[0].accounting.balance.satoshis).to be > 10_000
       expect(channel.partners[0].accounting.balance.satoshis).to be < 200_000
-      expect(channel.partners[0].policy.fee.base.milisatoshis).to eq(0)
+      expect(channel.partners[0].policy.fee.base.millisatoshis).to eq(0)
       expect(channel.partners[0].policy.fee.base.satoshis).to eq(0)
       expect(channel.partners[0].policy.fee.rate.parts_per_million).to eq(94)
       expect(channel.partners[0].policy.fee.rate.percentage).to eq(0.0094)
-      expect(channel.partners[0].policy.htlc.minimum.milisatoshis).to eq(1000)
+      expect(channel.partners[0].policy.htlc.minimum.millisatoshis).to eq(1000)
       expect(channel.partners[0].policy.htlc.minimum.satoshis).to eq(1)
-      expect(channel.partners[0].policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+      expect(channel.partners[0].policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
       expect(channel.partners[0].policy.htlc.maximum.satoshis).to eq(6_045_000)
       expect(channel.partners[0].node.platform.blockchain).to eq('bitcoin')
       expect(channel.partners[0].node.platform.network).to eq('mainnet')
@@ -102,16 +102,16 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.partner.node.alias).to eq('deezy.io ⚡✨')
       expect(channel.partner.node.public_key).to eq('024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf')
       expect(channel.partner.node.color).to eq('#3399ff')
-      expect(channel.partner.accounting.balance.milisatoshis).to eq(6_101_752_000)
+      expect(channel.partner.accounting.balance.millisatoshis).to eq(6_101_752_000)
       expect(channel.partner.accounting.balance.satoshis).to eq(6_101_752)
-      expect(channel.partner.policy.fee.base.milisatoshis).to eq(0)
+      expect(channel.partner.policy.fee.base.millisatoshis).to eq(0)
       expect(channel.partner.policy.fee.base.satoshis).to eq(0)
       expect(channel.partner.policy.fee.rate.parts_per_million).to eq(0)
       expect(channel.partner.policy.fee.rate.percentage).to eq(0.0)
-      expect(channel.partner.policy.htlc.minimum.milisatoshis).to eq(1000)
+      expect(channel.partner.policy.htlc.minimum.millisatoshis).to eq(1000)
       expect(channel.partner.policy.htlc.minimum.satoshis).to eq(1)
-      expect(channel.partner.policy.htlc.maximum.milisatoshis).to be > 5_000_000_000
-      expect(channel.partner.policy.htlc.maximum.milisatoshis).to be < 7_000_000_000
+      expect(channel.partner.policy.htlc.maximum.millisatoshis).to be > 5_000_000_000
+      expect(channel.partner.policy.htlc.maximum.millisatoshis).to be < 7_000_000_000
       expect(channel.partner.policy.htlc.maximum.satoshis).to be > 5_000_00
       expect(channel.partner.policy.htlc.maximum.satoshis).to be < 7_000_000
       expect(channel.partner.node.platform.blockchain).to eq('bitcoin')
@@ -126,16 +126,16 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.partners[1].node.alias).to eq('deezy.io ⚡✨')
       expect(channel.partners[1].node.public_key).to eq('024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf')
       expect(channel.partners[1].node.color).to eq('#3399ff')
-      expect(channel.partners[1].accounting.balance.milisatoshis).to eq(6_101_752_000)
+      expect(channel.partners[1].accounting.balance.millisatoshis).to eq(6_101_752_000)
       expect(channel.partners[1].accounting.balance.satoshis).to eq(6_101_752)
-      expect(channel.partners[1].policy.fee.base.milisatoshis).to eq(0)
+      expect(channel.partners[1].policy.fee.base.millisatoshis).to eq(0)
       expect(channel.partners[1].policy.fee.base.satoshis).to eq(0)
       expect(channel.partners[1].policy.fee.rate.parts_per_million).to eq(0)
       expect(channel.partners[1].policy.fee.rate.percentage).to eq(0.0)
-      expect(channel.partners[1].policy.htlc.minimum.milisatoshis).to eq(1000)
+      expect(channel.partners[1].policy.htlc.minimum.millisatoshis).to eq(1000)
       expect(channel.partners[1].policy.htlc.minimum.satoshis).to eq(1)
-      expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to be > 5_000_000_000
-      expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to be < 7_000_000_000
+      expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to be > 5_000_000_000
+      expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to be < 7_000_000_000
       expect(channel.partners[1].policy.htlc.maximum.satoshis).to be > 5_000_000
       expect(channel.partners[1].policy.htlc.maximum.satoshis).to be < 7_000_000
       expect(channel.partners[1].node.platform.blockchain).to eq('bitcoin')
@@ -146,7 +146,7 @@ RSpec.describe Lighstorm::Models::Channel do
       )
 
       Contract.expect(
-        channel.to_h, 'e800b26eea91e4c7ce5084261ca42c67b844ee414fd0cc5fb39baae973360c65'
+        channel.to_h, '00b987a5e9fa40fbc39b54bffa4635e54758248beb4395cc0edf662f2bfd0c96'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -180,13 +180,13 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.active?).to be(true)
         expect(channel.exposure).to eq('public')
 
-        expect(channel.accounting.capacity.milisatoshis).to eq(6_200_000_000)
+        expect(channel.accounting.capacity.millisatoshis).to eq(6_200_000_000)
         expect(channel.accounting.capacity.satoshis).to eq(6_200_000)
-        expect(channel.accounting.sent.milisatoshis).to eq(39_143_662_000)
+        expect(channel.accounting.sent.millisatoshis).to eq(39_143_662_000)
         expect(channel.accounting.sent.satoshis).to eq(39_143_662)
-        expect(channel.accounting.received.milisatoshis).to eq(33_041_910_000)
+        expect(channel.accounting.received.millisatoshis).to eq(33_041_910_000)
         expect(channel.accounting.received.satoshis).to eq(33_041_910)
-        expect(channel.accounting.unsettled.milisatoshis).to eq(0)
+        expect(channel.accounting.unsettled.millisatoshis).to eq(0)
         expect(channel.accounting.unsettled.satoshis).to eq(0)
 
         expect(channel.myself.node._key.size).to eq(64)
@@ -194,17 +194,17 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.myself.node.alias).to eq('icebaker/old-stone')
         expect(channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
         expect(channel.myself.node.color).to eq('#ff338f')
-        expect(channel.myself.accounting.balance.milisatoshis).to be > 10_000_000
-        expect(channel.myself.accounting.balance.milisatoshis).to be < 200_000_000
+        expect(channel.myself.accounting.balance.millisatoshis).to be > 10_000_000
+        expect(channel.myself.accounting.balance.millisatoshis).to be < 200_000_000
         expect(channel.myself.accounting.balance.satoshis).to be > 10_000
         expect(channel.myself.accounting.balance.satoshis).to be < 200_000
-        expect(channel.myself.policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.myself.policy.fee.base.millisatoshis).to eq(0)
         expect(channel.myself.policy.fee.base.satoshis).to eq(0)
         expect(channel.myself.policy.fee.rate.parts_per_million).to eq(94)
         expect(channel.myself.policy.fee.rate.percentage).to eq(0.0094)
-        expect(channel.myself.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.myself.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.myself.policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.myself.policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+        expect(channel.myself.policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
         expect(channel.myself.policy.htlc.maximum.satoshis).to eq(6_045_000)
         expect(channel.myself.node.platform.blockchain).to eq('bitcoin')
         expect(channel.myself.node.platform.network).to eq('mainnet')
@@ -216,17 +216,17 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partners[1].node.alias).to eq('icebaker/old-stone')
         expect(channel.partners[1].node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
         expect(channel.partners[1].node.color).to eq('#ff338f')
-        expect(channel.partners[1].accounting.balance.milisatoshis).to be > 10_000_000
-        expect(channel.partners[1].accounting.balance.milisatoshis).to be < 200_000_000
+        expect(channel.partners[1].accounting.balance.millisatoshis).to be > 10_000_000
+        expect(channel.partners[1].accounting.balance.millisatoshis).to be < 200_000_000
         expect(channel.partners[1].accounting.balance.satoshis).to be > 10_000
         expect(channel.partners[1].accounting.balance.satoshis).to be < 200_000
-        expect(channel.partners[1].policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partners[1].policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partners[1].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[1].policy.fee.rate.parts_per_million).to eq(94)
         expect(channel.partners[1].policy.fee.rate.percentage).to eq(0.0094)
-        expect(channel.partners[1].policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partners[1].policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partners[1].policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+        expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
         expect(channel.partners[1].policy.htlc.maximum.satoshis).to eq(6_045_000)
         expect(channel.partners[1].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[1].node.platform.network).to eq('mainnet')
@@ -238,16 +238,16 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partner.node.alias).to eq('deezy.io ⚡✨')
         expect(channel.partner.node.public_key).to eq('024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf')
         expect(channel.partner.node.color).to eq('#3399ff')
-        expect(channel.partner.accounting.balance.milisatoshis).to eq(6_101_752_000)
+        expect(channel.partner.accounting.balance.millisatoshis).to eq(6_101_752_000)
         expect(channel.partner.accounting.balance.satoshis).to eq(6_101_752)
-        expect(channel.partner.policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partner.policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partner.policy.fee.base.satoshis).to eq(0)
         expect(channel.partner.policy.fee.rate.parts_per_million).to eq(0)
         expect(channel.partner.policy.fee.rate.percentage).to eq(0.0)
-        expect(channel.partner.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partner.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partner.policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partner.policy.htlc.maximum.milisatoshis).to be > 5_000_000_000
-        expect(channel.partner.policy.htlc.maximum.milisatoshis).to be < 7_000_000_000
+        expect(channel.partner.policy.htlc.maximum.millisatoshis).to be > 5_000_000_000
+        expect(channel.partner.policy.htlc.maximum.millisatoshis).to be < 7_000_000_000
         expect(channel.partner.policy.htlc.maximum.satoshis).to be > 5_000_000
         expect(channel.partner.policy.htlc.maximum.satoshis).to be < 7_000_000
         expect(channel.partner.node.platform.blockchain).to eq('bitcoin')
@@ -262,16 +262,16 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partners[0].node.alias).to eq('deezy.io ⚡✨')
         expect(channel.partners[0].node.public_key).to eq('024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf')
         expect(channel.partners[0].node.color).to eq('#3399ff')
-        expect(channel.partners[0].accounting.balance.milisatoshis).to eq(6_101_752_000)
+        expect(channel.partners[0].accounting.balance.millisatoshis).to eq(6_101_752_000)
         expect(channel.partners[0].accounting.balance.satoshis).to eq(6_101_752)
-        expect(channel.partners[0].policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partners[0].policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partners[0].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[0].policy.fee.rate.parts_per_million).to eq(0)
         expect(channel.partners[0].policy.fee.rate.percentage).to eq(0.0)
-        expect(channel.partners[0].policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partners[0].policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partners[0].policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partners[0].policy.htlc.maximum.milisatoshis).to be > 5_000_000_000
-        expect(channel.partners[0].policy.htlc.maximum.milisatoshis).to be < 7_000_000_000
+        expect(channel.partners[0].policy.htlc.maximum.millisatoshis).to be > 5_000_000_000
+        expect(channel.partners[0].policy.htlc.maximum.millisatoshis).to be < 7_000_000_000
         expect(channel.partners[0].policy.htlc.maximum.satoshis).to be > 5_000_000
         expect(channel.partners[0].policy.htlc.maximum.satoshis).to be < 7_000_000
         expect(channel.partners[0].node.platform.blockchain).to eq('bitcoin')
@@ -282,7 +282,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.to_h, 'e800b26eea91e4c7ce5084261ca42c67b844ee414fd0cc5fb39baae973360c65'
+          channel.to_h, '00b987a5e9fa40fbc39b54bffa4635e54758248beb4395cc0edf662f2bfd0c96'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -313,7 +313,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.exposure).to eq('public')
 
-        expect(channel.accounting.capacity.milisatoshis).to eq(37_200_000)
+        expect(channel.accounting.capacity.millisatoshis).to eq(37_200_000)
         expect(channel.accounting.capacity.satoshis).to eq(37_200)
 
         expect { channel.accounting.sent }.to raise_error(NotYourChannelError)
@@ -362,7 +362,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '05f7283abe9bbb861f4e0c56aa0d45bd49ee3164123412f375d115c833327d70'
+          channel.to_h, 'd1048ba476daa11d917f0d9bf7d6678b7e7d0e1f8d152c9a8977e7addd9f0924'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -393,7 +393,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.exposure).to eq('public')
 
-        expect(channel.accounting.capacity.milisatoshis).to eq(200_000_000_000)
+        expect(channel.accounting.capacity.millisatoshis).to eq(200_000_000_000)
         expect(channel.accounting.capacity.satoshis).to eq(200_000_000)
         expect(channel.accounting.capacity.bitcoins).to eq(2)
 
@@ -411,15 +411,15 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.partners[0].accounting }.to raise_error(NotYourChannelError)
 
-        expect(channel.partners[0].policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partners[0].policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partners[0].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[0].policy.fee.rate.parts_per_million).to eq(0)
         expect(channel.partners[0].policy.fee.rate.percentage).to eq(0.0)
-        expect(channel.partners[0].policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partners[0].policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partners[0].policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partners[0].policy.htlc.maximum.milisatoshis).to be > 1_000_000_000
-        expect(channel.partners[0].policy.htlc.maximum.milisatoshis).to be < 500_000_000_000
-        expect(channel.partners[0].policy.htlc.maximum.satoshis).to be >   1_000_000
+        expect(channel.partners[0].policy.htlc.maximum.millisatoshis).to be > 1_000_000_000
+        expect(channel.partners[0].policy.htlc.maximum.millisatoshis).to be < 500_000_000_000
+        expect(channel.partners[0].policy.htlc.maximum.satoshis).to be > 1_000_000
         expect(channel.partners[0].policy.htlc.maximum.satoshis).to be < 500_000_000
         expect(channel.partners[0].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[0].node.platform.network).to eq('mainnet')
@@ -438,17 +438,17 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect { channel.partners[1].accounting }.to raise_error(NotYourChannelError)
 
-        expect(channel.partners[1].policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partners[1].policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partners[1].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[1].policy.fee.rate.parts_per_million).to be > 0
         expect(channel.partners[1].policy.fee.rate.parts_per_million).to be < 500
         expect(channel.partners[1].policy.fee.rate.percentage).to be > 0.0
         expect(channel.partners[1].policy.fee.rate.percentage).to be < 0.0500
-        expect(channel.partners[1].policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partners[1].policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partners[1].policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to be > 1_000_000_000
-        expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to be < 500_000_000_000
-        expect(channel.partners[1].policy.htlc.maximum.satoshis).to be >   1_000_000
+        expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to be > 1_000_000_000
+        expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to be < 500_000_000_000
+        expect(channel.partners[1].policy.htlc.maximum.satoshis).to be > 1_000_000
         expect(channel.partners[1].policy.htlc.maximum.satoshis).to be < 500_000_000
         expect(channel.partners[1].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[1].node.platform.network).to eq('mainnet')
@@ -456,7 +456,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '168edbce05294fb68511b986c7b0da7f85045928b426c3731d18011455e76b90'
+          channel.to_h, '282bba92dfc1941ec52b2dfb1563a74993abc4caeb7cc926710f2db1c9c52728'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -500,7 +500,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.exposure).to eq('public')
 
-        expect(channel.accounting.capacity.milisatoshis).to eq(37_200_000)
+        expect(channel.accounting.capacity.millisatoshis).to eq(37_200_000)
         expect(channel.accounting.capacity.satoshis).to eq(37_200)
 
         expect { channel.accounting.sent }.to raise_error(NotYourChannelError)
@@ -552,7 +552,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, 'db4d187e10fdf9461f0a6818ec78787f0bd9f5675e344ad785ff1293eac3e8e3'
+          channel.to_h, '35ee12eaad3ba2a047acd5c886c35e369e2bc88a9669072cffc2cddbbdd39310'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -578,34 +578,34 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.active?).to be(true)
         expect(channel.exposure).to eq('public')
 
-        expect(channel.accounting.capacity.milisatoshis).to eq(6_500_000_000)
+        expect(channel.accounting.capacity.millisatoshis).to eq(6_500_000_000)
         expect(channel.accounting.capacity.satoshis).to eq(6_500_000)
-        expect(channel.accounting.sent.milisatoshis).to be > 7_000_000_000
-        expect(channel.accounting.sent.milisatoshis).to be < 70_000_000_000
+        expect(channel.accounting.sent.millisatoshis).to be > 7_000_000_000
+        expect(channel.accounting.sent.millisatoshis).to be < 70_000_000_000
         expect(channel.accounting.sent.satoshis).to be > 7_000_000
         expect(channel.accounting.sent.satoshis).to be < 70_000_000
-        expect(channel.accounting.received.milisatoshis).to be > 2_000_000_000
-        expect(channel.accounting.received.milisatoshis).to be < 20_000_000_000
+        expect(channel.accounting.received.millisatoshis).to be > 2_000_000_000
+        expect(channel.accounting.received.millisatoshis).to be < 20_000_000_000
         expect(channel.accounting.received.satoshis).to be > 2_000_000
         expect(channel.accounting.received.satoshis).to be < 20_000_000
-        expect(channel.accounting.unsettled.milisatoshis).to eq(0)
+        expect(channel.accounting.unsettled.millisatoshis).to eq(0)
         expect(channel.accounting.unsettled.satoshis).to eq(0)
 
         expect(channel.myself.node._key.size).to eq(64)
         expect(channel.myself.node.alias).to eq('icebaker/old-stone')
         expect(channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
         expect(channel.myself.node.color).to eq('#ff338f')
-        expect(channel.myself.accounting.balance.milisatoshis).to be > 500_000_000
-        expect(channel.myself.accounting.balance.milisatoshis).to be < 10_000_000_000
+        expect(channel.myself.accounting.balance.millisatoshis).to be > 500_000_000
+        expect(channel.myself.accounting.balance.millisatoshis).to be < 10_000_000_000
         expect(channel.myself.accounting.balance.satoshis).to be > 500_000
         expect(channel.myself.accounting.balance.satoshis).to be < 10_000_000
-        expect(channel.myself.policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.myself.policy.fee.base.millisatoshis).to eq(0)
         expect(channel.myself.policy.fee.base.satoshis).to eq(0)
         expect(channel.myself.policy.fee.rate.parts_per_million).to eq(874)
         expect(channel.myself.policy.fee.rate.percentage).to eq(0.0874)
-        expect(channel.myself.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.myself.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.myself.policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.myself.policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+        expect(channel.myself.policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
         expect(channel.myself.policy.htlc.maximum.satoshis).to eq(6_045_000)
         expect(channel.myself.node.platform.blockchain).to eq('bitcoin')
         expect(channel.myself.node.platform.network).to eq('mainnet')
@@ -616,17 +616,17 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partners[0].node.alias).to eq('icebaker/old-stone')
         expect(channel.partners[0].node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
         expect(channel.partners[0].node.color).to eq('#ff338f')
-        expect(channel.partners[0].accounting.balance.milisatoshis).to be > 500_000_000
-        expect(channel.partners[0].accounting.balance.milisatoshis).to be < 10_000_000_000
+        expect(channel.partners[0].accounting.balance.millisatoshis).to be > 500_000_000
+        expect(channel.partners[0].accounting.balance.millisatoshis).to be < 10_000_000_000
         expect(channel.partners[0].accounting.balance.satoshis).to be > 500_000
         expect(channel.partners[0].accounting.balance.satoshis).to be < 10_000_000
-        expect(channel.partners[0].policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partners[0].policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partners[0].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[0].policy.fee.rate.parts_per_million).to eq(874)
         expect(channel.partners[0].policy.fee.rate.percentage).to eq(0.0874)
-        expect(channel.partners[0].policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partners[0].policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partners[0].policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partners[0].policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+        expect(channel.partners[0].policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
         expect(channel.partners[0].policy.htlc.maximum.satoshis).to eq(6_045_000)
         expect(channel.partners[0].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[0].node.platform.network).to eq('mainnet')
@@ -637,17 +637,17 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partner.node.alias).to eq('WalletOfSatoshi.com')
         expect(channel.partner.node.public_key).to eq('035e4ff418fc8b5554c5d9eea66396c227bd429a3251c8cbc711002ba215bfc226')
         expect(channel.partner.node.color).to eq('#3399ff')
-        expect(channel.partner.accounting.balance.milisatoshis).to be > 5_000_000_000
-        expect(channel.partner.accounting.balance.milisatoshis).to be < 50_000_000_000
+        expect(channel.partner.accounting.balance.millisatoshis).to be > 5_000_000_000
+        expect(channel.partner.accounting.balance.millisatoshis).to be < 50_000_000_000
         expect(channel.partner.accounting.balance.satoshis).to be > 5_000_000
         expect(channel.partner.accounting.balance.satoshis).to be < 50_000_000
-        expect(channel.partner.policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partner.policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partner.policy.fee.base.satoshis).to eq(0)
         expect(channel.partner.policy.fee.rate.parts_per_million).to eq(300)
         expect(channel.partner.policy.fee.rate.percentage).to eq(0.03)
-        expect(channel.partner.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partner.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partner.policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partner.policy.htlc.maximum.milisatoshis).to eq(6_435_000_000)
+        expect(channel.partner.policy.htlc.maximum.millisatoshis).to eq(6_435_000_000)
         expect(channel.partner.policy.htlc.maximum.satoshis).to eq(6_435_000)
         expect(channel.partner.node.platform.blockchain).to eq('bitcoin')
         expect(channel.partner.node.platform.network).to eq('mainnet')
@@ -658,17 +658,17 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partners[1].node.alias).to eq('WalletOfSatoshi.com')
         expect(channel.partners[1].node.public_key).to eq('035e4ff418fc8b5554c5d9eea66396c227bd429a3251c8cbc711002ba215bfc226')
         expect(channel.partners[1].node.color).to eq('#3399ff')
-        expect(channel.partners[1].accounting.balance.milisatoshis).to be > 5_000_000_000
-        expect(channel.partners[1].accounting.balance.milisatoshis).to be < 50_000_000_000
+        expect(channel.partners[1].accounting.balance.millisatoshis).to be > 5_000_000_000
+        expect(channel.partners[1].accounting.balance.millisatoshis).to be < 50_000_000_000
         expect(channel.partners[1].accounting.balance.satoshis).to be > 5_000_000
         expect(channel.partners[1].accounting.balance.satoshis).to be < 50_000_000
-        expect(channel.partners[1].policy.fee.base.milisatoshis).to eq(0)
+        expect(channel.partners[1].policy.fee.base.millisatoshis).to eq(0)
         expect(channel.partners[1].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[1].policy.fee.rate.parts_per_million).to eq(300)
         expect(channel.partners[1].policy.fee.rate.percentage).to eq(0.03)
-        expect(channel.partners[1].policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(channel.partners[1].policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(channel.partners[1].policy.htlc.minimum.satoshis).to eq(1)
-        expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to eq(6_435_000_000)
+        expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to eq(6_435_000_000)
         expect(channel.partners[1].policy.htlc.maximum.satoshis).to eq(6_435_000)
         expect(channel.partners[1].node.platform.blockchain).to eq('bitcoin')
         expect(channel.partners[1].node.platform.network).to eq('mainnet')
@@ -676,7 +676,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '821c7e20ce85a6c1947b39fcd30012c4fdee6fa2bf288920cdec28e15f93d76d'
+          channel.to_h, '7e63c0da76eee3d2567411bcf2eb34eba4dc484ea69e43cb7a8c890886f82d17'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

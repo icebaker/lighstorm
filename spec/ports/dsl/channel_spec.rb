@@ -40,7 +40,7 @@ RSpec.describe Lighstorm::Channel do
 
         expect(Contract.for(channel.exposure)).to eq('String:0..10')
 
-        expect(Contract.for(channel.accounting.capacity.milisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.accounting.capacity.millisatoshis)).to eq('Integer:0..10')
 
         expect { channel.accounting.sent }.to raise_error(NotYourChannelError)
         expect { channel.accounting.received }.to raise_error(NotYourChannelError)
@@ -56,24 +56,24 @@ RSpec.describe Lighstorm::Channel do
 
         expect(Contract.for(channel.partners[0].node.public_key)).to eq('String:50+')
 
-        expect(Contract.for(channel.partners[0].policy.fee.base.milisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.partners[0].policy.fee.base.millisatoshis)).to eq('Integer:0..10')
         expect(Contract.for(channel.partners[0].policy.fee.rate.parts_per_million)).to eq('Integer:0..10')
-        expect(Contract.for(channel.partners[0].policy.htlc.minimum.milisatoshis)).to eq('Integer:0..10')
-        expect(Contract.for(channel.partners[0].policy.htlc.maximum.milisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.partners[0].policy.htlc.minimum.millisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.partners[0].policy.htlc.maximum.millisatoshis)).to eq('Integer:0..10')
 
         expect { channel.partners[1].accounting }.to raise_error(NotYourChannelError)
         expect(channel.partners[1].node.myself?).to be(false)
 
         expect(Contract.for(channel.partners[1].node.public_key)).to eq('String:50+')
 
-        expect(Contract.for(channel.partners[1].policy.fee.base.milisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.partners[1].policy.fee.base.millisatoshis)).to eq('Integer:0..10')
         expect(Contract.for(channel.partners[1].policy.fee.rate.parts_per_million)).to eq('Integer:0..10')
-        expect(Contract.for(channel.partners[1].policy.htlc.minimum.milisatoshis)).to eq('Integer:0..10')
-        expect(Contract.for(channel.partners[1].policy.htlc.maximum.milisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.partners[1].policy.htlc.minimum.millisatoshis)).to eq('Integer:0..10')
+        expect(Contract.for(channel.partners[1].policy.htlc.maximum.millisatoshis)).to eq('Integer:0..10')
 
         expect(Contract.for(channel.to_h)).to eq(
           { _key: 'String:50+',
-            accounting: { capacity: { milisatoshis: 'Integer:0..10' } },
+            accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
             id: 'String:11..20',
             partners: [
               { node: {
@@ -82,11 +82,11 @@ RSpec.describe Lighstorm::Channel do
                   public_key: 'String:50+'
                 },
                 policy: {
-                  fee: { base: { milisatoshis: 'Integer:0..10' },
+                  fee: { base: { millisatoshis: 'Integer:0..10' },
                          rate: { parts_per_million: 'Integer:0..10' } },
                   htlc: { blocks: { delta: { minimum: 'Integer:0..10' } },
-                          maximum: { milisatoshis: 'Integer:0..10' },
-                          minimum: { milisatoshis: 'Integer:0..10' } }
+                          maximum: { millisatoshis: 'Integer:0..10' },
+                          minimum: { millisatoshis: 'Integer:0..10' } }
                 },
                 state: 'String:0..10' },
               { node: {
@@ -95,11 +95,11 @@ RSpec.describe Lighstorm::Channel do
                   public_key: 'String:50+'
                 },
                 policy: {
-                  fee: { base: { milisatoshis: 'Integer:0..10' },
+                  fee: { base: { millisatoshis: 'Integer:0..10' },
                          rate: { parts_per_million: 'Integer:0..10' } },
                   htlc: { blocks: { delta: { minimum: 'Integer:0..10' } },
-                          maximum: { milisatoshis: 'Integer:0..10' },
-                          minimum: { milisatoshis: 'Integer:0..10' } }
+                          maximum: { millisatoshis: 'Integer:0..10' },
+                          minimum: { millisatoshis: 'Integer:0..10' } }
                 },
                 state: 'String:0..10' }
             ] }
@@ -125,8 +125,8 @@ RSpec.describe Lighstorm::Channel do
                     rate: { parts_per_million: 'Integer:0..10' }
                   },
                   htlc: { blocks: { delta: { minimum: 'Integer:0..10' } },
-                          maximum: { milisatoshis: 'Integer:0..10' },
-                          minimum: { milisatoshis: 'Integer:0..10' } }
+                          maximum: { millisatoshis: 'Integer:0..10' },
+                          minimum: { millisatoshis: 'Integer:0..10' } }
                 },
                 state: 'Nil' },
               { node: {

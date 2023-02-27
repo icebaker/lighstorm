@@ -10,7 +10,7 @@ module Lighstorm
       end
 
       def amount
-        @amount ||= Satoshis.new(milisatoshis: @data[:amount][:milisatoshis])
+        @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
       end
 
       def channel

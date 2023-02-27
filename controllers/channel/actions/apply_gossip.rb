@@ -25,17 +25,17 @@ module Lighstorm
         ].freeze
 
         APPLICABLE = [
-          'accounting/capacity/milisatoshis',
-          'partners/0/policy/fee/base/milisatoshis',
+          'accounting/capacity/millisatoshis',
+          'partners/0/policy/fee/base/millisatoshis',
           'partners/0/state',
-          'partners/1/policy/fee/base/milisatoshis',
+          'partners/1/policy/fee/base/millisatoshis',
           'partners/1/state',
           'partners/1/policy/fee/rate/parts_per_million',
           'partners/0/policy/fee/rate/parts_per_million',
-          'partners/0/policy/htlc/minimum/milisatoshis',
-          'partners/1/policy/htlc/minimum/milisatoshis',
-          'partners/0/policy/htlc/maximum/milisatoshis',
-          'partners/1/policy/htlc/maximum/milisatoshis',
+          'partners/0/policy/htlc/minimum/millisatoshis',
+          'partners/1/policy/htlc/minimum/millisatoshis',
+          'partners/0/policy/htlc/maximum/millisatoshis',
+          'partners/1/policy/htlc/maximum/millisatoshis',
           'partners/0/policy/htlc/blocks/delta/minimum',
           'partners/1/policy/htlc/blocks/delta/minimum'
         ].freeze
@@ -79,25 +79,25 @@ module Lighstorm
 
         def self.apply!(actual, key, change)
           case key
-          when 'accounting/capacity/milisatoshis'
+          when 'accounting/capacity/millisatoshis'
             token = SecureRandom.hex
             actual.accounting.prepare_token!(token)
             actual.accounting.capacity = {
-              value: Models::Satoshis.new(milisatoshis: change[:to]),
+              value: Models::Satoshis.new(millisatoshis: change[:to]),
               token: token
             }
-          when 'partners/0/policy/htlc/maximum/milisatoshis',
-                 'partners/1/policy/htlc/maximum/milisatoshis' then
+          when 'partners/0/policy/htlc/maximum/millisatoshis',
+                 'partners/1/policy/htlc/maximum/millisatoshis' then
             policy = actual.partners[change[:path][1]].policy
 
             token = SecureRandom.hex
             policy.htlc.prepare_token!(token)
             policy.htlc.maximum = {
-              value: Models::Satoshis.new(milisatoshis: change[:to]),
+              value: Models::Satoshis.new(millisatoshis: change[:to]),
               token: token
             }
-          when 'partners/0/policy/htlc/minimum/milisatoshis',
-                 'partners/1/policy/htlc/minimum/milisatoshis' then
+          when 'partners/0/policy/htlc/minimum/millisatoshis',
+                 'partners/1/policy/htlc/minimum/millisatoshis' then
             if actual.partners[change[:path][1]].policy.nil?
               actual.partners[change[:path][1]].policy = Lighstorm::Models::Policy.new({})
             end
@@ -107,7 +107,7 @@ module Lighstorm
             token = SecureRandom.hex
             policy.htlc.prepare_token!(token)
             policy.htlc.minimum = {
-              value: Models::Satoshis.new(milisatoshis: change[:to]),
+              value: Models::Satoshis.new(millisatoshis: change[:to]),
               token: token
             }
           when 'partners/0/policy/htlc/blocks/delta/minimum',
@@ -134,14 +134,14 @@ module Lighstorm
               value: Models::Rate.new(parts_per_million: change[:to]),
               token: token
             }
-          when 'partners/0/policy/fee/base/milisatoshis',
-                 'partners/1/policy/fee/base/milisatoshis' then
+          when 'partners/0/policy/fee/base/millisatoshis',
+                 'partners/1/policy/fee/base/millisatoshis' then
             policy = actual.partners[change[:path][1]].policy
 
             token = SecureRandom.hex
             policy.fee.prepare_token!(token)
             policy.fee.base = {
-              value: Models::Satoshis.new(milisatoshis: change[:to]),
+              value: Models::Satoshis.new(millisatoshis: change[:to]),
               token: token
             }
           when 'partners/0/state',

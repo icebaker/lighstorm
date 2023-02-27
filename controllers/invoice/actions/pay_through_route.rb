@@ -36,7 +36,7 @@ module Lighstorm
           begin
             route = LND.instance.middleware('router.build_route') do
               LND.instance.client.router.build_route(
-                amt_msat: amount.milisatoshis,
+                amt_msat: amount.millisatoshis,
                 outgoing_chan_id: channels.first.id.to_i,
                 hop_pubkeys: hops_public_keys.map { |hpk| [hpk].pack('H*') },
                 payment_addr: [address].pack('H*')

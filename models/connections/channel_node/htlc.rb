@@ -17,7 +17,7 @@ module Lighstorm
       def minimum
         @minimum ||= if @data[:minimum]
                        Satoshis.new(
-                         milisatoshis: @data[:minimum][:milisatoshis]
+                         millisatoshis: @data[:minimum][:millisatoshis]
                        )
                      end
       end
@@ -25,7 +25,7 @@ module Lighstorm
       def maximum
         @maximum ||= if @data[:maximum]
                        Satoshis.new(
-                         milisatoshis: @data[:maximum][:milisatoshis]
+                         millisatoshis: @data[:maximum][:millisatoshis]
                        )
                      end
       end
@@ -67,7 +67,7 @@ module Lighstorm
 
         @minimum = value[:value]
 
-        @data[:minimum] = { milisatoshis: @minimum.milisatoshis }
+        @data[:minimum] = { millisatoshis: @minimum.millisatoshis }
 
         minimum
       end
@@ -77,7 +77,7 @@ module Lighstorm
 
         @maximum = value[:value]
 
-        @data[:maximum] = { milisatoshis: @maximum.milisatoshis }
+        @data[:maximum] = { millisatoshis: @maximum.millisatoshis }
 
         maximum
       end

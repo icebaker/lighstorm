@@ -10,7 +10,7 @@ module Lighstorm
     class IncoherentGossipError < LighstormError; end
     class MissingGossipHandlerError < LighstormError; end
     class MissingCredentialsError < LighstormError; end
-    class MissingMilisatoshisError < LighstormError; end
+    class MissingMillisatoshisError < LighstormError; end
     class MissingPartsPerMillionError < LighstormError; end
     class MissingTTLError < LighstormError; end
     class NegativeNotAllowedError < LighstormError; end

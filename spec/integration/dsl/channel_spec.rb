@@ -30,35 +30,35 @@ RSpec.describe 'Integration Tests' do
           expect(Contract.for(channel.transaction.funding.id)).to eq('String:50+')
           expect(Contract.for(channel.transaction.funding.index)).to eq('Integer:0..10')
 
-          expect(Contract.for(channel.accounting.capacity.milisatoshis)).to eq('Integer:0..10')
-          expect(Contract.for(channel.accounting.sent.milisatoshis)).to eq('Integer:11..20')
-          expect(Contract.for(channel.accounting.received.milisatoshis)).to eq('Integer:11..20')
-          expect(Contract.for(channel.accounting.unsettled.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.accounting.capacity.millisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.accounting.sent.millisatoshis)).to eq('Integer:11..20')
+          expect(Contract.for(channel.accounting.received.millisatoshis)).to eq('Integer:11..20')
+          expect(Contract.for(channel.accounting.unsettled.millisatoshis)).to eq('Integer:0..10')
 
           expect(channel.partners.size).to eq(2)
 
           expect(channel.myself.node.myself?).to be(true)
           expect(channel.myself.node.public_key).to eq(channel.partners[0].node.public_key)
 
-          expect(Contract.for(channel.myself.accounting.balance.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.myself.accounting.balance.millisatoshis)).to eq('Integer:0..10')
           expect(Contract.for(channel.myself.node.public_key)).to eq('String:50+')
 
-          expect(Contract.for(channel.myself.policy.fee.base.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.myself.policy.fee.base.millisatoshis)).to eq('Integer:0..10')
           expect(Contract.for(channel.myself.policy.fee.rate.parts_per_million)).to eq('Integer:0..10')
-          expect(Contract.for(channel.myself.policy.htlc.minimum.milisatoshis)).to eq('Integer:0..10')
-          expect(Contract.for(channel.myself.policy.htlc.maximum.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.myself.policy.htlc.minimum.millisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.myself.policy.htlc.maximum.millisatoshis)).to eq('Integer:0..10')
           expect(Contract.for(channel.myself.policy.htlc.blocks.delta.minimum)).to eq('Integer:0..10')
 
           expect(channel.partner.node.myself?).to be(false)
           expect(channel.partner.node.public_key).to eq(channel.partners[1].node.public_key)
 
-          expect(Contract.for(channel.partner.accounting.balance.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.partner.accounting.balance.millisatoshis)).to eq('Integer:0..10')
           expect(Contract.for(channel.partner.node.public_key)).to eq('String:50+')
 
-          expect(Contract.for(channel.partner.policy.fee.base.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.partner.policy.fee.base.millisatoshis)).to eq('Integer:0..10')
           expect(Contract.for(channel.partner.policy.fee.rate.parts_per_million)).to eq('Integer:0..10')
-          expect(Contract.for(channel.partner.policy.htlc.minimum.milisatoshis)).to eq('Integer:0..10')
-          expect(Contract.for(channel.partner.policy.htlc.maximum.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.partner.policy.htlc.minimum.millisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.partner.policy.htlc.maximum.millisatoshis)).to eq('Integer:0..10')
         end
       end
 
@@ -81,7 +81,7 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel.exposure)).to eq('String:0..10')
 
-          expect(Contract.for(channel.accounting.capacity.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.accounting.capacity.millisatoshis)).to eq('Integer:0..10')
 
           expect { channel.accounting.sent }.to raise_error(NotYourChannelError)
           expect { channel.accounting.received }.to raise_error(NotYourChannelError)
@@ -117,7 +117,7 @@ RSpec.describe 'Integration Tests' do
           expect(Contract.for(channel.to_h)).to eq(
             { _key: 'String:50+',
               accounting: {
-                capacity: { milisatoshis: 'Integer:0..10' }
+                capacity: { millisatoshis: 'Integer:0..10' }
               },
               id: 'String:11..20',
               partners: [
@@ -171,7 +171,7 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel.exposure)).to eq('String:0..10')
 
-          expect(Contract.for(channel.accounting.capacity.milisatoshis)).to eq('Integer:0..10')
+          expect(Contract.for(channel.accounting.capacity.millisatoshis)).to eq('Integer:0..10')
 
           expect { channel.accounting.sent }.to raise_error(NotYourChannelError)
           expect { channel.accounting.received }.to raise_error(NotYourChannelError)
@@ -206,7 +206,7 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel.to_h)).to eq(
             { _key: 'String:50+',
-              accounting: { capacity: { milisatoshis: 'Integer:0..10' } },
+              accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
               id: 'String:11..20',
               partners: [
                 { node: {

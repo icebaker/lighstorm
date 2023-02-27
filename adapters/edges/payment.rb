@@ -31,7 +31,7 @@ module Lighstorm
           _key: _key(grpc),
           created_at: Time.at(grpc[:creation_time_ns] / 1e+9),
           status: grpc[:status].to_s.downcase,
-          fee: { milisatoshis: grpc[:fee_msat] },
+          fee: { millisatoshis: grpc[:fee_msat] },
           purpose: Purpose.list_payments(grpc, node_get_info),
           request: PaymentRequest.list_payments(grpc),
           hops: grpc[:htlcs].first[:route][:hops].map.with_index do |raw_hop, i|

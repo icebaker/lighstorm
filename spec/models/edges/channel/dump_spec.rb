@@ -24,7 +24,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel = described_class.new(data)
 
         Contract.expect(
-          channel.dump, '511cbdca8d6e4e775614e856e1c77f0756a6f3d45f78f11da056643da590aff7'
+          channel.dump, '37500d995a8fae10335094e07898002e60a432be7ec879fe907704cc0a17a2ea'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -32,7 +32,7 @@ RSpec.describe Lighstorm::Models::Channel do
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               _source: 'Symbol:11..20',
-              accounting: { capacity: { milisatoshis: 'Integer:11..20' } },
+              accounting: { capacity: { millisatoshis: 'Integer:11..20' } },
               exposure: 'String:0..10',
               id: 'String:11..20',
               known: 'Boolean',
@@ -53,13 +53,13 @@ RSpec.describe Lighstorm::Models::Channel do
                   },
                   policy: {
                     fee: {
-                      base: { milisatoshis: 'Integer:0..10' },
+                      base: { millisatoshis: 'Integer:0..10' },
                       rate: { parts_per_million: 'Integer:0..10' }
                     },
                     htlc: {
                       blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { milisatoshis: 'Integer:11..20' },
-                      minimum: { milisatoshis: 'Integer:0..10' }
+                      maximum: { millisatoshis: 'Integer:11..20' },
+                      minimum: { millisatoshis: 'Integer:0..10' }
                     }
                   },
                   state: 'String:0..10' },
@@ -78,13 +78,13 @@ RSpec.describe Lighstorm::Models::Channel do
                   },
                   policy: {
                     fee: {
-                      base: { milisatoshis: 'Integer:0..10' },
+                      base: { millisatoshis: 'Integer:0..10' },
                       rate: { parts_per_million: 'Integer:0..10' }
                     },
                     htlc: {
                       blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { milisatoshis: 'Integer:11..20' },
-                      minimum: { milisatoshis: 'Integer:0..10' }
+                      maximum: { millisatoshis: 'Integer:11..20' },
+                      minimum: { millisatoshis: 'Integer:0..10' }
                     }
                   },
                   state: 'String:0..10' }
@@ -110,7 +110,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel = described_class.new(data[0])
 
         Contract.expect(
-          channel.dump, '1f2a02bb64e45f2521eac46247740a88fe21f881d14a9984c16d641a215d40af'
+          channel.dump, 'a625dae9677bbb55775d943a9db73761d8d401a0283923b63b683e0d04a95dcd'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -119,10 +119,10 @@ RSpec.describe Lighstorm::Models::Channel do
             { _key: 'String:50+',
               _source: 'Symbol:11..20',
               accounting: {
-                capacity: { milisatoshis: 'Integer:0..10' },
-                received: { milisatoshis: 'Integer:11..20' },
-                sent: { milisatoshis: 'Integer:11..20' },
-                unsettled: { milisatoshis: 'Integer:0..10' }
+                capacity: { millisatoshis: 'Integer:0..10' },
+                received: { millisatoshis: 'Integer:11..20' },
+                sent: { millisatoshis: 'Integer:11..20' },
+                unsettled: { millisatoshis: 'Integer:0..10' }
               },
               exposure: 'String:0..10',
               id: 'String:11..20',
@@ -131,7 +131,7 @@ RSpec.describe Lighstorm::Models::Channel do
               opened_at: 'Time',
               partners: [
                 { _source: 'Symbol:11..20',
-                  accounting: { balance: { milisatoshis: 'Integer:0..10' } },
+                  accounting: { balance: { millisatoshis: 'Integer:0..10' } },
                   node: {
                     _key: 'String:50+',
                     _source: 'Symbol:0..10',
@@ -147,18 +147,18 @@ RSpec.describe Lighstorm::Models::Channel do
                   },
                   policy: {
                     fee: {
-                      base: { milisatoshis: 'Integer:0..10' },
+                      base: { millisatoshis: 'Integer:0..10' },
                       rate: { parts_per_million: 'Integer:0..10' }
                     },
                     htlc: {
                       blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { milisatoshis: 'Integer:0..10' },
-                      minimum: { milisatoshis: 'Integer:0..10' }
+                      maximum: { millisatoshis: 'Integer:0..10' },
+                      minimum: { millisatoshis: 'Integer:0..10' }
                     }
                   },
                   state: 'String:0..10' },
                 { _source: 'Symbol:11..20',
-                  accounting: { balance: { milisatoshis: 'Integer:0..10' } },
+                  accounting: { balance: { millisatoshis: 'Integer:0..10' } },
                   node: {
                     _key: 'String:50+',
                     _source: 'Symbol:11..20',
@@ -170,13 +170,13 @@ RSpec.describe Lighstorm::Models::Channel do
                   },
                   policy: {
                     fee: {
-                      base: { milisatoshis: 'Integer:0..10' },
+                      base: { millisatoshis: 'Integer:0..10' },
                       rate: { parts_per_million: 'Integer:0..10' }
                     },
                     htlc: {
                       blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { milisatoshis: 'Integer:0..10' },
-                      minimum: { milisatoshis: 'Integer:0..10' }
+                      maximum: { millisatoshis: 'Integer:0..10' },
+                      minimum: { millisatoshis: 'Integer:0..10' }
                     }
                   },
                   state: 'String:0..10' }
@@ -201,7 +201,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.dump, '978f0502508630bdef70857130fb02009550a614ea7c68b8010d6407c9de733e'
+          channel.dump, 'a47be8d6d54ecf51b55c738e1fc3cbba23c69ade69fb7124c00d22d682f7ccbb'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -209,7 +209,7 @@ RSpec.describe Lighstorm::Models::Channel do
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               _source: 'Symbol:21..30',
-              accounting: { capacity: { milisatoshis: 'Integer:0..10' } },
+              accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
               id: 'String:11..20',
               partners: [
                 { _source: 'Symbol:21..30',
@@ -217,12 +217,12 @@ RSpec.describe Lighstorm::Models::Channel do
                   policy: {
                     _source: 'Symbol:21..30',
                     fee: {
-                      base: { milisatoshis: 'Integer:0..10' }
+                      base: { millisatoshis: 'Integer:0..10' }
                     },
                     htlc: {
                       blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { milisatoshis: 'Integer:0..10' },
-                      minimum: { milisatoshis: 'Integer:0..10' }
+                      maximum: { millisatoshis: 'Integer:0..10' },
+                      minimum: { millisatoshis: 'Integer:0..10' }
                     }
                   } },
                 { node: { public_key: 'String:50+' } }
@@ -244,7 +244,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.dump, '741ae62ea22b48af83bef17336bf101755cc82c2f656882be0d098bf900e6de4'
+          channel.dump, 'f09efa5fa0c666794e64592f196761c8fb9ff815103316697fb73ee2170ef140'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -252,15 +252,15 @@ RSpec.describe Lighstorm::Models::Channel do
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               _source: 'Symbol:21..30',
-              accounting: { capacity: { milisatoshis: 'Integer:0..10' } },
+              accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
               id: 'String:11..20',
               partners: [{ _source: 'Symbol:21..30',
                            node: { public_key: 'String:50+' },
                            policy: { _source: 'Symbol:21..30',
-                                     fee: { base: { milisatoshis: 'Integer:0..10' },
+                                     fee: { base: { millisatoshis: 'Integer:0..10' },
                                             rate: { parts_per_million: 'Integer:0..10' } },
-                                     htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { milisatoshis: 'Integer:0..10' },
-                                             minimum: { milisatoshis: 'Integer:0..10' } } } },
+                                     htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { millisatoshis: 'Integer:0..10' },
+                                             minimum: { millisatoshis: 'Integer:0..10' } } } },
                          { node: { public_key: 'String:50+' } }] }
           )
         end
@@ -279,7 +279,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.dump, 'c4de9f110925bcd4186d9f624c9cf87488c7acf171f6d3b7c16bb9f4f8eb1146'
+          channel.dump, '98d710ac2ee1354cfae9577e2be804f05f3ad6d4396b6200e3ec11062a519da3'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -287,7 +287,7 @@ RSpec.describe Lighstorm::Models::Channel do
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               _source: 'Symbol:21..30',
-              accounting: { capacity: { milisatoshis: 'Integer:0..10' } },
+              accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
               id: 'String:11..20',
               partners: [{ _source: 'Symbol:21..30', node: { public_key: 'String:50+' }, state: 'String:0..10' },
                          { node: { public_key: 'String:50+' } }] }

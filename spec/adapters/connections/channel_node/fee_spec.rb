@@ -26,7 +26,7 @@ RSpec.describe Lighstorm::Adapter::Fee do
           partner: {
             policy: {
               fee: {
-                base: { milisatoshis: 0 },
+                base: { millisatoshis: 0 },
                 rate: { parts_per_million: 874 }
               }
             }

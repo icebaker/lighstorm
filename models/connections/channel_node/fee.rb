@@ -22,7 +22,7 @@ module Lighstorm
       def base
         return nil unless @data[:base]
 
-        @base ||= Satoshis.new(milisatoshis: @data[:base][:milisatoshis])
+        @base ||= Satoshis.new(millisatoshis: @data[:base][:millisatoshis])
       end
 
       def rate
@@ -58,7 +58,7 @@ module Lighstorm
 
         @base = value[:value]
 
-        @data[:base] = { milisatoshis: @base.milisatoshis }
+        @data[:base] = { millisatoshis: @base.millisatoshis }
 
         base
       end

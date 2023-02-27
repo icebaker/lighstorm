@@ -63,7 +63,7 @@ require 'lighstorm'
 puts Lighstorm.version # => 0.0.6
 
 Lighstorm::Invoice.create(
-  description: 'Coffee', milisatoshis: 1000
+  description: 'Coffee', millisatoshis: 1000
 )
 
 Lighstorm::Node.myself.alias # => icebaker/old-stone
@@ -77,7 +77,7 @@ Lighstorm::Channel.mine.first.partner.node.alias
 
 forward = Lighstorm::Forward.all(limit: 10).first
 
-forward.in.amount.milisatoshis # => 75621650
+forward.in.amount.millisatoshis # => 75621650
 forward.in.amount.satoshis # => 75621
 forward.in.amount.bitcoins # => 0.0007562165
 forward.in.channel.partner.node.alias
@@ -94,7 +94,7 @@ payment.hops.size # => 4
 payment.hops.first.channel.partner.node.alias
 
 Lighstorm::Satoshis.new(
-  milisatoshis: 75621650
+  millisatoshis: 75621650
 ).satoshis # => 75621
 ```
 
@@ -120,13 +120,13 @@ channel = Lighstorm::Channel.mine.first
 
 channel.id
 
-channel.accounting.capacity.milisatoshis
+channel.accounting.capacity.millisatoshis
 
-channel.partner.accounting.balance.milisatoshis
+channel.partner.accounting.balance.millisatoshis
 channel.partner.node.alias
 channel.partner.policy.fee.rate.parts_per_million
 
-channel.myself.accounting.balance.milisatoshis
+channel.myself.accounting.balance.millisatoshis
 channel.myself.node.alias
 channel.myself.policy.fee.rate.parts_per_million
 ```
@@ -145,11 +145,11 @@ forward = Lighstorm::Forward.last
 
 forward.at
 
-forward.fee.milisatoshis
+forward.fee.millisatoshis
 forward.fee.parts_per_million
 
-forward.in.amount.milisatoshis
-forward.out.amount.milisatoshis
+forward.in.amount.millisatoshis
+forward.out.amount.millisatoshis
 
 forward.in.channel.id
 forward.in.channel.partner.node.alias
@@ -176,24 +176,24 @@ payment.created_at
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
 payment.request.code # "lnbc20m1pv...qqdhhwkj"
 
-payment.request.amount.milisatoshis
+payment.request.amount.millisatoshis
 
 payment.from.hop
-payment.from.amount.milisatoshis
-payment.from.fee.milisatoshis
+payment.from.amount.millisatoshis
+payment.from.fee.millisatoshis
 payment.from.channel.id
 payment.from.channel.target.alias
 payment.from.channel.exit.alias
 
 payment.to.hop
-payment.to.amount.milisatoshis
-payment.to.fee.milisatoshis
+payment.to.amount.millisatoshis
+payment.to.fee.millisatoshis
 payment.to.channel.id
 payment.to.channel.target.alias
 
 payment.hops[0].hop
-payment.hops[0].amount.milisatoshis
-payment.hops[0].fee.milisatoshis
+payment.hops[0].amount.millisatoshis
+payment.hops[0].fee.millisatoshis
 payment.hops[0].channel.id
 payment.hops[0].channel.target.alias
 ```
@@ -272,10 +272,10 @@ channel.state
 channel.active?
 channel.exposure
 
-channel.accounting.capacity.milisatoshis
-channel.accounting.sent.milisatoshis
-channel.accounting.received.milisatoshis
-channel.accounting.unsettled.milisatoshis
+channel.accounting.capacity.millisatoshis
+channel.accounting.sent.millisatoshis
+channel.accounting.received.millisatoshis
+channel.accounting.unsettled.millisatoshis
 
 # Channels that don't belong to you:
 channel.partners
@@ -298,13 +298,13 @@ channel.partner.node.public_key
 channel.partner.node.alias
 channel.partner.node.color
 
-channel.partner.accounting.balance.milisatoshis
+channel.partner.accounting.balance.millisatoshis
 
-channel.partner.policy.fee.base.milisatoshis
+channel.partner.policy.fee.base.millisatoshis
 channel.partner.policy.fee.rate.parts_per_million
 
-channel.partner.policy.htlc.minimum.milisatoshis
-channel.partner.policy.htlc.maximum.milisatoshis
+channel.partner.policy.htlc.minimum.millisatoshis
+channel.partner.policy.htlc.maximum.millisatoshis
 channel.partner.policy.htlc.blocks.delta.minimum
 
 channel.myself
@@ -315,13 +315,13 @@ channel.myself.node.public_key
 channel.myself.node.alias
 channel.myself.node.color
 
-channel.myself.accounting.balance.milisatoshis
+channel.myself.accounting.balance.millisatoshis
 
-channel.myself.policy.fee.base.milisatoshis
+channel.myself.policy.fee.base.millisatoshis
 channel.myself.policy.fee.rate.parts_per_million
 
-channel.myself.policy.htlc.minimum.milisatoshis
-channel.myself.policy.htlc.maximum.milisatoshis
+channel.myself.policy.htlc.minimum.millisatoshis
+channel.myself.policy.htlc.maximum.millisatoshis
 channel.myself.policy.htlc.blocks.delta.minimum
 ```
 
@@ -337,7 +337,7 @@ channel.myself.policy.fee.update(
 )
 
 channel.myself.policy.fee.update(
-  { base: { milisatoshis: 1 } }
+  { base: { millisatoshis: 1 } }
 )
 
 channel.myself.policy.fee.update(
@@ -345,7 +345,7 @@ channel.myself.policy.fee.update(
 )
 
 channel.myself.policy.fee.update(
-  { base: { milisatoshis: 1 }, rate: { parts_per_million: 25 } }
+  { base: { millisatoshis: 1 }, rate: { parts_per_million: 25 } }
 )
 ```
 
@@ -378,7 +378,7 @@ invoice.state
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
 invoice.request.code # "lnbc20m1pv...qqdhhwkj"
 
-invoice.request.amount.milisatoshis
+invoice.request.amount.millisatoshis
 
 invoice.request.description.memo
 invoice.request.description.hash
@@ -398,11 +398,11 @@ invoice.request.address
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
 preview = Lighstorm::Invoice.create(
-  description: 'Coffee', milisatoshis: 1000, preview: true
+  description: 'Coffee', millisatoshis: 1000, preview: true
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Piña Colada', milisatoshis: 1000
+  description: 'Piña Colada', millisatoshis: 1000
 )
 
 action.to_h
@@ -443,15 +443,15 @@ payment.created_at
 payment.settled_at
 payment.purpose
 
-payment.fee.milisatoshis
+payment.fee.millisatoshis
 payment.fee.parts_per_million(
-  payment.request.amount.milisatoshis
+  payment.request.amount.millisatoshis
 )
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
 payment.request.code # "lnbc20m1pv...qqdhhwkj"
 
-payment.request.amount.milisatoshis
+payment.request.amount.millisatoshis
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
 payment.request.secret.preimage
@@ -463,9 +463,9 @@ payment.request.description.memo
 payment.request.description.hash
 
 payment.from.hop
-payment.from.amount.milisatoshis
-payment.from.fee.milisatoshis
-payment.from.fee.parts_per_million(payment.from.amount.milisatoshis)
+payment.from.amount.millisatoshis
+payment.from.fee.millisatoshis
+payment.from.fee.parts_per_million(payment.from.amount.millisatoshis)
 
 payment.from.channel.id
 
@@ -478,9 +478,9 @@ payment.from.channel.exit.alias
 payment.from.channel.exit.color
 
 payment.to.hop
-payment.to.amount.milisatoshis
-payment.to.fee.milisatoshis
-payment.to.fee.parts_per_million(payment.to.amount.milisatoshis)
+payment.to.amount.millisatoshis
+payment.to.fee.millisatoshis
+payment.to.fee.parts_per_million(payment.to.amount.millisatoshis)
 
 payment.to.channel.id
 
@@ -498,9 +498,9 @@ payment.hops[0].first?
 payment.hops[0].last?
 
 payment.hops[0].hop
-payment.hops[0].amount.milisatoshis
-payment.hops[0].fee.milisatoshis
-payment.hops[0].fee.parts_per_million(payment.hops[0].amount.milisatoshis)
+payment.hops[0].amount.millisatoshis
+payment.hops[0].fee.millisatoshis
+payment.hops[0].fee.parts_per_million(payment.hops[0].amount.millisatoshis)
 
 payment.hops[0].channel.id
 
@@ -550,19 +550,19 @@ forward._key
 
 forward.at
 
-forward.fee.milisatoshis
+forward.fee.millisatoshis
 forward.fee.parts_per_million(
-  forward.in.amount.milisatoshis
+  forward.in.amount.millisatoshis
 )
 
-forward.in.amount.milisatoshis
+forward.in.amount.millisatoshis
 
 forward.in.channel.id
 forward.in.channel.partner.node.alias
 forward.in.channel.partner.node.public_key
 forward.in.channel.partner.node.color
 
-forward.out.amount.milisatoshis
+forward.out.amount.millisatoshis
 
 forward.out.channel.id
 forward.out.channel.partner.node.alias
@@ -585,12 +585,12 @@ group._key
 
 group.last_at
 group.analysis.count
-group.analysis.sums.amount.milisatoshis
-group.analysis.sums.fee.milisatoshis
-group.analysis.averages.amount.milisatoshis
-group.analysis.averages.fee.milisatoshis
+group.analysis.sums.amount.millisatoshis
+group.analysis.sums.fee.millisatoshis
+group.analysis.averages.amount.millisatoshis
+group.analysis.averages.fee.millisatoshis
 group.analysis.averages.fee.parts_per_million(
-  group.analysis.averages.amount.milisatoshis
+  group.analysis.averages.amount.millisatoshis
 )
 
 group.channel.id
@@ -664,11 +664,11 @@ Lighstorm::Channel.adapt(dump: channel.dump)
 
 ```ruby
 Lighstorm::Satoshis
-Lighstorm::Satoshis.new(milisatoshis: 75621650)
+Lighstorm::Satoshis.new(millisatoshis: 75621650)
 
 satoshis.to_h
 
-satoshis.milisatoshis
+satoshis.millisatoshis
 satoshis.satoshis
 satoshis.bitcoins
 
@@ -676,8 +676,8 @@ satoshis.msats
 satoshis.sats
 satoshis.btc
 
-reference_in_milisatoshis = 75621650000
-satoshis.parts_per_million(reference_in_milisatoshis)
+reference_in_millisatoshis = 75621650000
+satoshis.parts_per_million(reference_in_millisatoshis)
 ```
 
 # Error Handling
@@ -739,7 +739,7 @@ IncoherentGossipError
 TooManyArgumentsError
 MissingCredentialsError
 MissingGossipHandlerError
-MissingMilisatoshisError
+MissingMillisatoshisError
 MissingPartsPerMillionError
 MissingTTLError
 
@@ -825,13 +825,13 @@ The downside is that we can't [lazy-load](https://en.wikipedia.org/wiki/Lazy_loa
 To perform an _action_, like creating an Invoice, you:
 ```ruby
 Lighstorm::Invoice.create(
-  description: 'Coffee', milisatoshis: 1000
+  description: 'Coffee', millisatoshis: 1000
 )
 ```
 
 Internally, what's happening:
 ```ruby
-action = Lighstorm::Invoice.create(description: 'Coffee', milisatoshis: 1000)
+action = Lighstorm::Invoice.create(description: 'Coffee', millisatoshis: 1000)
 
    request = Controllers::Invoice::Create.prepare(params) # pure
   response = Controllers::Invoice::Create.dispatch(request) # side effect

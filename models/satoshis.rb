@@ -5,34 +5,34 @@ require_relative '../ports/dsl/lighstorm/errors'
 module Lighstorm
   module Models
     class Satoshis
-      def initialize(milisatoshis: nil)
-        raise MissingMilisatoshisError, 'missing milisatoshis' if milisatoshis.nil?
+      def initialize(millisatoshis: nil)
+        raise MissingMillisatoshisError, 'missing millisatoshis' if millisatoshis.nil?
 
-        @amount_in_milisatoshis = milisatoshis
+        @amount_in_millisatoshis = millisatoshis
       end
 
-      def parts_per_million(reference_milisatoshis)
+      def parts_per_million(reference_millisatoshis)
         (
           (
-            if reference_milisatoshis.zero?
+            if reference_millisatoshis.zero?
               0
             else
-              @amount_in_milisatoshis.to_f / reference_milisatoshis
+              @amount_in_millisatoshis.to_f / reference_millisatoshis
             end
           ) * 1_000_000.0
         )
       end
 
-      def milisatoshis
-        @amount_in_milisatoshis
+      def millisatoshis
+        @amount_in_millisatoshis
       end
 
       def satoshis
-        @amount_in_milisatoshis.to_f / 1000.0
+        @amount_in_millisatoshis.to_f / 1000.0
       end
 
       def bitcoins
-        @amount_in_milisatoshis.to_f / 100_000_000_000
+        @amount_in_millisatoshis.to_f / 100_000_000_000
       end
 
       def sats
@@ -40,7 +40,7 @@ module Lighstorm
       end
 
       def msats
-        milisatoshis
+        millisatoshis
       end
 
       def btc
@@ -49,7 +49,7 @@ module Lighstorm
 
       def to_h
         {
-          milisatoshis: milisatoshis
+          millisatoshis: millisatoshis
         }
       end
     end

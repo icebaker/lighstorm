@@ -9,8 +9,8 @@ module Lighstorm
         {
           _source: :list_payments,
           hop: index + 1,
-          amount: { milisatoshis: grpc[:amt_to_forward_msat] },
-          fee: { milisatoshis: grpc[:fee_msat] },
+          amount: { millisatoshis: grpc[:amt_to_forward_msat] },
+          fee: { millisatoshis: grpc[:fee_msat] },
           channel: {
             _key: Digest::SHA256.hexdigest(grpc[:chan_id].to_s),
             id: grpc[:chan_id].to_s,

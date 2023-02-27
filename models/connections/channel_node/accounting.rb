@@ -10,7 +10,7 @@ module Lighstorm
       end
 
       def balance
-        @balance ||= Satoshis.new(milisatoshis: @data[:balance][:milisatoshis])
+        @balance ||= Satoshis.new(millisatoshis: @data[:balance][:millisatoshis])
       end
 
       def to_h
