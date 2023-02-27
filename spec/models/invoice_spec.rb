@@ -43,7 +43,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
         expect(invoice.request.address.class).to eq(String)
         expect(invoice.request.address.size).to eq(64)
-        expect(invoice.request.amount.milisatoshis).to eq(982_342_000)
+        expect(invoice.request.amount.millisatoshis).to eq(982_342_000)
         expect(invoice.request.amount.satoshis).to eq(982_342.0)
         expect(invoice.request.description.memo).to eq('Local-Rebalance-982342-Sats')
         expect(invoice.request.description.hash).to be_nil
@@ -52,7 +52,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, '0d75019411cea11336f7d0c9f18a4820044cc409536c6651834006ab1248a068'
+          invoice.to_h, 'c2fcb4387e491038e6ed6f729d0c93aa206150206f6ceeb4447b961200126d5d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
@@ -60,7 +60,7 @@ RSpec.describe Lighstorm::Models::Invoice do
             { _key: 'String:50+',
               created_at: 'Time',
               request: { _key: 'String:50+',
-                         amount: { milisatoshis: 'Integer:0..10' },
+                         amount: { millisatoshis: 'Integer:0..10' },
                          code: 'String:50+',
                          description: { hash: 'Nil', memo: 'String:21..30' },
                          secret: { hash: 'String:50+' } },
@@ -97,7 +97,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
         expect(invoice.request.address.class).to eq(String)
         expect(invoice.request.address.size).to eq(64)
-        expect(invoice.request.amount.milisatoshis).to eq(982_342_000)
+        expect(invoice.request.amount.millisatoshis).to eq(982_342_000)
         expect(invoice.request.amount.satoshis).to eq(982_342.0)
         expect(invoice.request.description.memo).to eq('Local-Rebalance-982342-Sats')
         expect(invoice.request.description.hash).to be_nil
@@ -106,14 +106,14 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, '0d75019411cea11336f7d0c9f18a4820044cc409536c6651834006ab1248a068'
+          invoice.to_h, 'c2fcb4387e491038e6ed6f729d0c93aa206150206f6ceeb4447b961200126d5d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               created_at: 'Time',
               request: { _key: 'String:50+',
-                         amount: { milisatoshis: 'Integer:0..10' },
+                         amount: { millisatoshis: 'Integer:0..10' },
                          code: 'String:50+',
                          description: { hash: 'Nil', memo: 'String:21..30' },
                          secret: { hash: 'String:50+' } },
@@ -148,7 +148,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.code.size).to eq(267)
         expect(invoice.request.address.class).to eq(String)
         expect(invoice.request.address.size).to eq(64)
-        expect(invoice.request.amount.milisatoshis).to eq(1000)
+        expect(invoice.request.amount.millisatoshis).to eq(1000)
         expect(invoice.request.amount.satoshis).to eq(1.0)
         expect(invoice.request.description.memo).to eq('Coffee')
         expect(invoice.request.description.hash).to be_nil
@@ -157,7 +157,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.secret.hash).to eq(secret_hash)
 
         Contract.expect(
-          invoice.to_h, 'b137e3031dd74ecbbc363c0f7913cec92e7803affa114000a03002a8b096d3df'
+          invoice.to_h, 'b4e46c28cdfdf2943a8ed404e41b4a8f89c8741938d8f22563409cfef1b4f500'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
@@ -165,7 +165,7 @@ RSpec.describe Lighstorm::Models::Invoice do
             { _key: 'String:50+',
               created_at: 'Time',
               request: { _key: 'String:50+',
-                         amount: { milisatoshis: 'Integer:0..10' },
+                         amount: { millisatoshis: 'Integer:0..10' },
                          code: 'String:50+',
                          description: { hash: 'Nil', memo: 'String:0..10' },
                          secret: { hash: 'String:50+' } },

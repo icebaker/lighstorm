@@ -11,19 +11,19 @@ module Lighstorm
         def sums
           Struct.new(:sums) do
             def amount
-              Satoshis.new(milisatoshis: sums[:amount][:milisatoshis])
+              Satoshis.new(millisatoshis: sums[:amount][:millisatoshis])
             end
 
             def fee
-              Satoshis.new(milisatoshis: sums[:fee][:milisatoshis])
+              Satoshis.new(millisatoshis: sums[:fee][:millisatoshis])
             end
 
             def to_h
               {
                 amount: amount.to_h,
                 fee: {
-                  milisatoshis: fee.milisatoshis,
-                  parts_per_million: fee.parts_per_million(amount.milisatoshis)
+                  millisatoshis: fee.millisatoshis,
+                  parts_per_million: fee.parts_per_million(amount.millisatoshis)
                 }
               }
             end
@@ -34,13 +34,13 @@ module Lighstorm
           Struct.new(:data) do
             def amount
               Satoshis.new(
-                milisatoshis: data[:sums][:amount][:milisatoshis].to_f / data[:count]
+                millisatoshis: data[:sums][:amount][:millisatoshis].to_f / data[:count]
               )
             end
 
             def fee
               Satoshis.new(
-                milisatoshis: data[:sums][:fee][:milisatoshis].to_f / data[:count]
+                millisatoshis: data[:sums][:fee][:millisatoshis].to_f / data[:count]
               )
             end
 
@@ -48,8 +48,8 @@ module Lighstorm
               {
                 amount: amount.to_h,
                 fee: {
-                  milisatoshis: fee.milisatoshis,
-                  parts_per_million: fee.parts_per_million(amount.milisatoshis)
+                  millisatoshis: fee.millisatoshis,
+                  parts_per_million: fee.parts_per_million(amount.millisatoshis)
                 }
               }
             end

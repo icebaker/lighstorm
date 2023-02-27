@@ -20,7 +20,7 @@ module Lighstorm
       end
 
       def fee
-        @fee ||= Satoshis.new(milisatoshis: @data[:fee][:milisatoshis])
+        @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
       end
 
       def in
@@ -36,8 +36,8 @@ module Lighstorm
           _key: _key,
           at: at,
           fee: {
-            milisatoshis: fee.milisatoshis,
-            parts_per_million: fee.parts_per_million(self.in.amount.milisatoshis)
+            millisatoshis: fee.millisatoshis,
+            parts_per_million: fee.parts_per_million(self.in.amount.millisatoshis)
           },
           in: self.in.to_h,
           out: out.to_h

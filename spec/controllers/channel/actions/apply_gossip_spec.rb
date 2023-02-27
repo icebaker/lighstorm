@@ -57,14 +57,14 @@ RSpec.describe Lighstorm::Models::Channel do
 
         gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-b.json'))
 
-        expect(channel.partners[0].policy.fee.base.milisatoshis).not_to eq(150)
+        expect(channel.partners[0].policy.fee.base.millisatoshis).not_to eq(150)
 
         diff = channel.apply!(gossip: gossip)
 
-        expect(channel.partners[0].policy.fee.base.milisatoshis).to eq(150)
+        expect(channel.partners[0].policy.fee.base.millisatoshis).to eq(150)
 
         expect(diff).to eq(
-          [{ from: 100, path: [:partners, 0, :policy, :fee, :base, :milisatoshis], to: 150 }]
+          [{ from: 100, path: [:partners, 0, :policy, :fee, :base, :millisatoshis], to: 150 }]
         )
 
         expect(channel.to_h).not_to eq(previous_to_h)
@@ -108,7 +108,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(previous_to_h).to eq(
           { _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
-            accounting: { capacity: { milisatoshis: 5_000_000_000 } },
+            accounting: { capacity: { millisatoshis: 5_000_000_000 } },
             partners: [
               { state: 'active',
                 node: {
@@ -120,12 +120,12 @@ RSpec.describe Lighstorm::Models::Channel do
                 },
                 policy: {
                   fee: {
-                    base: { milisatoshis: 0 },
+                    base: { millisatoshis: 0 },
                     rate: { parts_per_million: 700 }
                   },
                   htlc: {
-                    minimum: { milisatoshis: 1000 },
-                    maximum: { milisatoshis: 4_950_000_000 },
+                    minimum: { millisatoshis: 1000 },
+                    maximum: { millisatoshis: 4_950_000_000 },
                     blocks: { delta: { minimum: 40 } }
                   }
                 } },
@@ -139,12 +139,12 @@ RSpec.describe Lighstorm::Models::Channel do
                 },
                 policy: {
                   fee: {
-                    base: { milisatoshis: 1000 },
+                    base: { millisatoshis: 1000 },
                     rate: { parts_per_million: 300 }
                   },
                   htlc: {
-                    minimum: { milisatoshis: 1000 },
-                    maximum: { milisatoshis: 4_950_000_000 },
+                    minimum: { millisatoshis: 1000 },
+                    maximum: { millisatoshis: 4_950_000_000 },
                     blocks: { delta: { minimum: 144 } }
                   }
                 } }
@@ -155,7 +155,7 @@ RSpec.describe Lighstorm::Models::Channel do
           { _source: :get_chan_info,
             _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
-            accounting: { capacity: { milisatoshis: 5_000_000_000 } },
+            accounting: { capacity: { millisatoshis: 5_000_000_000 } },
             partners: [
               { _source: :get_chan_info,
                 node: {
@@ -169,10 +169,10 @@ RSpec.describe Lighstorm::Models::Channel do
                 },
                 state: 'active',
                 policy: {
-                  fee: { base: { milisatoshis: 0 }, rate: { parts_per_million: 700 } },
+                  fee: { base: { millisatoshis: 0 }, rate: { parts_per_million: 700 } },
                   htlc: {
-                    minimum: { milisatoshis: 1000 },
-                    maximum: { milisatoshis: 4_950_000_000 },
+                    minimum: { millisatoshis: 1000 },
+                    maximum: { millisatoshis: 4_950_000_000 },
                     blocks: { delta: { minimum: 40 } }
                   }
                 } },
@@ -188,11 +188,11 @@ RSpec.describe Lighstorm::Models::Channel do
                 },
                 state: 'active',
                 policy: {
-                  fee: { base: { milisatoshis: 1000 },
+                  fee: { base: { millisatoshis: 1000 },
                          rate: { parts_per_million: 300 } },
                   htlc: {
-                    minimum: { milisatoshis: 1000 },
-                    maximum: { milisatoshis: 4_950_000_000 },
+                    minimum: { millisatoshis: 1000 },
+                    maximum: { millisatoshis: 4_950_000_000 },
                     blocks: { delta: { minimum: 144 } }
                   }
                 } }
@@ -202,37 +202,37 @@ RSpec.describe Lighstorm::Models::Channel do
             exposure: 'public' }
         )
 
-        expect(channel.accounting.capacity.milisatoshis).not_to eq(6_000_000_000)
+        expect(channel.accounting.capacity.millisatoshis).not_to eq(6_000_000_000)
 
         expect(channel.partners[1].state).not_to eq('inactive')
 
-        expect(channel.partners[1].policy.fee.base.milisatoshis).not_to eq(1700)
+        expect(channel.partners[1].policy.fee.base.millisatoshis).not_to eq(1700)
         expect(channel.partners[1].policy.fee.rate.parts_per_million).not_to eq(800)
 
-        expect(channel.partners[1].policy.htlc.maximum.milisatoshis).not_to eq(5_950_000_000)
-        expect(channel.partners[1].policy.htlc.minimum.milisatoshis).not_to eq(1400)
+        expect(channel.partners[1].policy.htlc.maximum.millisatoshis).not_to eq(5_950_000_000)
+        expect(channel.partners[1].policy.htlc.minimum.millisatoshis).not_to eq(1400)
         expect(channel.partners[1].policy.htlc.blocks.delta.minimum).not_to eq(200)
 
         diff = channel.apply!(gossip: gossip)
 
-        expect(channel.accounting.capacity.milisatoshis).to eq(6_000_000_000)
+        expect(channel.accounting.capacity.millisatoshis).to eq(6_000_000_000)
 
         expect(channel.partners[1].state).to eq('inactive')
 
-        expect(channel.partners[1].policy.fee.base.milisatoshis).to eq(1700)
+        expect(channel.partners[1].policy.fee.base.millisatoshis).to eq(1700)
         expect(channel.partners[1].policy.fee.rate.parts_per_million).to eq(800)
 
-        expect(channel.partners[1].policy.htlc.maximum.milisatoshis).to eq(5_950_000_000)
-        expect(channel.partners[1].policy.htlc.minimum.milisatoshis).to eq(1400)
+        expect(channel.partners[1].policy.htlc.maximum.millisatoshis).to eq(5_950_000_000)
+        expect(channel.partners[1].policy.htlc.minimum.millisatoshis).to eq(1400)
         expect(channel.partners[1].policy.htlc.blocks.delta.minimum).to eq(200)
 
         expect(diff).to eq(
           [{
-            path: %i[accounting capacity milisatoshis],
+            path: %i[accounting capacity millisatoshis],
             from: 5_000_000_000, to: 6_000_000_000
           },
            {
-             path: [:partners, 1, :policy, :fee, :base, :milisatoshis],
+             path: [:partners, 1, :policy, :fee, :base, :millisatoshis],
              from: 1000, to: 1700
            },
            {
@@ -240,10 +240,10 @@ RSpec.describe Lighstorm::Models::Channel do
              from: 300, to: 800
            },
            {
-             path: [:partners, 1, :policy, :htlc, :minimum, :milisatoshis],
+             path: [:partners, 1, :policy, :htlc, :minimum, :millisatoshis],
              from: 1000, to: 1400
            },
-           { path: [:partners, 1, :policy, :htlc, :maximum, :milisatoshis],
+           { path: [:partners, 1, :policy, :htlc, :maximum, :millisatoshis],
              from: 4_950_000_000, to: 5_950_000_000 },
            {
              path: [:partners, 1, :policy, :htlc, :blocks, :delta, :minimum],
@@ -261,15 +261,15 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.to_h).to eq(
           { _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
-            accounting: { capacity: { milisatoshis: 6_000_000_000 } },
+            accounting: { capacity: { millisatoshis: 6_000_000_000 } },
             partners: [{ state: 'active',
                          node: { _key: 'de2939d174ddd01e051a5b05e3e2e40479d0dfd16ee5295c0b4985890a603ffc',
                                  public_key: '0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7',
                                  alias: 'SatoshiIsProudOfUs',
                                  color: '#fa770f',
                                  platform: { blockchain: 'bitcoin', network: 'mainnet' } },
-                         policy: { fee: { base: { milisatoshis: 0 }, rate: { parts_per_million: 700 } },
-                                   htlc: { minimum: { milisatoshis: 1000 }, maximum: { milisatoshis: 4_950_000_000 },
+                         policy: { fee: { base: { millisatoshis: 0 }, rate: { parts_per_million: 700 } },
+                                   htlc: { minimum: { millisatoshis: 1000 }, maximum: { millisatoshis: 4_950_000_000 },
                                            blocks: { delta: { minimum: 40 } } } } },
                        { state: 'inactive',
                          node: { _key: '713519e5aca513a070deedc0520be905e0fc3e36f555c33f977b6c369b7d76fb',
@@ -277,8 +277,8 @@ RSpec.describe Lighstorm::Models::Channel do
                                  alias: 'ln.nicehash.com [Nicehash]',
                                  color: '#cf1b99',
                                  platform: { blockchain: 'bitcoin', network: 'mainnet' } },
-                         policy: { fee: { base: { milisatoshis: 1700 }, rate: { parts_per_million: 800 } },
-                                   htlc: { minimum: { milisatoshis: 1400 }, maximum: { milisatoshis: 5_950_000_000 },
+                         policy: { fee: { base: { millisatoshis: 1700 }, rate: { parts_per_million: 800 } },
+                                   htlc: { minimum: { millisatoshis: 1400 }, maximum: { millisatoshis: 5_950_000_000 },
                                            blocks: { delta: { minimum: 200 } } } } }] }
         )
 
@@ -286,7 +286,7 @@ RSpec.describe Lighstorm::Models::Channel do
           { _source: :get_chan_info,
             _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
-            accounting: { capacity: { milisatoshis: 6_000_000_000 } },
+            accounting: { capacity: { millisatoshis: 6_000_000_000 } },
             partners: [{ _source: :get_chan_info,
                          node: { _source: :get_node_info,
                                  _key: 'de2939d174ddd01e051a5b05e3e2e40479d0dfd16ee5295c0b4985890a603ffc',
@@ -296,8 +296,8 @@ RSpec.describe Lighstorm::Models::Channel do
                                  platform: { blockchain: 'bitcoin', network: 'mainnet' },
                                  myself: false },
                          state: 'active',
-                         policy: { fee: { base: { milisatoshis: 0 }, rate: { parts_per_million: 700 } },
-                                   htlc: { minimum: { milisatoshis: 1000 }, maximum: { milisatoshis: 4_950_000_000 },
+                         policy: { fee: { base: { millisatoshis: 0 }, rate: { parts_per_million: 700 } },
+                                   htlc: { minimum: { millisatoshis: 1000 }, maximum: { millisatoshis: 4_950_000_000 },
                                            blocks: { delta: { minimum: 40 } } } } },
                        { _source: :get_chan_info,
                          node: { _source: :get_node_info,
@@ -308,8 +308,8 @@ RSpec.describe Lighstorm::Models::Channel do
                                  platform: { blockchain: 'bitcoin', network: 'mainnet' },
                                  myself: false },
                          state: 'inactive',
-                         policy: { fee: { base: { milisatoshis: 1700 }, rate: { parts_per_million: 800 } },
-                                   htlc: { minimum: { milisatoshis: 1400 }, maximum: { milisatoshis: 5_950_000_000 },
+                         policy: { fee: { base: { millisatoshis: 1700 }, rate: { parts_per_million: 800 } },
+                                   htlc: { minimum: { millisatoshis: 1400 }, maximum: { millisatoshis: 5_950_000_000 },
                                            blocks: { delta: { minimum: 200 } } } } }],
             known: true,
             mine: false,
@@ -333,12 +333,12 @@ RSpec.describe Lighstorm::Models::Channel do
                         public_key: '037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba' },
                 policy: {
                   fee: {
-                    base: { milisatoshis: 1700 },
+                    base: { millisatoshis: 1700 },
                     rate: { parts_per_million: 800 }
                   },
                   htlc: {
-                    minimum: { milisatoshis: 1400 },
-                    maximum: { milisatoshis: 5_950_000_000 },
+                    minimum: { millisatoshis: 1400 },
+                    maximum: { millisatoshis: 5_950_000_000 },
                     blocks: { delta: { minimum: 200 } }
                   }
                 } },
@@ -353,7 +353,7 @@ RSpec.describe Lighstorm::Models::Channel do
             _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
             accounting: {
-              capacity: { milisatoshis: 6_000_000_000 }
+              capacity: { millisatoshis: 6_000_000_000 }
             },
             partners: [
               { _source: :subscribe_channel_graph,
@@ -361,12 +361,12 @@ RSpec.describe Lighstorm::Models::Channel do
                 policy: {
                   _source: :subscribe_channel_graph,
                   fee: {
-                    base: { milisatoshis: 1700 },
+                    base: { millisatoshis: 1700 },
                     rate: { parts_per_million: 800 }
                   },
                   htlc: {
-                    minimum: { milisatoshis: 1400 },
-                    maximum: { milisatoshis: 5_950_000_000 },
+                    minimum: { millisatoshis: 1400 },
+                    maximum: { millisatoshis: 5_950_000_000 },
                     blocks: { delta: { minimum: 200 } }
                   }
                 },

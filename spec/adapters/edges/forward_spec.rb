@@ -28,13 +28,13 @@ RSpec.describe Lighstorm::Adapter::Forward do
         { _source: :forwarding_history,
           _key: '9cdae1a0727397e187eae315e49d9254ffa6a4aac60be5575b16eecb47a019ff',
           at: '2023-01-16 14:49:43 UTC',
-          fee: { milisatoshis: 5206 },
+          fee: { millisatoshis: 5206 },
           in: {
-            amount: { milisatoshis: 69_428_816 },
+            amount: { millisatoshis: 69_428_816 },
             channel: { id: '848952719119024129' }
           },
           out: {
-            amount: { milisatoshis: 69_423_610 },
+            amount: { millisatoshis: 69_423_610 },
             channel: { id: '848952719173877762' }
           } }
       )

@@ -31,7 +31,7 @@ RSpec.describe Lighstorm::Models::PaymentRequest do
       expect(request.address.class).to eq(String)
       expect(request.address.size).to eq(64)
 
-      expect(request.amount.milisatoshis).to eq(982_342_000)
+      expect(request.amount.millisatoshis).to eq(982_342_000)
       expect(request.amount.satoshis).to eq(982_342.0)
 
       expect(request.description.memo).to eq('Local-Rebalance-982342-Sats')

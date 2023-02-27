@@ -30,10 +30,10 @@ module Lighstorm
           state: grpc[:active] ? 'active' : 'inactive',
           exposure: grpc[:private] ? 'private' : 'public',
           accounting: {
-            capacity: { milisatoshis: grpc[:capacity] * 1000 },
-            sent: { milisatoshis: grpc[:total_satoshis_sent] * 1000 },
-            received: { milisatoshis: grpc[:total_satoshis_received] * 1000 },
-            unsettled: { milisatoshis: grpc[:unsettled_balance] * 1000 }
+            capacity: { millisatoshis: grpc[:capacity] * 1000 },
+            sent: { millisatoshis: grpc[:total_satoshis_sent] * 1000 },
+            received: { millisatoshis: grpc[:total_satoshis_received] * 1000 },
+            unsettled: { millisatoshis: grpc[:unsettled_balance] * 1000 }
           },
           partners: [
             ChannelNode.list_channels(grpc, :local),
@@ -49,7 +49,7 @@ module Lighstorm
           # Standard JSON don't support BigInt, so, a String is safer.
           id: grpc[:channel_id].to_s,
           accounting: {
-            capacity: { milisatoshis: grpc[:capacity] * 1000 }
+            capacity: { millisatoshis: grpc[:capacity] * 1000 }
           },
           partners: [
             ChannelNode.get_chan_info(grpc, 1),
@@ -66,7 +66,7 @@ module Lighstorm
           id: grpc[:channel_id].to_s,
           exposure: 'public',
           accounting: {
-            capacity: { milisatoshis: grpc[:capacity] * 1000 }
+            capacity: { millisatoshis: grpc[:capacity] * 1000 }
           },
           partners: [
             ChannelNode.describe_graph(grpc, 1),
@@ -81,7 +81,7 @@ module Lighstorm
           _key: _key(json['chanId'], nil),
           id: json['chanId'],
           accounting: {
-            capacity: { milisatoshis: json['capacity'].to_i * 1000 }
+            capacity: { millisatoshis: json['capacity'].to_i * 1000 }
           },
           partners: [
             ChannelNode.subscribe_channel_graph(json),

@@ -17,7 +17,7 @@ module Lighstorm
       def capacity
         @capacity ||= if @data[:capacity]
                         Satoshis.new(
-                          milisatoshis: @data[:capacity][:milisatoshis]
+                          millisatoshis: @data[:capacity][:millisatoshis]
                         )
                       end
       end
@@ -27,7 +27,7 @@ module Lighstorm
 
         @sent ||= if @data[:sent]
                     Satoshis.new(
-                      milisatoshis: @data[:sent][:milisatoshis]
+                      millisatoshis: @data[:sent][:millisatoshis]
                     )
                   end
       end
@@ -37,7 +37,7 @@ module Lighstorm
 
         @received ||= if @data[:received]
                         Satoshis.new(
-                          milisatoshis: @data[:received][:milisatoshis]
+                          millisatoshis: @data[:received][:millisatoshis]
                         )
                       end
       end
@@ -47,7 +47,7 @@ module Lighstorm
 
         @unsettled ||= if @data[:unsettled]
                          Satoshis.new(
-                           milisatoshis: @data[:unsettled][:milisatoshis]
+                           millisatoshis: @data[:unsettled][:millisatoshis]
                          )
                        end
       end
@@ -76,7 +76,7 @@ module Lighstorm
 
         @capacity = value[:value]
 
-        @data[:capacity][:milisatoshis] = @capacity.milisatoshis
+        @data[:capacity][:millisatoshis] = @capacity.millisatoshis
 
         capacity
       end

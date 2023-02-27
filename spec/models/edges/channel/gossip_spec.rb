@@ -30,8 +30,8 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(diff).to eq(
           [{ path: [:partners, 1, :policy, :fee, :rate, :parts_per_million], from: 100, to: 150 },
-           { path: [:partners, 1, :policy, :htlc, :minimum, :milisatoshis], from: 1000, to: 1200 },
-           { path: [:partners, 1, :policy, :htlc, :maximum, :milisatoshis], from: 990_000_000,
+           { path: [:partners, 1, :policy, :htlc, :minimum, :millisatoshis], from: 1000, to: 1200 },
+           { path: [:partners, 1, :policy, :htlc, :maximum, :millisatoshis], from: 990_000_000,
              to: 920_000_000 },
            { path: [:partners, 1, :policy, :htlc, :blocks, :delta, :minimum], from: 40, to: 20 }]
         )
@@ -51,7 +51,7 @@ RSpec.describe Lighstorm::Models::Channel do
                          node: { _key: nil,
                                  public_key: '03d5099461761b1b4d3f3d2edfe9c929c71ad384ac18abe58a7188890964c8390a' },
                          policy: { fee: { rate: { parts_per_million: 150 } },
-                                   htlc: { minimum: { milisatoshis: 1200 }, maximum: { milisatoshis: 920_000_000 },
+                                   htlc: { minimum: { millisatoshis: 1200 }, maximum: { millisatoshis: 920_000_000 },
                                            blocks: { delta: { minimum: 20 } } } } },
                        { state: nil,
                          node: { _key: nil,
@@ -68,10 +68,10 @@ RSpec.describe Lighstorm::Models::Channel do
         diff = channel.apply!(gossip: gossip)
 
         expect(diff).to eq(
-          [{ path: [:partners, 0, :policy, :fee, :base, :milisatoshis], from: nil, to: 2_147_483_647 },
+          [{ path: [:partners, 0, :policy, :fee, :base, :millisatoshis], from: nil, to: 2_147_483_647 },
            { path: [:partners, 0, :policy, :fee, :rate, :parts_per_million], from: nil, to: 2_147_483_647 },
-           { path: [:partners, 0, :policy, :htlc, :minimum, :milisatoshis], from: nil, to: 1 },
-           { path: [:partners, 0, :policy, :htlc, :maximum, :milisatoshis], from: nil, to: 15_093_000_000 },
+           { path: [:partners, 0, :policy, :htlc, :minimum, :millisatoshis], from: nil, to: 1 },
+           { path: [:partners, 0, :policy, :htlc, :maximum, :millisatoshis], from: nil, to: 15_093_000_000 },
            { path: [:partners, 0, :policy, :htlc, :blocks, :delta, :minimum], from: nil, to: 72 },
            { path: [:partners, 0, :state], from: nil, to: 'inactive' }]
         )
@@ -87,8 +87,8 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(diff).to eq(
           [{ path: [:partners, 1, :policy, :fee, :rate, :parts_per_million], from: 100, to: 150 },
-           { path: [:partners, 1, :policy, :htlc, :minimum, :milisatoshis], from: 1000, to: 1200 },
-           { path: [:partners, 1, :policy, :htlc, :maximum, :milisatoshis], from: 990_000_000,
+           { path: [:partners, 1, :policy, :htlc, :minimum, :millisatoshis], from: 1000, to: 1200 },
+           { path: [:partners, 1, :policy, :htlc, :maximum, :millisatoshis], from: 990_000_000,
              to: 920_000_000 },
            { path: [:partners, 1, :policy, :htlc, :blocks, :delta, :minimum], from: 40, to: 20 }]
         )
@@ -103,8 +103,8 @@ RSpec.describe Lighstorm::Models::Channel do
         diff = channel.apply!(gossip: gossip)
 
         expect(diff).to eq(
-          [{ path: [:partners, 0, :policy, :htlc, :minimum, :milisatoshis], from: nil, to: 1000 },
-           { path: [:partners, 0, :policy, :htlc, :maximum, :milisatoshis], from: nil, to: 396_000_000 },
+          [{ path: [:partners, 0, :policy, :htlc, :minimum, :millisatoshis], from: nil, to: 1000 },
+           { path: [:partners, 0, :policy, :htlc, :maximum, :millisatoshis], from: nil, to: 396_000_000 },
            { path: [:partners, 0, :policy, :htlc, :blocks, :delta, :minimum], from: nil, to: 144 }]
         )
       end

@@ -36,18 +36,18 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.at).to be_a(Time)
         expect(forward.at.utc.to_s).to eq('2023-01-23 01:02:28 UTC')
 
-        expect(forward.fee.milisatoshis).to eq(350)
+        expect(forward.fee.millisatoshis).to eq(350)
         expect(forward.fee.satoshis).to eq(0.35)
 
-        expect(forward.in.amount.milisatoshis).to eq(5_000_850)
+        expect(forward.in.amount.millisatoshis).to eq(5_000_850)
         expect(forward.in.amount.satoshis).to eq(5000.85)
 
-        expect(forward.out.amount.milisatoshis).to eq(5_000_500)
+        expect(forward.out.amount.millisatoshis).to eq(5_000_500)
         expect(forward.out.amount.satoshis).to eq(5000.5)
 
         expect(
-          forward.in.amount.milisatoshis - forward.out.amount.milisatoshis
-        ).to eq(forward.fee.milisatoshis)
+          forward.in.amount.millisatoshis - forward.out.amount.millisatoshis
+        ).to eq(forward.fee.millisatoshis)
 
         # ------------------------------------------------------------------
 
@@ -65,13 +65,13 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.in.channel.active?).to be(true)
         expect(forward.in.channel.exposure).to eq('public')
 
-        expect(forward.in.channel.accounting.capacity.milisatoshis).to eq(6_300_000_000)
+        expect(forward.in.channel.accounting.capacity.millisatoshis).to eq(6_300_000_000)
         expect(forward.in.channel.accounting.capacity.satoshis).to eq(6_300_000)
-        expect(forward.in.channel.accounting.sent.milisatoshis).to eq(49_124_312_000)
+        expect(forward.in.channel.accounting.sent.millisatoshis).to eq(49_124_312_000)
         expect(forward.in.channel.accounting.sent.satoshis).to eq(49_124_312)
-        expect(forward.in.channel.accounting.received.milisatoshis).to be > 45_000_000_000
+        expect(forward.in.channel.accounting.received.millisatoshis).to be > 45_000_000_000
         expect(forward.in.channel.accounting.received.satoshis).to be > 45_000_000
-        expect(forward.in.channel.accounting.unsettled.milisatoshis).to eq(0)
+        expect(forward.in.channel.accounting.unsettled.millisatoshis).to eq(0)
         expect(forward.in.channel.accounting.unsettled.satoshis).to eq(0)
 
         expect(forward.in.channel.myself.node._key.size).to eq(64)
@@ -79,17 +79,17 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.in.channel.myself.node.alias).to eq('icebaker/old-stone')
         expect(forward.in.channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
         expect(forward.in.channel.myself.node.color).to eq('#ff338f')
-        expect(forward.in.channel.myself.accounting.balance.milisatoshis).to be > 500_000_000
-        expect(forward.in.channel.myself.accounting.balance.milisatoshis).to be < 10_000_000_000
+        expect(forward.in.channel.myself.accounting.balance.millisatoshis).to be > 500_000_000
+        expect(forward.in.channel.myself.accounting.balance.millisatoshis).to be < 10_000_000_000
         expect(forward.in.channel.myself.accounting.balance.satoshis).to be > 500_000
         expect(forward.in.channel.myself.accounting.balance.satoshis).to be < 10_000_000
-        expect(forward.in.channel.myself.policy.fee.base.milisatoshis).to eq(0)
+        expect(forward.in.channel.myself.policy.fee.base.millisatoshis).to eq(0)
         expect(forward.in.channel.myself.policy.fee.base.satoshis).to eq(0)
         expect(forward.in.channel.myself.policy.fee.rate.parts_per_million).to eq(5)
         expect(forward.in.channel.myself.policy.fee.rate.percentage).to eq(0.0005)
-        expect(forward.in.channel.myself.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(forward.in.channel.myself.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(forward.in.channel.myself.policy.htlc.minimum.satoshis).to eq(1)
-        expect(forward.in.channel.myself.policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+        expect(forward.in.channel.myself.policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
         expect(forward.in.channel.myself.policy.htlc.maximum.satoshis).to eq(6_045_000)
         expect(forward.in.channel.myself.node.platform.blockchain).to eq('bitcoin')
         expect(forward.in.channel.myself.node.platform.network).to eq('mainnet')
@@ -101,17 +101,17 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.in.channel.partner.node.alias).to eq('Boltz')
         expect(forward.in.channel.partner.node.public_key).to eq('026165850492521f4ac8abd9bd8088123446d126f648ca35e60f88177dc149ceb2')
         expect(forward.in.channel.partner.node.color).to eq('#ff9800')
-        expect(forward.in.channel.partner.accounting.balance.milisatoshis).to be > 500_000_000
-        expect(forward.in.channel.partner.accounting.balance.milisatoshis).to be < 10_000_000_000
+        expect(forward.in.channel.partner.accounting.balance.millisatoshis).to be > 500_000_000
+        expect(forward.in.channel.partner.accounting.balance.millisatoshis).to be < 10_000_000_000
         expect(forward.in.channel.partner.accounting.balance.satoshis).to be > 500_000
         expect(forward.in.channel.partner.accounting.balance.satoshis).to be < 10_000_000
-        expect(forward.in.channel.partner.policy.fee.base.milisatoshis).to eq(0)
+        expect(forward.in.channel.partner.policy.fee.base.millisatoshis).to eq(0)
         expect(forward.in.channel.partner.policy.fee.base.satoshis).to eq(0)
         expect(forward.in.channel.partner.policy.fee.rate.parts_per_million).to eq(1)
         expect(forward.in.channel.partner.policy.fee.rate.percentage).to eq(0.0001)
-        expect(forward.in.channel.partner.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(forward.in.channel.partner.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(forward.in.channel.partner.policy.htlc.minimum.satoshis).to eq(1)
-        expect(forward.in.channel.partner.policy.htlc.maximum.milisatoshis).to eq(6_237_000_000)
+        expect(forward.in.channel.partner.policy.htlc.maximum.millisatoshis).to eq(6_237_000_000)
         expect(forward.in.channel.partner.policy.htlc.maximum.satoshis).to eq(6_237_000)
         expect(forward.in.channel.partner.node.platform.blockchain).to eq('bitcoin')
         expect(forward.in.channel.partner.node.platform.network).to eq('mainnet')
@@ -136,17 +136,17 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.out.channel.active?).to be(true)
         expect(forward.out.channel.exposure).to eq('public')
 
-        expect(forward.out.channel.accounting.capacity.milisatoshis).to eq(6_500_000_000)
+        expect(forward.out.channel.accounting.capacity.millisatoshis).to eq(6_500_000_000)
         expect(forward.out.channel.accounting.capacity.satoshis).to eq(6_500_000)
-        expect(forward.out.channel.accounting.sent.milisatoshis).to be > 7_000_000_000
-        expect(forward.out.channel.accounting.sent.milisatoshis).to be < 70_000_000_000
+        expect(forward.out.channel.accounting.sent.millisatoshis).to be > 7_000_000_000
+        expect(forward.out.channel.accounting.sent.millisatoshis).to be < 70_000_000_000
         expect(forward.out.channel.accounting.sent.satoshis).to be > 7_000_000
         expect(forward.out.channel.accounting.sent.satoshis).to be < 70_000_000
-        expect(forward.out.channel.accounting.received.milisatoshis).to be > 2_000_000_000
-        expect(forward.out.channel.accounting.received.milisatoshis).to be < 20_000_000_000
+        expect(forward.out.channel.accounting.received.millisatoshis).to be > 2_000_000_000
+        expect(forward.out.channel.accounting.received.millisatoshis).to be < 20_000_000_000
         expect(forward.out.channel.accounting.received.satoshis).to be > 2_000_000
         expect(forward.out.channel.accounting.received.satoshis).to be < 20_000_000
-        expect(forward.out.channel.accounting.unsettled.milisatoshis).to eq(0)
+        expect(forward.out.channel.accounting.unsettled.millisatoshis).to eq(0)
         expect(forward.out.channel.accounting.unsettled.satoshis).to eq(0)
 
         expect(forward.out.channel.myself.node._key.size).to eq(64)
@@ -155,18 +155,18 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.out.channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
         expect(forward.out.channel.myself.node.color).to eq('#ff338f')
 
-        expect(forward.in.channel.myself.accounting.balance.milisatoshis).to be > 500_000_000
-        expect(forward.in.channel.myself.accounting.balance.milisatoshis).to be < 10_000_000_000
+        expect(forward.in.channel.myself.accounting.balance.millisatoshis).to be > 500_000_000
+        expect(forward.in.channel.myself.accounting.balance.millisatoshis).to be < 10_000_000_000
         expect(forward.in.channel.myself.accounting.balance.satoshis).to be > 500_000
         expect(forward.in.channel.myself.accounting.balance.satoshis).to be < 10_000_000
 
-        expect(forward.out.channel.myself.policy.fee.base.milisatoshis).to eq(0)
+        expect(forward.out.channel.myself.policy.fee.base.millisatoshis).to eq(0)
         expect(forward.out.channel.myself.policy.fee.base.satoshis).to eq(0)
         expect(forward.out.channel.myself.policy.fee.rate.parts_per_million).to eq(874)
         expect(forward.out.channel.myself.policy.fee.rate.percentage).to eq(0.0874)
-        expect(forward.out.channel.myself.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(forward.out.channel.myself.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(forward.out.channel.myself.policy.htlc.minimum.satoshis).to eq(1)
-        expect(forward.out.channel.myself.policy.htlc.maximum.milisatoshis).to eq(6_045_000_000)
+        expect(forward.out.channel.myself.policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)
         expect(forward.out.channel.myself.policy.htlc.maximum.satoshis).to eq(6_045_000)
         expect(forward.out.channel.myself.node.platform.blockchain).to eq('bitcoin')
         expect(forward.out.channel.myself.node.platform.network).to eq('mainnet')
@@ -179,18 +179,18 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.out.channel.partner.node.public_key).to eq('035e4ff418fc8b5554c5d9eea66396c227bd429a3251c8cbc711002ba215bfc226')
         expect(forward.out.channel.partner.node.color).to eq('#3399ff')
 
-        expect(forward.in.channel.partner.accounting.balance.milisatoshis).to be > 500_000_000
-        expect(forward.in.channel.partner.accounting.balance.milisatoshis).to be < 10_000_000_000
+        expect(forward.in.channel.partner.accounting.balance.millisatoshis).to be > 500_000_000
+        expect(forward.in.channel.partner.accounting.balance.millisatoshis).to be < 10_000_000_000
         expect(forward.in.channel.partner.accounting.balance.satoshis).to be > 500_000
         expect(forward.in.channel.partner.accounting.balance.satoshis).to be < 10_000_000
 
-        expect(forward.out.channel.partner.policy.fee.base.milisatoshis).to eq(0)
+        expect(forward.out.channel.partner.policy.fee.base.millisatoshis).to eq(0)
         expect(forward.out.channel.partner.policy.fee.base.satoshis).to eq(0)
         expect(forward.out.channel.partner.policy.fee.rate.parts_per_million).to eq(300)
         expect(forward.out.channel.partner.policy.fee.rate.percentage).to eq(0.03)
-        expect(forward.out.channel.partner.policy.htlc.minimum.milisatoshis).to eq(1000)
+        expect(forward.out.channel.partner.policy.htlc.minimum.millisatoshis).to eq(1000)
         expect(forward.out.channel.partner.policy.htlc.minimum.satoshis).to eq(1)
-        expect(forward.out.channel.partner.policy.htlc.maximum.milisatoshis).to eq(6_435_000_000)
+        expect(forward.out.channel.partner.policy.htlc.maximum.millisatoshis).to eq(6_435_000_000)
         expect(forward.out.channel.partner.policy.htlc.maximum.satoshis).to eq(6_435_000)
         expect(forward.out.channel.partner.node.platform.blockchain).to eq('bitcoin')
         expect(forward.out.channel.partner.node.platform.network).to eq('mainnet')
@@ -201,7 +201,7 @@ RSpec.describe Lighstorm::Models::Forward do
 
         Contract.expect(
           forward.to_h,
-          'd22c4690dcb9cdfc20d787b41eda9e194aa62ff3848d4c1df847488590e19df4'
+          'b469aaa041f93dc3a6bd20e596c3d29480b5615ecf7972378dbe98791dcfd2e5'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -235,18 +235,18 @@ RSpec.describe Lighstorm::Models::Forward do
         expect(forward.at).to be_a(Time)
         expect(forward.at.utc.to_s).to eq('2023-01-16 14:49:43 UTC')
 
-        expect(forward.fee.milisatoshis).to eq(5206)
+        expect(forward.fee.millisatoshis).to eq(5206)
         expect(forward.fee.satoshis).to eq(5.206)
 
-        expect(forward.in.amount.milisatoshis).to eq(69_428_816)
+        expect(forward.in.amount.millisatoshis).to eq(69_428_816)
         expect(forward.in.amount.satoshis).to eq(69_428.816)
 
-        expect(forward.out.amount.milisatoshis).to eq(69_423_610)
+        expect(forward.out.amount.millisatoshis).to eq(69_423_610)
         expect(forward.out.amount.satoshis).to eq(69_423.61)
 
         expect(
-          forward.in.amount.milisatoshis - forward.out.amount.milisatoshis
-        ).to eq(forward.fee.milisatoshis)
+          forward.in.amount.millisatoshis - forward.out.amount.millisatoshis
+        ).to eq(forward.fee.millisatoshis)
 
         # ------------------------------------------------------------------
 
@@ -283,7 +283,7 @@ RSpec.describe Lighstorm::Models::Forward do
         expect { forward.out.channel.partner }.to raise_error(UnknownChannelError)
 
         Contract.expect(
-          forward.to_h, '9942d7f65337dd2c49cf57072e81da86a9d3fc973ffa0a5b253e23d8aa68f06a'
+          forward.to_h, 'febd1bd40e081685c5000faa98249d6760e37377f96600736a0a14f766176c19'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

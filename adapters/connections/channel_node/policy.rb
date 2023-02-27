@@ -6,12 +6,12 @@ module Lighstorm
       def self.get_chan_info(grpc)
         {
           fee: {
-            base: { milisatoshis: grpc[:fee_base_msat] },
+            base: { millisatoshis: grpc[:fee_base_msat] },
             rate: { parts_per_million: grpc[:fee_rate_milli_msat] }
           },
           htlc: {
-            minimum: { milisatoshis: grpc[:min_htlc] },
-            maximum: { milisatoshis: grpc[:max_htlc_msat] },
+            minimum: { millisatoshis: grpc[:min_htlc] },
+            maximum: { millisatoshis: grpc[:max_htlc_msat] },
             # https://github.com/lightning/bolts/blob/master/02-peer-protocol.md#cltv_expiry_delta-selection
             blocks: {
               delta: {
@@ -26,12 +26,12 @@ module Lighstorm
         result = {
           _source: :subscribe_channel_graph,
           fee: {
-            base: { milisatoshis: json['routingPolicy']['feeBaseMsat'].to_i },
+            base: { millisatoshis: json['routingPolicy']['feeBaseMsat'].to_i },
             rate: { parts_per_million: json['routingPolicy']['feeRateMilliMsat'].to_i }
           },
           htlc: {
-            minimum: { milisatoshis: json['routingPolicy']['minHtlc'].to_i },
-            maximum: { milisatoshis: json['routingPolicy']['maxHtlcMsat'].to_i },
+            minimum: { millisatoshis: json['routingPolicy']['minHtlc'].to_i },
+            maximum: { millisatoshis: json['routingPolicy']['maxHtlcMsat'].to_i },
             # https://github.com/lightning/bolts/blob/master/02-peer-protocol.md#cltv_expiry_delta-selection
             blocks: {
               delta: {

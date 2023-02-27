@@ -19,11 +19,11 @@ module Lighstorm
                 funding_txid_str: transaction[:funding][:id],
                 output_index: transaction[:funding][:index]
               },
-              base_fee_msat: policy[:fee][:base][:milisatoshis],
+              base_fee_msat: policy[:fee][:base][:millisatoshis],
               fee_rate_ppm: policy[:fee][:rate][:parts_per_million],
               time_lock_delta: policy[:htlc][:blocks][:delta][:minimum],
-              max_htlc_msat: policy[:htlc][:maximum][:milisatoshis],
-              min_htlc_msat: policy[:htlc][:minimum][:milisatoshis]
+              max_htlc_msat: policy[:htlc][:maximum][:millisatoshis],
+              min_htlc_msat: policy[:htlc][:minimum][:millisatoshis]
             }
           }
 
@@ -35,12 +35,12 @@ module Lighstorm
             grpc_request[:params][:fee_rate_ppm] = params[:rate][:parts_per_million]
           end
 
-          if params[:base] && params[:base][:milisatoshis]
-            if (params[:base][:milisatoshis]).negative?
-              raise Errors::NegativeNotAllowedError, "fee base can't be negative: #{params[:base][:milisatoshis]}"
+          if params[:base] && params[:base][:millisatoshis]
+            if (params[:base][:millisatoshis]).negative?
+              raise Errors::NegativeNotAllowedError, "fee base can't be negative: #{params[:base][:millisatoshis]}"
             end
 
-            grpc_request[:params][:base_fee_msat] = params[:base][:milisatoshis]
+            grpc_request[:params][:base_fee_msat] = params[:base][:millisatoshis]
           end
 
           grpc_request
@@ -68,7 +68,7 @@ module Lighstorm
           token = SecureRandom.hex
           policy.fee.prepare_token!(token)
           policy.fee.base = {
-            value: Models::Satoshis.new(milisatoshis: grpc_request[:params][:base_fee_msat]),
+            value: Models::Satoshis.new(millisatoshis: grpc_request[:params][:base_fee_msat]),
             token: token
           }
 

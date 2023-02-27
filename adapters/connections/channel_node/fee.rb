@@ -11,7 +11,7 @@ module Lighstorm
             policy: {
               fee: {
                 base: {
-                  milisatoshis: grpc[:base_fee_msat]
+                  millisatoshis: grpc[:base_fee_msat]
                 },
                 rate: {
                   parts_per_million: grpc[:fee_per_mil]

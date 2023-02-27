@@ -36,7 +36,7 @@ module Lighstorm
             last_at: nil,
             analysis: {
               count: 0,
-              sums: { amount: { milisatoshis: 0 }, fee: { milisatoshis: 0 } }
+              sums: { amount: { millisatoshis: 0 }, fee: { millisatoshis: 0 } }
             },
             channel: nil
           }
@@ -47,8 +47,8 @@ module Lighstorm
             group[:channel] = forward[direction][:channel] if group[:channel].nil?
 
             group[:analysis][:count] += 1
-            group[:analysis][:sums][:amount][:milisatoshis] += forward[:in][:amount][:milisatoshis]
-            group[:analysis][:sums][:fee][:milisatoshis] += forward[:fee][:milisatoshis]
+            group[:analysis][:sums][:amount][:millisatoshis] += forward[:in][:amount][:millisatoshis]
+            group[:analysis][:sums][:fee][:millisatoshis] += forward[:fee][:millisatoshis]
           end
 
           group[:_key] = _key(group)

@@ -24,7 +24,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
       adapted = described_class.decode_pay_req(raw)
 
       Contract.expect(
-        adapted, '1d5ac1a2a1c6d4ef78491712e0752fa3020c962952e993029ba2c05f2d1f03cd'
+        adapted, '83d844babf7d2da248af40624e113600b6ee372e0592b1d27e180254d647d14f'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -33,7 +33,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
         expect(actual.contract).to eq(
           { _source: 'Symbol:11..20',
             address: 'String:50+',
-            amount: { milisatoshis: 'Integer:0..10' },
+            amount: { millisatoshis: 'Integer:0..10' },
             description: { hash: 'Nil', memo: 'String:0..10' },
             secret: { hash: 'String:50+' } }
         )
@@ -59,7 +59,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
       adapted = described_class.list_invoices(raw)
 
       Contract.expect(
-        adapted, '8cf07999dfc949076f097a93f9edfe2e3a703be02b89f9df0988c4ec8fab76c4'
+        adapted, '332fff21d48b3cc628e77ab0a2423ab80120f36780225f553b206e5140c74dd3'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -68,7 +68,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
         expect(actual.contract).to eq(
           { _source: 'Symbol:11..20',
             address: 'String:50+',
-            amount: { milisatoshis: 'Integer:0..10' },
+            amount: { millisatoshis: 'Integer:0..10' },
             code: 'String:50+',
             description: { hash: 'Nil', memo: 'String:21..30' },
             secret: { hash: 'String:50+', preimage: 'String:50+' } }
@@ -97,7 +97,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
       adapted = described_class.lookup_invoice(raw)
 
       Contract.expect(
-        adapted, '8cf07999dfc949076f097a93f9edfe2e3a703be02b89f9df0988c4ec8fab76c4'
+        adapted, '332fff21d48b3cc628e77ab0a2423ab80120f36780225f553b206e5140c74dd3'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -106,7 +106,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
         expect(actual.contract).to eq(
           { _source: 'Symbol:11..20',
             address: 'String:50+',
-            amount: { milisatoshis: 'Integer:0..10' },
+            amount: { millisatoshis: 'Integer:0..10' },
             code: 'String:50+',
             description: { hash: 'Nil', memo: 'String:21..30' },
             secret: { hash: 'String:50+', preimage: 'String:50+' } }
@@ -139,7 +139,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
       adapted = described_class.list_payments(raw)
 
       Contract.expect(
-        adapted, 'd6724b0b9f8385c31b98decbac7ea44034c40db9ca8d6dc95a5967f3d4c8751f'
+        adapted, 'b05be87ad9f3f2ff4617bae47478c8a0a32c1198d3729095077f623ea6d07033'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -148,7 +148,7 @@ RSpec.describe Lighstorm::Adapter::PaymentRequest do
         expect(actual.contract).to eq(
           { _source: 'Symbol:11..20',
             address: 'String:50+',
-            amount: { milisatoshis: 'Integer:0..10' },
+            amount: { millisatoshis: 'Integer:0..10' },
             code: 'String:50+',
             secret: { hash: 'String:50+', preimage: 'String:50+' } }
         )

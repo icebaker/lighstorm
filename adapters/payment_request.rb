@@ -21,7 +21,7 @@ module Lighstorm
       def self.decode_pay_req(grpc)
         {
           _source: :decode_pay_req,
-          amount: { milisatoshis: grpc[:num_msat] },
+          amount: { millisatoshis: grpc[:num_msat] },
           description: {
             memo: grpc[:description],
             hash: grpc[:description_hash] == '' ? nil : grpc[:description_hash]
@@ -48,7 +48,7 @@ module Lighstorm
       def self.list_or_lookup_invoice(grpc)
         {
           code: grpc[:payment_request],
-          amount: { milisatoshis: grpc[:value_msat] },
+          amount: { millisatoshis: grpc[:value_msat] },
           description: {
             memo: grpc[:memo],
             hash: grpc[:description_hash] == '' ? nil : grpc[:description_hash]
@@ -67,7 +67,7 @@ module Lighstorm
         data = {
           _source: :list_payments,
           code: grpc[:payment_request],
-          amount: { milisatoshis: grpc[:value_msat] },
+          amount: { millisatoshis: grpc[:value_msat] },
           secret: {
             preimage: grpc[:payment_preimage],
             hash: grpc[:payment_hash]

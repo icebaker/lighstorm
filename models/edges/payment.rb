@@ -28,7 +28,7 @@ module Lighstorm
       end
 
       def fee
-        @fee ||= Satoshis.new(milisatoshis: @data[:fee][:milisatoshis])
+        @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
       end
 
       def hops
@@ -56,8 +56,8 @@ module Lighstorm
           settled_at: settled_at,
           purpose: purpose,
           fee: {
-            milisatoshis: fee.milisatoshis,
-            parts_per_million: fee.parts_per_million(request.amount.milisatoshis)
+            millisatoshis: fee.millisatoshis,
+            parts_per_million: fee.parts_per_million(request.amount.millisatoshis)
           },
           request: request.to_h,
           from: from.to_h,

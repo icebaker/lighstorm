@@ -25,7 +25,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
       adapted = described_class.list_payments(raw, node_get_info)
 
       Contract.expect(
-        adapted, '880eed1f59206bb3e51a6f996a9ffaf50ad7c03e91ffc761e3e7e00c7c65545f'
+        adapted, '434176033c4a8b661deb125b86db0de6906230d8caba04ec460d509402b76342'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -34,34 +34,34 @@ RSpec.describe Lighstorm::Adapter::Payment do
           { _key: 'String:50+',
             _source: 'Symbol:11..20',
             created_at: 'Time',
-            fee: { milisatoshis: 'Integer:0..10' },
+            fee: { millisatoshis: 'Integer:0..10' },
             hops: [
               { _source: 'Symbol:11..20',
-                amount: { milisatoshis: 'Integer:0..10' },
+                amount: { millisatoshis: 'Integer:0..10' },
                 channel: {
                   _key: 'String:50+',
                   id: 'String:11..20',
                   partners: [{ node: { _key: 'String:50+', public_key: 'String:50+' } }],
                   target: { public_key: 'String:50+' }
                 },
-                fee: { milisatoshis: 'Integer:0..10' },
+                fee: { millisatoshis: 'Integer:0..10' },
                 hop: 'Integer:0..10' },
               { _source: 'Symbol:11..20',
-                amount: { milisatoshis: 'Integer:0..10' },
+                amount: { millisatoshis: 'Integer:0..10' },
                 channel: {
                   _key: 'String:50+',
                   id: 'String:11..20',
                   partners: [{ node: { _key: 'String:50+', public_key: 'String:50+' } }],
                   target: { public_key: 'String:50+' }
                 },
-                fee: { milisatoshis: 'Integer:0..10' },
+                fee: { millisatoshis: 'Integer:0..10' },
                 hop: 'Integer:0..10' }
             ],
             purpose: 'String:0..10',
             request: {
               _source: 'Symbol:11..20',
               address: 'String:50+',
-              amount: { milisatoshis: 'Integer:0..10' },
+              amount: { millisatoshis: 'Integer:0..10' },
               code: 'String:50+',
               secret: { hash: 'String:50+', preimage: 'String:50+' }
             },
