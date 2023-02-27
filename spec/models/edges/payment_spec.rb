@@ -163,7 +163,7 @@ RSpec.describe Lighstorm::Models::Payment do
 
       it 'models' do
         expect(data[:meta][:calls].keys).to eq(
-          %i[decode_pay_req lookup_invoice get_node_info get_chan_info list_channels]
+          %i[fee_report decode_pay_req lookup_invoice get_chan_info get_node_info list_channels]
         )
 
         expect(payment._key.size).to eq(64)

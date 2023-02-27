@@ -12,7 +12,7 @@ module VCR
     end
 
     def replay!(key, *params, &block)
-      VCR.replay(key, *params, kind: kind, &block)
+      VCR.replay!(key, *params, kind: kind, &block)
     end
   end
 
@@ -44,11 +44,11 @@ module VCR
   end
 
   def self.replay!(key, params = {}, kind:, &block)
-    path = build_path_forr(key, params, kind: kind)
+    path = build_path_for(key, params, kind: kind)
 
     FileUtils.rm_f(path)
 
-    replay(key, params, &block)
+    replay(key, params, kind: kind, &block)
   end
 
   def self.build_path_for(key, params, kind: :tapes, partial: false)

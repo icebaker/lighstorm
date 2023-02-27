@@ -93,7 +93,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
 
     context 'open' do
       it 'adapts' do
-        secret_hash = '3055894c40aac008121ad045475a3b124f7214e5e08ec42902a63ef28f59e4fc'
+        secret_hash = '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637'
 
         raw = VCR.tape.replay("lightning.lookup_invoice/#{secret_hash}") do
           Lighstorm::Ports::GRPC.lightning.lookup_invoice(

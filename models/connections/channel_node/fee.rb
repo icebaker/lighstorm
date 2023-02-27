@@ -46,9 +46,10 @@ module Lighstorm
         Marshal.load(Marshal.dump(@data))
       end
 
-      def update(params, preview: false, fake: false)
+      def update(params, preview: false, &vcr)
         Controllers::Channel::UpdateFee.perform(
-          @policy, params, preview: preview, fake: fake
+          @policy, @policy.transaction, params,
+          preview: preview, &vcr
         )
       end
 

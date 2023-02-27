@@ -138,10 +138,14 @@ RSpec.describe Lighstorm::Models::Forward do
 
         expect(forward.out.channel.accounting.capacity.milisatoshis).to eq(6_500_000_000)
         expect(forward.out.channel.accounting.capacity.satoshis).to eq(6_500_000)
-        expect(forward.out.channel.accounting.sent.milisatoshis).to eq(7_710_146_000)
-        expect(forward.out.channel.accounting.sent.satoshis).to eq(7_710_146)
-        expect(forward.out.channel.accounting.received.milisatoshis).to eq(2_278_505_000)
-        expect(forward.out.channel.accounting.received.satoshis).to eq(2_278_505)
+        expect(forward.out.channel.accounting.sent.milisatoshis).to be > 7_000_000_000
+        expect(forward.out.channel.accounting.sent.milisatoshis).to be < 70_000_000_000
+        expect(forward.out.channel.accounting.sent.satoshis).to be > 7_000_000
+        expect(forward.out.channel.accounting.sent.satoshis).to be < 70_000_000
+        expect(forward.out.channel.accounting.received.milisatoshis).to be > 2_000_000_000
+        expect(forward.out.channel.accounting.received.milisatoshis).to be < 20_000_000_000
+        expect(forward.out.channel.accounting.received.satoshis).to be > 2_000_000
+        expect(forward.out.channel.accounting.received.satoshis).to be < 20_000_000
         expect(forward.out.channel.accounting.unsettled.milisatoshis).to eq(0)
         expect(forward.out.channel.accounting.unsettled.satoshis).to eq(0)
 

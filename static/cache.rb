@@ -3,6 +3,8 @@
 module Lighstorm
   module Static
     CACHE = {
+      update_channel_policy: false,
+      add_invoice: false,
       fee_report: {
         ttl: 0.01,
         properties: %i[

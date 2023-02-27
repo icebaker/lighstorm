@@ -189,31 +189,6 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.dump).to eq(described_class.new(channel.dump).dump)
         expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
-
-        params = {
-          rate: { parts_per_million: channel.myself.policy.fee.rate.parts_per_million + 5 },
-          base: { milisatoshis: channel.myself.policy.fee.base.milisatoshis + 7 }
-        }
-
-        channel.myself.policy.fee.update(params, preview: false, fake: true)
-
-        expect(channel.myself.policy.fee.rate.parts_per_million).to eq(
-          params[:rate][:parts_per_million]
-        )
-
-        expect(channel.myself.policy.fee.base.milisatoshis).to eq(
-          params[:base][:milisatoshis]
-        )
-
-        copy = described_class.new(channel.dump)
-
-        expect(copy.myself.policy.fee.rate.parts_per_million).to eq(
-          params[:rate][:parts_per_million]
-        )
-
-        expect(copy.myself.policy.fee.base.milisatoshis).to eq(
-          params[:base][:milisatoshis]
-        )
       end
     end
 

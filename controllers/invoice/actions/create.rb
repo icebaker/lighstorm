@@ -26,9 +26,9 @@ module Lighstorm
         end
 
         def self.call(grpc_request)
-          LND.instance.middleware("lightning.#{grpc_request[:method]}") do
-            LND.instance.client.lightning.send(grpc_request[:method], grpc_request[:params])
-          end.to_h
+          Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
+            grpc_request[:method], grpc_request[:params]
+          ).to_h
         end
 
         def self.prepare(description: nil, milisatoshis: nil)
@@ -73,10 +73,6 @@ module Lighstorm
           model = self.model(data)
 
           OUTPUT.new({ response: response, result: model })
-
-          # # result = Invoice.find_by_secret_hash(response[:r_hash].unpack1('H*'))
-
-          # # OUTPUT.new({ response: reponse, result: result })
         end
       end
     end
