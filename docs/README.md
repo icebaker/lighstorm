@@ -407,8 +407,8 @@ action = Lighstorm::Invoice.create(
 
 action.to_h
 
-action.result
-action.grpc.response
+action.response
+invoice = action.result
 ```
 
 ## Payment
