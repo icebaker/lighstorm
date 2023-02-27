@@ -6,7 +6,7 @@ require_relative '../../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Payment do
   context 'list_payments' do
     it 'adapts' do
-      raw = VCR.replay('lightning.list_payments.first') do
+      raw = VCR.tape.replay('lightning.list_payments.first') do
         Lighstorm::Ports::GRPC.lightning.list_payments.payments.first.to_h
       end
 
@@ -18,7 +18,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
         expect(actual.contract).to eq(expected.contract)
       end
 
-      node_get_info = VCR.replay('lightning.get_info') do
+      node_get_info = VCR.tape.replay('lightning.get_info') do
         Lighstorm::Ports::GRPC.lightning.get_info.to_h
       end
 

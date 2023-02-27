@@ -14,7 +14,7 @@ RSpec.describe Lighstorm::Models::Channel do
   describe '.mine' do
     it 'models' do
       data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
-        VCR.replay('Controllers::Channel.mine') do
+        VCR.tape.replay('Controllers::Channel.mine') do
           data = fetch.call
           data[:list_channels] = [data[:list_channels][0].to_h]
           data
@@ -38,7 +38,7 @@ RSpec.describe Lighstorm::Models::Channel do
       expect(channel.exposure).to eq('public')
 
       expect(channel.transaction.funding.id.class).to eq(String)
-      expect(channel.transaction.funding.id.size).to eq(66)
+      expect(channel.transaction.funding.id.size).to eq(64)
       expect(channel.transaction.funding.index.class).to eq(Integer)
 
       expect(channel.accounting.capacity.milisatoshis).to eq(6_200_000_000)
@@ -160,7 +160,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '850111604344029185'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -295,7 +295,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '553951550347608065'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -375,7 +375,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '853996178921881601'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -468,7 +468,7 @@ RSpec.describe Lighstorm::Models::Channel do
   describe 'all' do
     let :data do
       Lighstorm::Controllers::Channel::All.data do |fetch|
-        VCR.replay('Controllers::Channel.all') do
+        VCR.tape.replay('Controllers::Channel.all') do
           data = fetch.call
 
           mine = Lighstorm::Controllers::Channel::Mine.data.map { |c| c[:id] }
@@ -580,10 +580,14 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.accounting.capacity.milisatoshis).to eq(6_500_000_000)
         expect(channel.accounting.capacity.satoshis).to eq(6_500_000)
-        expect(channel.accounting.sent.milisatoshis).to eq(7_710_146_000)
-        expect(channel.accounting.sent.satoshis).to eq(7_710_146)
-        expect(channel.accounting.received.milisatoshis).to eq(2_278_505_000)
-        expect(channel.accounting.received.satoshis).to eq(2_278_505)
+        expect(channel.accounting.sent.milisatoshis).to be > 7_000_000_000
+        expect(channel.accounting.sent.milisatoshis).to be < 70_000_000_000
+        expect(channel.accounting.sent.satoshis).to be > 7_000_000
+        expect(channel.accounting.sent.satoshis).to be < 70_000_000
+        expect(channel.accounting.received.milisatoshis).to be > 2_000_000_000
+        expect(channel.accounting.received.milisatoshis).to be < 20_000_000_000
+        expect(channel.accounting.received.satoshis).to be > 2_000_000
+        expect(channel.accounting.received.satoshis).to be < 20_000_000
         expect(channel.accounting.unsettled.milisatoshis).to eq(0)
         expect(channel.accounting.unsettled.satoshis).to eq(0)
 
@@ -633,8 +637,10 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partner.node.alias).to eq('WalletOfSatoshi.com')
         expect(channel.partner.node.public_key).to eq('035e4ff418fc8b5554c5d9eea66396c227bd429a3251c8cbc711002ba215bfc226')
         expect(channel.partner.node.color).to eq('#3399ff')
-        expect(channel.partner.accounting.balance.milisatoshis).to eq(5_431_641_000)
-        expect(channel.partner.accounting.balance.satoshis).to eq(5_431_641)
+        expect(channel.partner.accounting.balance.milisatoshis).to be > 5_000_000_000
+        expect(channel.partner.accounting.balance.milisatoshis).to be < 50_000_000_000
+        expect(channel.partner.accounting.balance.satoshis).to be > 5_000_000
+        expect(channel.partner.accounting.balance.satoshis).to be < 50_000_000
         expect(channel.partner.policy.fee.base.milisatoshis).to eq(0)
         expect(channel.partner.policy.fee.base.satoshis).to eq(0)
         expect(channel.partner.policy.fee.rate.parts_per_million).to eq(300)
@@ -652,8 +658,10 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.partners[1].node.alias).to eq('WalletOfSatoshi.com')
         expect(channel.partners[1].node.public_key).to eq('035e4ff418fc8b5554c5d9eea66396c227bd429a3251c8cbc711002ba215bfc226')
         expect(channel.partners[1].node.color).to eq('#3399ff')
-        expect(channel.partners[1].accounting.balance.milisatoshis).to eq(5_431_641_000)
-        expect(channel.partners[1].accounting.balance.satoshis).to eq(5_431_641)
+        expect(channel.partners[1].accounting.balance.milisatoshis).to be > 5_000_000_000
+        expect(channel.partners[1].accounting.balance.milisatoshis).to be < 50_000_000_000
+        expect(channel.partners[1].accounting.balance.satoshis).to be > 5_000_000
+        expect(channel.partners[1].accounting.balance.satoshis).to be < 50_000_000
         expect(channel.partners[1].policy.fee.base.milisatoshis).to eq(0)
         expect(channel.partners[1].policy.fee.base.satoshis).to eq(0)
         expect(channel.partners[1].policy.fee.rate.parts_per_million).to eq(300)

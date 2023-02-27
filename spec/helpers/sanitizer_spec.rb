@@ -24,6 +24,20 @@ RSpec.describe Sanitizer do
       end
     end
 
+    context 'string' do
+      let(:value) { 'lor,em:2' }
+
+      let(:obfuscate) { described_class.obfuscate(value) }
+
+      it 'obfuscates' do
+        expect(obfuscate[3]).to eq(',')
+        expect(obfuscate[6]).to eq(':')
+        expect(obfuscate).not_to eq(value)
+        expect(obfuscate.class).to eq(value.class)
+        expect(obfuscate.size).to eq(value.size)
+      end
+    end
+
     context 'symbol' do
       let(:value) { :symbol }
 

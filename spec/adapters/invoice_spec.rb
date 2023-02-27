@@ -6,7 +6,7 @@ require_relative '../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Invoice do
   context 'list_invoices' do
     it 'adapts' do
-      raw = VCR.replay('lightning.list_invoices.first/memo/settled') do
+      raw = VCR.tape.replay('lightning.list_invoices.first/memo/settled') do
         Lighstorm::Ports::GRPC.lightning.list_invoices.invoices.find do |invoice|
           invoice.memo != '' && invoice.state == :SETTLED
         end.to_h
@@ -51,7 +51,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       it 'adapts' do
         secret_hash = '7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba'
 
-        raw = VCR.replay("lightning.lookup_invoice/#{secret_hash}") do
+        raw = VCR.tape.replay("lightning.lookup_invoice/#{secret_hash}") do
           Lighstorm::Ports::GRPC.lightning.lookup_invoice(
             r_hash_str: secret_hash
           ).to_h
@@ -93,9 +93,9 @@ RSpec.describe Lighstorm::Adapter::Invoice do
 
     context 'open' do
       it 'adapts' do
-        secret_hash = '3055894c40aac008121ad045475a3b124f7214e5e08ec42902a63ef28f59e4fc'
+        secret_hash = '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637'
 
-        raw = VCR.replay("lightning.lookup_invoice/#{secret_hash}") do
+        raw = VCR.tape.replay("lightning.lookup_invoice/#{secret_hash}") do
           Lighstorm::Ports::GRPC.lightning.lookup_invoice(
             r_hash_str: secret_hash
           ).to_h

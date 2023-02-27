@@ -24,15 +24,18 @@ module Lighstorm
     def for(key, ttl: nil, params: {}, &block)
       if ttl.nil?
         ttl = Lighstorm::Static::CACHE[key.sub('lightning.', '').to_sym]
-        raise MissingTTLError, "missing ttl for #{key} static/cache.rb" if ttl.nil?
+        raise MissingTTLError, "missing ttl for #{key.sub('lightning.', '')} static/cache.rb" if ttl.nil?
 
-        ttl = ttl[:ttl]
+        ttl = ttl == false ? false : ttl[:ttl]
       end
 
-      key = build_key_for(key, params)
-
-      @client.get(key, lifetime: ttl) do
+      if ttl == false
         block.call
+      else
+        key = build_key_for(key, params)
+        @client.get(key, lifetime: ttl) do
+          block.call
+        end
       end
     end
 

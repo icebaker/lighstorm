@@ -6,7 +6,7 @@ require_relative '../../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Forward do
   context 'forwarding_history' do
     it 'adapts' do
-      raw = VCR.replay('lightning.forwarding_history.first') do
+      raw = VCR.tape.replay('lightning.forwarding_history.first') do
         Lighstorm::Ports::GRPC.lightning.forwarding_history.forwarding_events.first.to_h
       end
 

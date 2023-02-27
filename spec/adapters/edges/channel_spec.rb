@@ -8,7 +8,7 @@ require_relative '../../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Channel do
   context 'list_channels' do
     it 'adapts' do
-      raw = VCR.replay('lightning.list_channels.channels.first') do
+      raw = VCR.tape.replay('lightning.list_channels.channels.first') do
         Lighstorm::Ports::GRPC.lightning.list_channels.channels.first.to_h
       end
 
@@ -39,7 +39,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
       it 'adapts' do
         channel_id = 850_099_509_773_795_329
 
-        raw = VCR.replay('lightning.get_chan_info', chan_id: channel_id) do
+        raw = VCR.tape.replay('lightning.get_chan_info', chan_id: channel_id) do
           Lighstorm::Ports::GRPC.lightning.get_chan_info(chan_id: channel_id).to_h
         end
 
@@ -82,7 +82,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
       it 'adapts' do
         channel_id = 836_907_569_272_651_777
 
-        raw = VCR.replay('lightning.get_chan_info', chan_id: channel_id) do
+        raw = VCR.tape.replay('lightning.get_chan_info', chan_id: channel_id) do
           Lighstorm::Ports::GRPC.lightning.get_chan_info(chan_id: channel_id).to_h
         end
 
@@ -125,7 +125,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
   context 'describe_graph' do
     context 'first' do
       it 'adapts' do
-        raw = VCR.replay('lightning.describe_graph.edges.first') do
+        raw = VCR.tape.replay('lightning.describe_graph.edges.first') do
           Lighstorm::Ports::GRPC.lightning.describe_graph.edges.first.to_h
         end
 
@@ -163,7 +163,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
       it 'adapts' do
         channel_id = 837_471_618_647_916_545
 
-        reference_raw = VCR.replay('lightning.get_chan_info', chan_id: channel_id) do
+        reference_raw = VCR.tape.replay('lightning.get_chan_info', chan_id: channel_id) do
           Lighstorm::Ports::GRPC.lightning.get_chan_info(chan_id: channel_id).to_h
         end
 
@@ -232,7 +232,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
       it 'adapts' do
         channel_id = 798_835_879_549_927_425
 
-        reference_raw = VCR.replay('lightning.get_chan_info', chan_id: channel_id) do
+        reference_raw = VCR.tape.replay('lightning.get_chan_info', chan_id: channel_id) do
           Lighstorm::Ports::GRPC.lightning.get_chan_info(chan_id: channel_id).to_h
         end
 

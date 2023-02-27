@@ -7,6 +7,17 @@ require_relative '../ports/dsl/lighstorm/errors'
 module Lighstorm
   module Adapter
     class PaymentRequest
+      def self.add_invoice(grpc)
+        {
+          _source: :add_invoice,
+          code: grpc[:payment_request],
+          address: grpc[:payment_addr].unpack1('H*'),
+          secret: {
+            hash: grpc[:r_hash].unpack1('H*')
+          }
+        }
+      end
+
       def self.decode_pay_req(grpc)
         {
           _source: :decode_pay_req,

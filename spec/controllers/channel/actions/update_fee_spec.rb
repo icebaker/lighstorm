@@ -8,9 +8,11 @@ require_relative '../../../../models/rate'
 require_relative '../../../../ports/dsl/lighstorm/errors'
 
 RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
+  let(:vcr_key) { 'Controllers::Channel::UpdateFee' }
+
   let(:channel) do
     data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
-      VCR.replay('Controllers::Channel.mine') do
+      VCR.reel.replay('Controllers::Channel.mine/first/fee-update') do
         data = fetch.call
         data[:list_channels] = [data[:list_channels][0].to_h]
         data
@@ -20,56 +22,40 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
     Lighstorm::Models::Channel.new(data[0])
   end
 
-  describe 'update attributes' do
-    it 'updates' do
-      policy = channel.myself.policy
+  let(:policy) { channel.myself.policy }
 
-      previous = {
-        base: policy.fee.base.milisatoshis,
-        rate: policy.fee.rate.parts_per_million
-      }
+  let(:params) do
+    {
+      rate: { parts_per_million: policy.fee.rate.parts_per_million + 1 },
+      base: { milisatoshis: policy.fee.base.milisatoshis + 1 }
+    }
+  end
 
-      expect(channel.myself.policy.fee.base.milisatoshis).to eq(previous[:base])
-      expect(channel.myself.policy.fee.rate.parts_per_million).to eq(previous[:rate])
+  context 'gradual' do
+    it 'flows' do
+      request = described_class.prepare(policy.to_h, channel.transaction.to_h, params)
 
-      expect do
-        policy.fee.base = Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2)
-      end.to raise_error(OperationNotAllowedError)
+      expect(request).to eq(
+        { service: :lightning,
+          method: :update_channel_policy,
+          params: {
+            chan_point: {
+              funding_txid_str: '240c0825d4757459e694e5c9e8a7bf6b2d244de4bd9eca5f94adef777d0c2956',
+              output_index: 1
+            },
+            base_fee_msat: 1,
+            fee_rate_ppm: 95,
+            time_lock_delta: 40,
+            max_htlc_msat: 6_045_000_000,
+            min_htlc_msat: 1000
+          } }
+      )
 
-      expect do
-        policy.fee.rate = Lighstorm::Models::Rate.new(parts_per_million: previous[:rate] + 3)
-      end.to raise_error(OperationNotAllowedError)
+      response = described_class.dispatch(request) do |grpc|
+        VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
+      end
 
-      policy.fee.prepare_token!('token-a')
-
-      expect do
-        policy.fee.base = {
-          value: Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2),
-          token: 'token-x'
-        }
-      end.to raise_error(OperationNotAllowedError)
-
-      policy.fee.base = {
-        value: Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2),
-        token: 'token-a'
-      }
-
-      expect do
-        policy.fee.rate = {
-          value: Lighstorm::Models::Rate.new(parts_per_million: previous[:rate] + 3),
-          token: 'token-a'
-        }
-      end.to raise_error(OperationNotAllowedError)
-
-      policy.fee.prepare_token!('token-b')
-
-      policy.fee.rate = {
-        value: Lighstorm::Models::Rate.new(parts_per_million: previous[:rate] + 3),
-        token: 'token-b'
-      }
-
-      expect(channel.myself.policy.fee.base.milisatoshis).to eq(previous[:base] + 2)
-      expect(channel.myself.policy.fee.rate.parts_per_million).to eq(previous[:rate] + 3)
+      expect(response).to eq({ failed_updates: [] })
     end
   end
 
@@ -173,17 +159,34 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       )
     end
 
-    it 'fakes the update' do
-      policy = channel.myself.policy
+    it 'updates' do
+      expect(channel.myself.policy.fee.rate.parts_per_million).not_to eq(
+        params[:rate][:parts_per_million]
+      )
 
-      params = {
-        rate: { parts_per_million: policy.fee.rate.parts_per_million + 5 },
-        base: { milisatoshis: policy.fee.base.milisatoshis + 7 }
-      }
+      expect(channel.myself.policy.fee.base.milisatoshis).not_to eq(
+        params[:base][:milisatoshis]
+      )
 
-      response = policy.fee.update(params, preview: false, fake: true)
+      action = policy.fee.update(params) do |grpc|
+        VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
+      end
 
-      expect(response).to eq(:fake)
+      expect(action.result.to_h).to eq(
+        { fee: {
+            base: { milisatoshis: 1 },
+            rate: { parts_per_million: 95 }
+          },
+          htlc: {
+            minimum: { milisatoshis: 1000 },
+            maximum: { milisatoshis: 6_045_000_000 },
+            blocks: { delta: { minimum: 40 } }
+          } }
+      )
+
+      expect(action.response.to_h).to eq(
+        { failed_updates: [] }
+      )
 
       expect(channel.myself.policy.fee.rate.parts_per_million).to eq(
         params[:rate][:parts_per_million]
@@ -192,6 +195,59 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       expect(channel.myself.policy.fee.base.milisatoshis).to eq(
         params[:base][:milisatoshis]
       )
+    end
+  end
+
+  describe 'update attributes' do
+    it 'updates' do
+      policy = channel.myself.policy
+
+      previous = {
+        base: policy.fee.base.milisatoshis,
+        rate: policy.fee.rate.parts_per_million
+      }
+
+      expect(channel.myself.policy.fee.base.milisatoshis).to eq(previous[:base])
+      expect(channel.myself.policy.fee.rate.parts_per_million).to eq(previous[:rate])
+
+      expect do
+        policy.fee.base = Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2)
+      end.to raise_error(OperationNotAllowedError)
+
+      expect do
+        policy.fee.rate = Lighstorm::Models::Rate.new(parts_per_million: previous[:rate] + 3)
+      end.to raise_error(OperationNotAllowedError)
+
+      policy.fee.prepare_token!('token-a')
+
+      expect do
+        policy.fee.base = {
+          value: Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2),
+          token: 'token-x'
+        }
+      end.to raise_error(OperationNotAllowedError)
+
+      policy.fee.base = {
+        value: Lighstorm::Models::Satoshis.new(milisatoshis: previous[:base] + 2),
+        token: 'token-a'
+      }
+
+      expect do
+        policy.fee.rate = {
+          value: Lighstorm::Models::Rate.new(parts_per_million: previous[:rate] + 3),
+          token: 'token-a'
+        }
+      end.to raise_error(OperationNotAllowedError)
+
+      policy.fee.prepare_token!('token-b')
+
+      policy.fee.rate = {
+        value: Lighstorm::Models::Rate.new(parts_per_million: previous[:rate] + 3),
+        token: 'token-b'
+      }
+
+      expect(channel.myself.policy.fee.base.milisatoshis).to eq(previous[:base] + 2)
+      expect(channel.myself.policy.fee.rate.parts_per_million).to eq(previous[:rate] + 3)
     end
   end
 end

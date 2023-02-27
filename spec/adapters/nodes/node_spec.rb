@@ -8,7 +8,7 @@ require_relative '../../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Node do
   context 'get_info' do
     it 'adapts' do
-      raw = VCR.replay('lightning.get_info') do
+      raw = VCR.tape.replay('lightning.get_info') do
         Lighstorm::Ports::GRPC.lightning.get_info.to_h
       end
 
@@ -39,7 +39,7 @@ RSpec.describe Lighstorm::Adapter::Node do
       it 'adapts' do
         public_key = '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 
-        raw = VCR.replay('lightning.get_node_info', pub_key: public_key) do
+        raw = VCR.tape.replay('lightning.get_node_info', pub_key: public_key) do
           Lighstorm::Ports::GRPC.lightning.get_node_info(pub_key: public_key).to_h
         end
 
@@ -67,7 +67,7 @@ RSpec.describe Lighstorm::Adapter::Node do
       it 'adapts' do
         public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78877928'
 
-        raw = VCR.replay('lightning.get_node_info', pub_key: public_key) do
+        raw = VCR.tape.replay('lightning.get_node_info', pub_key: public_key) do
           Lighstorm::Ports::GRPC.lightning.get_node_info(pub_key: public_key).to_h
         end
 
@@ -107,7 +107,7 @@ RSpec.describe Lighstorm::Adapter::Node do
   context 'describe_graph' do
     context 'with alias' do
       it 'adapts' do
-        raw = VCR.replay('lightning.describe_graph.nodes.with-alias') do
+        raw = VCR.tape.replay('lightning.describe_graph.nodes.with-alias') do
           Lighstorm::Ports::GRPC.lightning.describe_graph.nodes.find do |node|
             node.alias != ''
           end.to_h
@@ -159,7 +159,7 @@ RSpec.describe Lighstorm::Adapter::Node do
 
     context 'no alias' do
       it 'adapts' do
-        raw = VCR.replay('lightning.describe_graph.nodes.no-alias') do
+        raw = VCR.tape.replay('lightning.describe_graph.nodes.no-alias') do
           Lighstorm::Ports::GRPC.lightning.describe_graph.nodes.find do |node|
             node.alias == ''
           end.to_h

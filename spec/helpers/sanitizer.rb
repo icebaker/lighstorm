@@ -123,11 +123,18 @@ module Sanitizer
     end
   end
 
+  SPLITTABLE = [':', ',', '@', '.'].freeze
+
   def self.obfuscate_string(value)
     pack = value.encoding.name == 'ASCII-8BIT'
 
     obfuscated = value
     obfuscated = obfuscated.unpack1('H*') if pack
+
+    SPLITTABLE.each do |char|
+      parts = obfuscated.split(char)
+      return parts.map { |part| obfuscate_string(part) }.join(char) if parts.size > 1
+    end
 
     size = obfuscated.size
 

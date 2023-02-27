@@ -15,18 +15,19 @@ Lighstorm::Channel.mine.first.myself.node.alias
 - [About](#about)
 - [Usage](#usage)
   - [Documentation](https://icebaker.github.io/lighstorm)
-- [Development](#development)
-  - [Testing](#testing)
-  - [Generating Documentation](#generating-documentation)
-  - [Publish to RubyGems](#publish-to-rubygems)
+- [Development](https://icebaker.github.io/lighstorm/#/README?id=development)
 
 ## About
 
 _Lighstorm_ is an opinionated abstraction layer on top of the [lnd-client](https://github.com/icebaker/lnd-client).
 
-It brings an [object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Models](https://guides.rubyonrails.org/active_record_basics.html) conventions.
+It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Models](https://guides.rubyonrails.org/active_record_basics.html) conventions.
 
-Although it tries to stay close to [Lightning's terminologies](https://docs.lightning.engineering/lightning-network-tools/lnd), it brings its own vocabulary and [data modeling](https://icebaker.github.io/lighstorm/#/README?id=data-modeling), optimizing for [programmer happiness](https://rubyonrails.org/doctrine).
+However, despite the fluidity of _Object Orientation_ being desired in its public interface, internally, most of its code is structured following the [_Hexagonal Architecture_](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)) and [_Functional Programming_](https://en.wikipedia.org/wiki/Functional_programming) principles.
+
+It aims to be intuitive to use while being highly **reliable**, as it deals with people's money, and easily testable since its [tests](https://icebaker.github.io/lighstorm/#/README?id=testing) are the foundation for its reliability.
+
+Although it tries to stay close to [Lightning's terminologies](https://docs.lightning.engineering/the-lightning-network/overview), it brings its own vocabulary and [data modeling](https://icebaker.github.io/lighstorm/#/README?id=data-modeling), optimizing for [programmer happiness](https://rubyonrails.org/doctrine#optimize-for-programmer-happiness).
 
 ## Usage
 
@@ -47,58 +48,19 @@ Lighstorm.config!(
 
 puts Lighstorm.version # => 0.0.6
 
+Lighstorm::Node.myself.alias # => icebaker/old-stone
+
+Lighstorm::Invoice.create(
+  description: 'Coffee', milisatoshis: 1_000
+)
+
 Lighstorm::Satoshis.new(
   milisatoshis: 75_621_650
 ).satoshis # => 75_621
-
-Lighstorm::Node.myself.alias # => icebaker/old-stone
 ```
 
 Check the [full documentation](https://icebaker.github.io/lighstorm).
 
 ## Development
 
-Copy the `.env.example` file to `.env` and provide the required data.
-
-```ruby
-# Gemfile
-gem 'lighstorm', path: '/home/user/lighstorm'
-
-# demo.rb
-require 'lighstorm'
-
-puts Lighstorm.version # => 0.0.6
-```
-
-```sh
-bundle
-rubocop -A
-```
-
-### Testing
-
-Copy the `.env.example` file to `.env` and provide the required data.
-
-```
-bundle
-
-bundle exec rspec
-```
-
-### Generating Documentation
-
-```sh
-npm i docsify-cli -g
-
-docsify serve ./docs
-```
-
-### Publish to RubyGems
-
-```sh
-gem build lighstorm.gemspec
-
-gem signin
-
-gem push lighstorm-0.0.6.gem
-```
+Check the [development documentation](https://icebaker.github.io/lighstorm/#/README?id=development).

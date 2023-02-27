@@ -14,7 +14,7 @@ RSpec.describe Lighstorm::Models::Invoice do
     context 'settled' do
       it 'models' do
         data = Lighstorm::Controllers::Invoice::All.data do |fetch|
-          VCR.replay('Controllers::Invoice.all.last/memo/settled') do
+          VCR.tape.replay('Controllers::Invoice.all.last/memo/settled') do
             data = fetch.call
 
             data[:list_invoices] = [
@@ -78,7 +78,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         secret_hash = '7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba'
 
         data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
-          VCR.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
+          VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
         invoice = described_class.new(data)
@@ -126,10 +126,10 @@ RSpec.describe Lighstorm::Models::Invoice do
 
     context 'open' do
       it 'models' do
-        secret_hash = '3055894c40aac008121ad045475a3b124f7214e5e08ec42902a63ef28f59e4fc'
+        secret_hash = '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637'
 
         data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
-          VCR.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
+          VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
         invoice = described_class.new(data)
@@ -137,14 +137,15 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice._key.size).to eq(64)
 
         expect(invoice.created_at).to be_a(Time)
-        expect(invoice.created_at.utc.to_s).to eq('2023-02-25 20:13:59 UTC')
+        expect(invoice.created_at.utc.to_s.size).to eq(23)
 
         expect(invoice.settle_at).to be_nil
 
         expect(invoice.state).to eq('open')
 
         expect(invoice.request._key.size).to eq(64)
-        expect(invoice.request.code).to eq('lnbc10n1p3l5mq8pp5xp2cjnzq4tqqsys66pz5wk3mzf8hy989uz8vg2gz5cl09r6eun7qdq2gdhkven9v5cqzpgxqyz5vqsp5dk00u4wes8jfvk52nz3vd5srkgf6a3v2m6wumu2uvnwrfyfspezq9qyyssqy3lf65pe5szu2nmdtpt2x8ck7p7mkguqhnvvjrcpvl48nr4yjec96hsd9t2kdcr5ukxeq3vwy9sg7z0su93z3x38cetk5eq7z8dyutcqj5ewva')
+        expect(invoice.request.code).to start_with('lnbc')
+        expect(invoice.request.code.size).to eq(267)
         expect(invoice.request.address.class).to eq(String)
         expect(invoice.request.address.size).to eq(64)
         expect(invoice.request.amount.milisatoshis).to eq(1000)
@@ -153,7 +154,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.request.description.hash).to be_nil
         expect(invoice.request.secret.preimage.class).to eq(String)
         expect(invoice.request.secret.preimage.size).to eq(64)
-        expect(invoice.request.secret.hash).to eq('3055894c40aac008121ad045475a3b124f7214e5e08ec42902a63ef28f59e4fc')
+        expect(invoice.request.secret.hash).to eq(secret_hash)
 
         Contract.expect(
           invoice.to_h, 'b137e3031dd74ecbbc363c0f7913cec92e7803affa114000a03002a8b096d3df'

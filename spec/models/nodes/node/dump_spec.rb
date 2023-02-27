@@ -15,11 +15,11 @@ RSpec.describe Lighstorm::Models::Node do
     context 'samples' do
       let(:data) do
         myself = Lighstorm::Controllers::Node::Myself.data do |fetch|
-          VCR.replay('Controllers::Node.myself') { fetch.call }
+          VCR.tape.replay('Controllers::Node.myself') { fetch.call }
         end
 
         data = Lighstorm::Controllers::Node::All.data do |fetch|
-          VCR.replay('Controllers::Node.all/samples') do
+          VCR.tape.replay('Controllers::Node.all/samples') do
             data = fetch.call
 
             data[:describe_graph] = [

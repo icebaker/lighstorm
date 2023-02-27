@@ -18,7 +18,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel_id = '853996178921881601'
 
         data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
-          VCR.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
+          VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
         channel = described_class.new(data)
@@ -100,7 +100,7 @@ RSpec.describe Lighstorm::Models::Channel do
     context 'mine' do
       it 'models' do
         data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
-          VCR.replay('Controllers::Channel.mine') do
+          VCR.tape.replay('Controllers::Channel.mine') do
             data = fetch.call
             data[:list_channels] = [data[:list_channels][0].to_h]
             data
@@ -189,31 +189,6 @@ RSpec.describe Lighstorm::Models::Channel do
 
         expect(channel.dump).to eq(described_class.new(channel.dump).dump)
         expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
-
-        params = {
-          rate: { parts_per_million: channel.myself.policy.fee.rate.parts_per_million + 5 },
-          base: { milisatoshis: channel.myself.policy.fee.base.milisatoshis + 7 }
-        }
-
-        channel.myself.policy.fee.update(params, preview: false, fake: true)
-
-        expect(channel.myself.policy.fee.rate.parts_per_million).to eq(
-          params[:rate][:parts_per_million]
-        )
-
-        expect(channel.myself.policy.fee.base.milisatoshis).to eq(
-          params[:base][:milisatoshis]
-        )
-
-        copy = described_class.new(channel.dump)
-
-        expect(copy.myself.policy.fee.rate.parts_per_million).to eq(
-          params[:rate][:parts_per_million]
-        )
-
-        expect(copy.myself.policy.fee.base.milisatoshis).to eq(
-          params[:base][:milisatoshis]
-        )
       end
     end
 
