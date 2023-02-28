@@ -27,7 +27,7 @@ Lighstorm::Channel.mine.first.myself.node.alias
 Add to your `Gemfile`:
 
 ```ruby
-gem 'lighstorm', '~> 0.0.6'
+gem 'lighstorm', '~> 0.0.7'
 ```
 
 Run `bundle install`.
@@ -60,7 +60,7 @@ Lighstorm.config!(
 ```ruby
 require 'lighstorm'
 
-puts Lighstorm.version # => 0.0.6
+puts Lighstorm.version # => 0.0.7
 
 Lighstorm::Invoice.create(
   description: 'Coffee', millisatoshis: 1000
@@ -765,7 +765,7 @@ gem 'lighstorm', path: '/home/user/lighstorm'
 # demo.rb
 require 'lighstorm'
 
-puts Lighstorm.version # => 0.0.6
+puts Lighstorm.version # => 0.0.7
 ```
 
 ```sh
@@ -982,13 +982,13 @@ gem build lighstorm.gemspec
 
 gem signin
 
-gem push lighstorm-0.0.6.gem
+gem push lighstorm-0.0.7.gem
 ```
 
 _________________
 
 <center>
-  lighstorm 0.0.6
+  lighstorm 0.0.7
   |
   <a href="https://github.com/icebaker/lighstorm" rel="noopener noreferrer" target="_blank">GitHub</a>
   |

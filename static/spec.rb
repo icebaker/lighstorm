@@ -4,7 +4,7 @@ module Lighstorm
   module Static
     SPEC = {
       name: 'lighstorm',
-      version: '0.0.6',
+      version: '0.0.7',
       author: 'icebaker',
       summary: 'API for interacting with a Lightning Node.',
       description: 'Lighstorm is an opinionated abstraction layer on top of the lnd-client for interacting with a Lightning Node.',
