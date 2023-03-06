@@ -2,6 +2,7 @@
 
 module Sanitizer
   SAFE = {
+    '_error' => true,
     '_request_code' => true,
     'accept_time <= htlcs' => true,
     'active <= list_channels' => true,

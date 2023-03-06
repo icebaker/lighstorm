@@ -20,6 +20,18 @@ module Lighstorm
     class UnexpectedNumberOfHTLCsError < LighstormError; end
     class UnknownChannelError < LighstormError; end
 
+    class GRPCError < LighstormError
+      attr_reader :grpc
+
+      def initialize(message, grpc)
+        super(message)
+        @grpc = grpc
+      end
+    end
+
+    class AlreadyPaidError < GRPCError; end
+    class AmountForNonZeroError < GRPCError; end
+
     class UpdateChannelPolicyError < LighstormError
       attr_reader :response
 

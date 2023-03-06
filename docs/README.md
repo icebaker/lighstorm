@@ -436,10 +436,45 @@ payment.fee.millisatoshis
 payment.created_at
 payment.settled_at
 payment.result.hops.size
+```
 
+```ruby
 invoice.pay(millisatoshis: 1000, seconds: 5)
 ```
 
+#### Error Handling
+Check [Error Handling](?id=error-handling-1)
+
+```ruby
+begin
+  invoice.pay
+rescue AlreadyPaidError => error
+  error.message # 'The invoice is already paid.'
+  error.grpc.class # GRPC::AlreadyExists
+  error.grpc.message # '6:invoice is already paid. debug_error_string:{UNKNOWN...'
+end
+```
+
+```ruby
+begin
+  invoice.pay(millisatoshis: 1000)
+rescue AmountForNonZeroError => error
+  error.message # 'Millisatoshis must not be specified...'
+  error.grpc.class # GRPC::Unknown
+  error.grpc.message # '2:amount must not be specified when paying...'
+end
+```
+
+```ruby
+begin
+  invoice.pay
+rescue LighstormError => error
+  error.class
+  error.message
+  error.grpc.class
+  error.grpc.message
+end
+```
 ## Payment
 
 [![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
@@ -763,9 +798,13 @@ end
 ```ruby
 LighstormError
 
+GRPCError
+
+AlreadyPaidError
+AmountForNonZeroError
+
 IncoherentGossipError
 
-TooManyArgumentsError
 MissingCredentialsError
 MissingGossipHandlerError
 MissingMillisatoshisError
@@ -776,10 +815,15 @@ NegativeNotAllowedError
 
 NotYourChannelError
 NotYourNodeError
-UnknownChannelError
 
 OperationNotAllowedError
+
+TooManyArgumentsError
+
 UnexpectedNumberOfHTLCsError
+
+UnknownChannelError
+
 UpdateChannelPolicyError
 ```
 

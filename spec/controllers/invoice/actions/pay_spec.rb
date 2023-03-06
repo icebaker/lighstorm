@@ -84,7 +84,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'perform' do
         it 'performs' do
           action = described_class.perform(
-            request_code: params[:request_code], millisatoshis: params[:millisatoshis]
+            request_code: params[:request_code]
           ) do |fn, from = :fetch|
             VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
           end
@@ -106,6 +106,61 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
+          end
+        end
+      end
+    end
+
+    context 'errors' do
+      context 'already paid' do
+        it 'raises error' do
+          expect do
+            described_class.perform(
+              request_code: params[:request_code]
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}/already-paid", params) { fn.call }
+            end
+          end.to raise_error AlreadyPaidError, 'The invoice is already paid.'
+
+          begin
+            described_class.perform(
+              request_code: params[:request_code]
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}/already-paid", params) { fn.call }
+            end
+          rescue StandardError => e
+            expect(e.grpc.class).to eq(GRPC::AlreadyExists)
+            expect(e.grpc.message).to eq(
+              '6:invoice is already paid. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {created_time:"2023-03-06T20:12:10.360561797-03:00", grpc_status:6, grpc_message:"invoice is already paid"}}'
+            )
+          end
+        end
+      end
+
+      context 'millisatoshis' do
+        it 'raises error' do
+          expect do
+            described_class.perform(
+              request_code: params[:request_code], millisatoshis: params[:millisatoshis]
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
+            end
+          end.to raise_error(
+            AmountForNonZeroError,
+            'Millisatoshis must not be specified when paying a non-zero amount invoice.'
+          )
+
+          begin
+            described_class.perform(
+              request_code: params[:request_code], millisatoshis: params[:millisatoshis]
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
+            end
+          rescue StandardError => e
+            expect(e.grpc.class).to eq(GRPC::Unknown)
+            expect(e.grpc.message).to eq(
+              '2:amount must not be specified when paying a non-zero  amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {grpc_message:"amount must not be specified when paying a non-zero  amount invoice", grpc_status:2, created_time:"2023-03-06T20:12:10.378259288-03:00"}}'
+            )
           end
         end
       end

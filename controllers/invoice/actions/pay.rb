@@ -20,6 +20,8 @@ module Lighstorm
             result << response.to_h
           end
           result
+        rescue StandardError => e
+          { _error: e }
         end
 
         def self.prepare(request_code:, seconds:, millisatoshis: nil)
@@ -62,6 +64,25 @@ module Lighstorm
           return grpc_request if preview
 
           response = dispatch(grpc_request, &vcr)
+
+          if response.is_a?(Hash) && response[:_error]
+            if response[:_error].is_a?(GRPC::AlreadyExists)
+              raise AlreadyPaidError.new(
+                'The invoice is already paid.',
+                response[:_error]
+              )
+            end
+
+            if response[:_error].message =~ /amount must not be specified when paying a non-zero/
+              raise AmountForNonZeroError.new(
+                'Millisatoshis must not be specified when paying a non-zero amount invoice.',
+                response[:_error]
+              )
+            end
+
+            raise GRPCError.new('Unknown error.', response[:_error])
+
+          end
 
           data = fetch(&vcr)
 
