@@ -12,7 +12,7 @@ module Lighstorm
         @data = data
 
         @_key = data[:_key] || Digest::SHA256.hexdigest(
-          data[:code] || "#{data[:code][:amount][:millisatoshis]}#{Time.now}"
+          data[:code] || "#{data[:amount][:millisatoshis]}#{Time.now}"
         )
 
         @code = data[:code]

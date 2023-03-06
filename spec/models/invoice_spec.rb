@@ -4,6 +4,7 @@ require 'json'
 
 require_relative '../../controllers/invoice/all'
 require_relative '../../controllers/invoice/find_by_secret_hash'
+require_relative '../../controllers/invoice/decode'
 
 require_relative '../../models/invoice'
 
@@ -72,7 +73,7 @@ RSpec.describe Lighstorm::Models::Invoice do
     end
   end
 
-  describe 'find_by_secret_hash B' do
+  describe 'find_by_secret_hash' do
     context 'settled' do
       it 'models' do
         secret_hash = '7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba'
@@ -173,6 +174,60 @@ RSpec.describe Lighstorm::Models::Invoice do
               state: 'String:0..10' }
           )
         end
+      end
+    end
+  end
+
+  describe 'decode' do
+    let(:request_code) do
+      'lnbc20n1pjq2ywjpp5qy4mms9xqe7h3uhgtct7gt4qxmx56630xwdgenup9x73ggcsk7lsdqggaexzur9cqzpgxqyz5vqsp5je8mp8d49gvq0hj37jkp6y7vapvsgc6nflehhwpqw0yznclzuuqq9qyyssqt38umwt9wdd09dgejd68v88jnwezr9j2y87pv3yr5yglw77kqk6hn3jv6ue573m003n06r2yfa8yzzyh8zr3rgkkwqg9sf4arv490eqps7h0k9'
+    end
+
+    it 'models' do
+      data = Lighstorm::Controllers::Invoice::Decode.data(request_code) do |fetch|
+        VCR.tape.replay("Controllers::Invoice.decode/#{request_code}") { fetch.call }
+      end
+
+      invoice = described_class.new(data)
+
+      expect(invoice._key.size).to eq(64)
+
+      expect(invoice.created_at).to be_a(Time)
+      expect(invoice.created_at.utc.to_s).to eq('2023-03-05 22:04:02 UTC')
+
+      expect(invoice.settle_at).to be_nil
+
+      expect(invoice.state).to be_nil
+
+      expect(invoice.request._key.size).to eq(64)
+      expect(invoice.request.code).to eq(request_code)
+      expect(invoice.request.address.class).to eq(String)
+      expect(invoice.request.address.size).to eq(64)
+      expect(invoice.request.amount.millisatoshis).to eq(2000)
+      expect(invoice.request.amount.satoshis).to eq(2)
+      expect(invoice.request.description.memo).to eq('Grape')
+      expect(invoice.request.description.hash).to be_nil
+      expect(invoice.request.secret.preimage).to be_nil
+      expect(invoice.request.secret.hash).to eq('012bbdc0a6067d78f2e85e17e42ea036cd4d6a2f339a8ccf8129bd142310b7bf')
+
+      Contract.expect(
+        invoice.to_h, 'a30a93197a2598e42ad10013abb5b8808bd816af30b71c6b780de4c58c22976a'
+      ) do |actual, expected|
+        expect(actual.hash).to eq(expected.hash)
+
+        expect(actual.contract).to eq(
+          { _key: 'String:50+',
+            created_at: 'Time',
+            request: {
+              _key: 'String:50+',
+              amount: { millisatoshis: 'Integer:0..10' },
+              code: 'String:50+',
+              description: { hash: 'Nil', memo: 'String:0..10' },
+              secret: { hash: 'String:50+' }
+            },
+            settle_at: 'Nil',
+            state: 'Nil' }
+        )
       end
     end
   end

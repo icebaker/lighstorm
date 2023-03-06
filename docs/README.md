@@ -360,6 +360,8 @@ Lighstorm::Invoice.all(limit: 10)
 Lighstorm::Invoice.first
 Lighstorm::Invoice.last
 
+Lighstorm::Invoice.decode('lnbc20n1pj...0eqps7h0k9')
+
 Lighstorm::Invoice.find_by_secret_hash(
   '1d438b8100518c9fba0a607e3317d6b36f74ceef3a6591836eb2f679c6853501'
 )
