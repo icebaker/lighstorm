@@ -17,13 +17,13 @@ module Lighstorm
 
         def self.adapt(raw)
           {
-            _request_code: raw[:_request_code],
-            decode_pay_req: Lighstorm::Adapter::Invoice.decode_pay_req(raw[:decode_pay_req])
+            decode_pay_req: Lighstorm::Adapter::Invoice.decode_pay_req(
+              raw[:decode_pay_req], raw[:_request_code]
+            )
           }
         end
 
         def self.transform(adapted)
-          adapted[:decode_pay_req][:request][:code] = adapted[:_request_code]
           adapted[:decode_pay_req]
         end
 

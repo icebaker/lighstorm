@@ -9,7 +9,7 @@ module Lighstorm
     class Invoice
       def self.decode_pay_req(grpc, request_code = nil)
         adapted = {
-          _source: :add_invoice,
+          _source: :decode_pay_req,
           _key: Digest::SHA256.hexdigest(
             [
               grpc[:payment_hash],
