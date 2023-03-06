@@ -7,6 +7,26 @@ require_relative 'payment_request'
 module Lighstorm
   module Adapter
     class Invoice
+      def self.decode_pay_req(grpc, request_code = nil)
+        adapted = {
+          _source: :add_invoice,
+          _key: Digest::SHA256.hexdigest(
+            [
+              grpc[:payment_hash],
+              grpc[:num_satoshis],
+              grpc[:timestamp],
+              grpc[:payment_addr]
+            ].join('/')
+          ),
+          created_at: Time.at(grpc[:timestamp]),
+          request: PaymentRequest.decode_pay_req(grpc)
+        }
+
+        adapted[:request][:code] = request_code unless request_code.nil?
+
+        adapted
+      end
+
       def self.add_invoice(grpc)
         {
           _source: :add_invoice,

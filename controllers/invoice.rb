@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './invoice/all'
+require_relative './invoice/decode'
 require_relative './invoice/find_by_secret_hash'
 require_relative './invoice/actions/create'
 
@@ -21,6 +22,10 @@ module Lighstorm
 
       def self.find_by_secret_hash(secret_hash)
         FindBySecretHash.model(FindBySecretHash.data(secret_hash))
+      end
+
+      def self.decode(request_code, &vcr)
+        Decode.model(Decode.data(request_code, &vcr))
       end
 
       def self.create(description: nil, millisatoshis: nil, preview: false, &vcr)
