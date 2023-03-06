@@ -37,13 +37,14 @@ module Lighstorm
         }
       end
 
-      def pay!(route: nil, preview: false)
+      def pay(seconds: 5, millisatoshis: nil, route: nil, preview: false)
         if route
           Controllers::Invoice::PayThroughRoute.perform(self, route: route, preview: preview)
         else
           Controllers::Invoice::Pay.perform(
             request_code: request.code,
-            millisatoshis: request.amount.millisatoshis,
+            millisatoshis: millisatoshis,
+            seconds: seconds,
             preview: preview
           )
         end

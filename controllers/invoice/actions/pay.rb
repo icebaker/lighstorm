@@ -22,17 +22,20 @@ module Lighstorm
           result
         end
 
-        def self.prepare(request_code: nil, millisatoshis: nil)
-          {
+        def self.prepare(request_code:, seconds:, millisatoshis: nil)
+          request = {
             service: :router,
             method: :send_payment_v2,
             params: {
               payment_request: request_code,
-              # amt_msat: millisatoshis,
-              timeout_seconds: 5,
+              timeout_seconds: seconds,
               allow_self_payment: true
             }
           }
+
+          request[:params][:amt_msat] = millisatoshis unless millisatoshis.nil?
+
+          request
         end
 
         def self.dispatch(grpc_request, &vcr)
@@ -51,9 +54,9 @@ module Lighstorm
           Models::Payment.new(data)
         end
 
-        def self.perform(request_code: nil, millisatoshis: nil, preview: false, &vcr)
+        def self.perform(request_code: nil, millisatoshis: nil, seconds: 5, preview: false, &vcr)
           grpc_request = prepare(
-            request_code: request_code, millisatoshis: millisatoshis
+            request_code: request_code, millisatoshis: millisatoshis, seconds: seconds
           )
 
           return grpc_request if preview

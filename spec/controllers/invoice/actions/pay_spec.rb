@@ -18,7 +18,8 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
     context 'gradual' do
       it 'flows' do
         request = described_class.prepare(
-          request_code: params[:request_code], millisatoshis: params[:millisatoshis]
+          request_code: params[:request_code],
+          seconds: 5
         )
 
         expect(request).to eq(
@@ -65,7 +66,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
-            request_code: params[:request_code], millisatoshis: params[:millisatoshis], preview: true
+            request_code: params[:request_code], preview: true
           )
 
           expect(request).to eq(
