@@ -9,6 +9,6 @@ group :test, :development do
   gem 'dotenv', '~> 2.8', '>= 2.8.1'
   gem 'pry-byebug', '~> 3.10', '>= 3.10.1'
   gem 'rspec', '~> 3.12'
-  gem 'rubocop', '~> 1.45', '>= 1.45.1'
+  gem 'rubocop', '~> 1.47'
   gem 'rubocop-rspec', '~> 2.18', '>= 2.18.1'
 end
