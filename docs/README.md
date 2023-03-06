@@ -413,6 +413,29 @@ action.response
 invoice = action.result
 ```
 
+### Pay
+
+[Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
+
+```ruby
+# 'preview' let you check the expected operation
+# before actually performing it for debug purposes
+invoice = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj')
+
+action = invoice.pay!
+
+action.to_h
+
+action.response
+payment = action.result
+
+payment.status
+payment.fee.millisatoshis
+payment.created_at
+payment.settled_at
+payment.result.hops.size
+```
+
 ## Payment
 
 [![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)

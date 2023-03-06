@@ -41,7 +41,11 @@ module Lighstorm
         if route
           Controllers::Invoice::PayThroughRoute.perform(self, route: route, preview: preview)
         else
-          Controllers::Invoice::Pay.perform(self, preview: preview)
+          Controllers::Invoice::Pay.perform(
+            request_code: request.code,
+            millisatoshis: request.amount.millisatoshis,
+            preview: preview
+          )
         end
       end
     end

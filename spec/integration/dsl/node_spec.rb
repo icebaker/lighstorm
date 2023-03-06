@@ -109,7 +109,7 @@ RSpec.describe 'Integration Tests' do
           node = nodes.first
 
           expect(Contract.for(node._key)).to eq('String:50+')
-          expect(Contract.for(node.alias)).to eq('String:0..10')
+          expect(Contract.for(node.alias)).to eq('String:11..20')
           expect(Contract.for(node.public_key)).to eq('String:50+')
           expect(Contract.for(node.color)).to eq('String:0..10')
           expect(Contract.for(node.myself?)).to be('Boolean')
@@ -119,7 +119,7 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(node.to_h)).to eq(
             { _key: 'String:50+',
-              alias: 'String:0..10',
+              alias: 'String:11..20',
               color: 'String:0..10',
               platform: {
                 blockchain: 'String:0..10',

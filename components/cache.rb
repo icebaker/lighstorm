@@ -21,10 +21,15 @@ module Lighstorm
       @client = Zache.new
     end
 
+    def safety_key(key)
+      key.gsub('.', '_').to_sym
+    end
+
     def for(key, ttl: nil, params: {}, &block)
       if ttl.nil?
-        ttl = Lighstorm::Static::CACHE[key.sub('lightning.', '').to_sym]
-        raise MissingTTLError, "missing ttl for #{key.sub('lightning.', '')} static/cache.rb" if ttl.nil?
+        safety_key = self.safety_key(key)
+        ttl = Lighstorm::Static::CACHE[safety_key]
+        raise MissingTTLError, "missing ttl for #{safety_key} static/cache.rb" if ttl.nil?
 
         ttl = ttl == false ? false : ttl[:ttl]
       end

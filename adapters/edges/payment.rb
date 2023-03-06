@@ -23,6 +23,10 @@ module Lighstorm
         )
       end
 
+      def self.send_payment_v2(grpc, node_get_info)
+        list_payments(grpc.last, node_get_info)
+      end
+
       def self.list_payments(grpc, node_get_info)
         raise UnexpectedNumberOfHTLCsError, "htlcs: #{grpc[:htlcs].size}" if grpc[:htlcs].size > 1
 
