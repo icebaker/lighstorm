@@ -468,6 +468,16 @@ end
 ```ruby
 begin
   invoice.pay
+rescue MissingMillisatoshisError => error
+  error.message # 'Millisatoshis must be specified...'
+  error.grpc.class # GRPC::Unknown
+  error.grpc.message # '2:amount must be specified when paying a zero...'
+end
+```
+
+```ruby
+begin
+  invoice.pay
 rescue LighstormError => error
   error.class
   error.message

@@ -10,7 +10,6 @@ module Lighstorm
     class IncoherentGossipError < LighstormError; end
     class MissingGossipHandlerError < LighstormError; end
     class MissingCredentialsError < LighstormError; end
-    class MissingMillisatoshisError < LighstormError; end
     class MissingPartsPerMillionError < LighstormError; end
     class MissingTTLError < LighstormError; end
     class NegativeNotAllowedError < LighstormError; end
@@ -23,7 +22,7 @@ module Lighstorm
     class GRPCError < LighstormError
       attr_reader :grpc
 
-      def initialize(message, grpc)
+      def initialize(message, grpc = nil)
         super(message)
         @grpc = grpc
       end
@@ -31,6 +30,7 @@ module Lighstorm
 
     class AlreadyPaidError < GRPCError; end
     class AmountForNonZeroError < GRPCError; end
+    class MissingMillisatoshisError < GRPCError; end
 
     class UpdateChannelPolicyError < LighstormError
       attr_reader :response

@@ -19,6 +19,23 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       it 'flows' do
         request = described_class.prepare(
           request_code: params[:request_code],
+          millisatoshis: params[:millisatoshis],
+          seconds: 5
+        )
+
+        expect(request).to eq(
+          { service: :router,
+            method: :send_payment_v2,
+            params: {
+              payment_request: params[:request_code],
+              amt_msat: params[:millisatoshis],
+              timeout_seconds: 5,
+              allow_self_payment: true
+            } }
+        )
+
+        request = described_class.prepare(
+          request_code: params[:request_code],
           seconds: 5
         )
 
@@ -160,6 +177,41 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
             expect(e.grpc.class).to eq(GRPC::Unknown)
             expect(e.grpc.message).to eq(
               '2:amount must not be specified when paying a non-zero  amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {grpc_message:"amount must not be specified when paying a non-zero  amount invoice", grpc_status:2, created_time:"2023-03-06T20:12:10.378259288-03:00"}}'
+            )
+          end
+        end
+      end
+
+      context 'missing millisatoshis' do
+        let(:params) do
+          {
+            request_code: 'lnbc1pjqdrx0pp5qmtsgfqtswytyqv3ca0kczg6zmdznev383z3fprghwvfr8wtc53sdq0facx2m3qgfk82egcqzpgxqyz5vqsp54j0pn6ms495q8g90fxzsdxefk8y2t5mpszwfqxmw6093fhuzgzdq9qyyssqcuf4h4srsxvk45q8d2t62kcl0c55plrfeznqk24w8fjvqzqrd5vyssle2a22g26jkp05lryteu7nl4jg2w8ef0mzh6fwkv2l9s2ktngqqrnjkr',
+            millisatoshis: 1_000
+          }
+        end
+
+        it 'raises error' do
+          expect do
+            described_class.perform(
+              request_code: params[:request_code]
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
+            end
+          end.to raise_error(
+            MissingMillisatoshisError,
+            'Millisatoshis must be specified when paying a zero amount invoice.'
+          )
+
+          begin
+            described_class.perform(
+              request_code: params[:request_code]
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
+            end
+          rescue StandardError => e
+            expect(e.grpc.class).to eq(GRPC::Unknown)
+            expect(e.grpc.message).to eq(
+              '2:amount must be specified when paying a zero amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {grpc_message:"amount must be specified when paying a zero amount invoice", grpc_status:2, created_time:"2023-03-06T22:02:11.761537524-03:00"}}'
             )
           end
         end

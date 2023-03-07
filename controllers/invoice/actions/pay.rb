@@ -80,6 +80,13 @@ module Lighstorm
               )
             end
 
+            if response[:_error].message =~ /amount must be specified when paying a zero amount/
+              raise MissingMillisatoshisError.new(
+                'Millisatoshis must be specified when paying a zero amount invoice.',
+                response[:_error]
+              )
+            end
+
             raise GRPCError.new('Unknown error.', response[:_error])
 
           end
