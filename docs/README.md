@@ -213,13 +213,13 @@ forward.out.channel.partner.node.alias
 ```ruby
 payment = Payment.last
 
-payment.status
-payment.created_at
+payment.at
+payment.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
-payment.request.code # "lnbc20m1pv...qqdhhwkj"
+payment.invoice.code # "lnbc20m1pv...qqdhhwkj"
 
-payment.request.amount.millisatoshis
+payment.invoice.amount.millisatoshis
 
 payment.from.hop
 payment.from.amount.millisatoshis
@@ -421,18 +421,20 @@ invoice.settled_at
 invoice.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
-invoice.request.code # "lnbc20m1pv...qqdhhwkj"
+invoice.code # "lnbc20m1pv...qqdhhwkj"
 
-invoice.request.amount.millisatoshis
+invoice.amount.millisatoshis
 
-invoice.request.description.memo
-invoice.request.description.hash
+invoice.payable # 'once' or 'indefinitely'
+
+invoice.address
+
+invoice.description.memo
+invoice.description.hash
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-invoice.request.secret.preimage
-invoice.request.secret.hash
-
-invoice.request.address
+invoice.secret.preimage
+invoice.secret.hash
 ```
 
 ### Create
@@ -443,11 +445,16 @@ invoice.request.address
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
 preview = Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000, preview: true
+  description: 'Coffee', millisatoshis: 1000, payable: 'once',
+  preview: true
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Piña Colada', millisatoshis: 1000
+  description: 'Coffee', millisatoshis: 1000, payable: 'once' 
+)
+
+action = Lighstorm::Invoice.create(
+  description: 'Donations', payable: 'indefinitely'
 )
 
 action.to_h
@@ -474,15 +481,20 @@ action.to_h
 action.response
 payment = action.result
 
-payment.status
+payment.at
+payment.state
+payment.amount.millisatoshis
 payment.fee.millisatoshis
-payment.created_at
-payment.settled_at
-payment.result.hops.size
+payment.purpose
+payment.hops.size
 ```
 
 ```ruby
-invoice.pay(millisatoshis: 1000, seconds: 5)
+invoice.pay(
+  millisatoshis: 1500,
+  message: 'here we go',
+  seconds: 5
+)
 ```
 
 #### Error Handling
@@ -555,29 +567,34 @@ payment._key
 
 payment.to_h
 
-payment.status
-payment.created_at
-payment.settled_at
+payment.at
+payment.state
 payment.purpose
+
+payment.amount.millisatoshis
 
 payment.fee.millisatoshis
 payment.fee.parts_per_million(
-  payment.request.amount.millisatoshis
+  payment.amount.millisatoshis
 )
 
-# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
-payment.request.code # "lnbc20m1pv...qqdhhwkj"
+payment.invoice.created_at
+payment.invoice.settled_at
+payment.invoice.state
 
-payment.request.amount.millisatoshis
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+payment.invoice.code # "lnbc20m1pv...qqdhhwkj"
+payment.invoice.amount.millisatoshis
+
+payment.invoice.payable # 'once' or 'indefinitely'
+payment.invoice.address
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-payment.request.secret.preimage
-payment.request.secret.hash
+payment.invoice.secret.preimage
+payment.invoice.secret.hash
 
-payment.request.address
-
-payment.request.description.memo
-payment.request.description.hash
+payment.invoice.description.memo
+payment.invoice.description.hash
 
 payment.from.hop
 payment.from.amount.millisatoshis
