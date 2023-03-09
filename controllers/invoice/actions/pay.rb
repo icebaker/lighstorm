@@ -24,18 +24,26 @@ module Lighstorm
           { _error: e }
         end
 
-        def self.prepare(request_code:, seconds:, millisatoshis: nil)
+        def self.prepare(request_code:, seconds:, millisatoshis: nil, message: nil)
           request = {
             service: :router,
             method: :send_payment_v2,
             params: {
               payment_request: request_code,
               timeout_seconds: seconds,
-              allow_self_payment: true
+              allow_self_payment: true,
+              dest_custom_records: {}
             }
           }
 
           request[:params][:amt_msat] = millisatoshis unless millisatoshis.nil?
+
+          if !message.nil? && !message.empty?
+            # https://github.com/satoshisstream/satoshis.stream/blob/main/TLV_registry.md
+            request[:params][:dest_custom_records][34_349_334] = [message].pack('H*')
+          end
+
+          request[:params].delete(:dest_custom_records) if request[:params][:dest_custom_records].empty?
 
           request
         end
@@ -49,16 +57,19 @@ module Lighstorm
         end
 
         def self.adapt(response, node_get_info)
-          Adapter::Payment.send_payment_v2(response, node_get_info)
+          Adapter::Payment.send_payment_v2(response.last, node_get_info, :invoice_pay)
         end
 
         def self.model(data)
           Models::Payment.new(data)
         end
 
-        def self.perform(request_code: nil, millisatoshis: nil, seconds: 5, preview: false, &vcr)
+        def self.perform(request_code: nil, millisatoshis: nil, message: nil, seconds: 5, preview: false, &vcr)
           grpc_request = prepare(
-            request_code: request_code, millisatoshis: millisatoshis, seconds: seconds
+            request_code: request_code,
+            millisatoshis: millisatoshis,
+            message: message,
+            seconds: seconds
           )
 
           return grpc_request if preview

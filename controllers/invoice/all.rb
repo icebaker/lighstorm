@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../ports/grpc'
-require_relative '../../adapters/invoice'
+require_relative '../../adapters/invoice_v2'
 require_relative '../../models/invoice'
 
 module Lighstorm
@@ -39,7 +39,7 @@ module Lighstorm
         def self.adapt(raw)
           {
             list_invoices: raw[:list_invoices].map do |raw_invoice|
-              Lighstorm::Adapter::Invoice.list_invoices(raw_invoice)
+              Lighstorm::Adapter::InvoiceV2.list_invoices(raw_invoice)
             end
           }
         end

@@ -1,0 +1,2 @@
+{:	_keyI"String:50+:ET:addressI"String:50+;T:amount{:millisatoshisI"Integer:0..10;T:	codeI"String:50+;T:created_atI"	Time;F:description{:	hashI"Nil;F:	memoI"String:21..30;T:payableI"Symbol:0..10;T:secret{;I"String:50+;T:preimageI"String:50+;T:settled_atI"	Time;F:
+stateI"String:0..10;T

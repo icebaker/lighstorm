@@ -35,39 +35,27 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.created_at).to be_a(Time)
         expect(invoice.created_at.utc.to_s).to eq('2023-01-16 09:29:02 UTC')
 
-        expect(invoice.settle_at).to be_a(Time)
-        expect(invoice.settle_at.utc.to_s).to eq('2023-01-16 09:29:17 UTC')
+        expect(invoice.settled_at).to be_a(Time)
+        expect(invoice.settled_at.utc.to_s).to eq('2023-01-16 09:29:17 UTC')
 
         expect(invoice.state).to eq('settled')
 
-        expect(invoice.request._key.size).to eq(64)
-        expect(invoice.request.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
-        expect(invoice.request.address.class).to eq(String)
-        expect(invoice.request.address.size).to eq(64)
-        expect(invoice.request.amount.millisatoshis).to eq(982_342_000)
-        expect(invoice.request.amount.satoshis).to eq(982_342.0)
-        expect(invoice.request.description.memo).to eq('Local-Rebalance-982342-Sats')
-        expect(invoice.request.description.hash).to be_nil
-        expect(invoice.request.secret.preimage.class).to eq(String)
-        expect(invoice.request.secret.preimage.size).to eq(64)
-        expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
+        expect(invoice.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
+        expect(invoice.address.class).to eq(String)
+        expect(invoice.address.size).to eq(64)
+        expect(invoice.amount.millisatoshis).to eq(982_342_000)
+        expect(invoice.amount.satoshis).to eq(982_342.0)
+        expect(invoice.description.memo).to eq('Local-Rebalance-982342-Sats')
+        expect(invoice.description.hash).to be_nil
+        expect(invoice.secret.preimage.class).to eq(String)
+        expect(invoice.secret.preimage.size).to eq(64)
+        expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, 'c2fcb4387e491038e6ed6f729d0c93aa206150206f6ceeb4447b961200126d5d'
+          invoice.to_h, '62fdf7c4aacecb8f50739924ccec8c95bb0eafc399edf1e1c56bbd89fda5dc17'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
-
-          expect(actual.contract).to eq(
-            { _key: 'String:50+',
-              created_at: 'Time',
-              request: { _key: 'String:50+',
-                         amount: { millisatoshis: 'Integer:0..10' },
-                         code: 'String:50+',
-                         description: { hash: 'Nil', memo: 'String:21..30' },
-                         secret: { hash: 'String:50+' } },
-              settle_at: 'Time',
-              state: 'String:0..10' }
-          )
+          expect(actual.contract).to eq(expected.contract)
         end
       end
     end
@@ -89,45 +77,34 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.created_at).to be_a(Time)
         expect(invoice.created_at.utc.to_s).to eq('2023-01-16 09:29:02 UTC')
 
-        expect(invoice.settle_at).to be_a(Time)
-        expect(invoice.settle_at.utc.to_s).to eq('2023-01-16 09:29:17 UTC')
+        expect(invoice.settled_at).to be_a(Time)
+        expect(invoice.settled_at.utc.to_s).to eq('2023-01-16 09:29:17 UTC')
 
         expect(invoice.state).to eq('settled')
 
-        expect(invoice.request._key.size).to eq(64)
-        expect(invoice.request.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
-        expect(invoice.request.address.class).to eq(String)
-        expect(invoice.request.address.size).to eq(64)
-        expect(invoice.request.amount.millisatoshis).to eq(982_342_000)
-        expect(invoice.request.amount.satoshis).to eq(982_342.0)
-        expect(invoice.request.description.memo).to eq('Local-Rebalance-982342-Sats')
-        expect(invoice.request.description.hash).to be_nil
-        expect(invoice.request.secret.preimage.class).to eq(String)
-        expect(invoice.request.secret.preimage.size).to eq(64)
-        expect(invoice.request.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
+        expect(invoice.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
+        expect(invoice.address.class).to eq(String)
+        expect(invoice.address.size).to eq(64)
+        expect(invoice.amount.millisatoshis).to eq(982_342_000)
+        expect(invoice.amount.satoshis).to eq(982_342.0)
+        expect(invoice.description.memo).to eq('Local-Rebalance-982342-Sats')
+        expect(invoice.description.hash).to be_nil
+        expect(invoice.secret.preimage.class).to eq(String)
+        expect(invoice.secret.preimage.size).to eq(64)
+        expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, 'c2fcb4387e491038e6ed6f729d0c93aa206150206f6ceeb4447b961200126d5d'
+          invoice.to_h, '62fdf7c4aacecb8f50739924ccec8c95bb0eafc399edf1e1c56bbd89fda5dc17'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
-          expect(actual.contract).to eq(
-            { _key: 'String:50+',
-              created_at: 'Time',
-              request: { _key: 'String:50+',
-                         amount: { millisatoshis: 'Integer:0..10' },
-                         code: 'String:50+',
-                         description: { hash: 'Nil', memo: 'String:21..30' },
-                         secret: { hash: 'String:50+' } },
-              settle_at: 'Time',
-              state: 'String:0..10' }
-          )
+          expect(actual.contract).to eq(expected.contract)
         end
       end
     end
 
     context 'open' do
       it 'models' do
-        secret_hash = '0136cb78b4f421b06da07e9cc32928c62c5879e4458332c268ed087357d9a637'
+        secret_hash = 'f1eec36442c3caa6f46eb85894f5778c3ba95d67d08fcf7549af79df6829f0ee'
 
         data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
@@ -140,39 +117,28 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.created_at).to be_a(Time)
         expect(invoice.created_at.utc.to_s.size).to eq(23)
 
-        expect(invoice.settle_at).to be_nil
+        expect(invoice.settled_at).to be_nil
 
         expect(invoice.state).to eq('open')
 
-        expect(invoice.request._key.size).to eq(64)
-        expect(invoice.request.code).to start_with('lnbc')
-        expect(invoice.request.code.size).to eq(267)
-        expect(invoice.request.address.class).to eq(String)
-        expect(invoice.request.address.size).to eq(64)
-        expect(invoice.request.amount.millisatoshis).to eq(1000)
-        expect(invoice.request.amount.satoshis).to eq(1.0)
-        expect(invoice.request.description.memo).to eq('Coffee')
-        expect(invoice.request.description.hash).to be_nil
-        expect(invoice.request.secret.preimage.class).to eq(String)
-        expect(invoice.request.secret.preimage.size).to eq(64)
-        expect(invoice.request.secret.hash).to eq(secret_hash)
+        expect(invoice.code).to start_with('lnbc')
+        expect(invoice.code.size).to eq(267)
+        expect(invoice.address.class).to eq(String)
+        expect(invoice.address.size).to eq(64)
+        expect(invoice.amount.millisatoshis).to eq(1000)
+        expect(invoice.amount.satoshis).to eq(1.0)
+        expect(invoice.description.memo).to eq('Coffee')
+        expect(invoice.description.hash).to be_nil
+        expect(invoice.secret.preimage.class).to eq(String)
+        expect(invoice.secret.preimage.size).to eq(64)
+        expect(invoice.secret.hash).to eq(secret_hash)
 
         Contract.expect(
-          invoice.to_h, 'b4e46c28cdfdf2943a8ed404e41b4a8f89c8741938d8f22563409cfef1b4f500'
+          invoice.to_h, 'f92e5796cec5e6c32cd30755a006dab4e45ec175a5c631e28301434d7d12cd1c'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
-          expect(actual.contract).to eq(
-            { _key: 'String:50+',
-              created_at: 'Time',
-              request: { _key: 'String:50+',
-                         amount: { millisatoshis: 'Integer:0..10' },
-                         code: 'String:50+',
-                         description: { hash: 'Nil', memo: 'String:0..10' },
-                         secret: { hash: 'String:50+' } },
-              settle_at: 'Nil',
-              state: 'String:0..10' }
-          )
+          expect(actual.contract).to eq(expected.contract)
         end
       end
     end
@@ -195,39 +161,26 @@ RSpec.describe Lighstorm::Models::Invoice do
       expect(invoice.created_at).to be_a(Time)
       expect(invoice.created_at.utc.to_s).to eq('2023-03-05 22:04:02 UTC')
 
-      expect(invoice.settle_at).to be_nil
+      expect(invoice.settled_at).to be_nil
 
       expect(invoice.state).to be_nil
 
-      expect(invoice.request._key.size).to eq(64)
-      expect(invoice.request.code).to eq(request_code)
-      expect(invoice.request.address.class).to eq(String)
-      expect(invoice.request.address.size).to eq(64)
-      expect(invoice.request.amount.millisatoshis).to eq(2000)
-      expect(invoice.request.amount.satoshis).to eq(2)
-      expect(invoice.request.description.memo).to eq('Grape')
-      expect(invoice.request.description.hash).to be_nil
-      expect(invoice.request.secret.preimage).to be_nil
-      expect(invoice.request.secret.hash).to eq('012bbdc0a6067d78f2e85e17e42ea036cd4d6a2f339a8ccf8129bd142310b7bf')
+      expect(invoice.code).to eq(request_code)
+      expect(invoice.address.class).to eq(String)
+      expect(invoice.address.size).to eq(64)
+      expect(invoice.amount.millisatoshis).to eq(2000)
+      expect(invoice.amount.satoshis).to eq(2)
+      expect(invoice.description.memo).to eq('Grape')
+      expect(invoice.description.hash).to be_nil
+      expect(invoice.secret.preimage).to be_nil
+      expect(invoice.secret.hash).to eq('012bbdc0a6067d78f2e85e17e42ea036cd4d6a2f339a8ccf8129bd142310b7bf')
 
       Contract.expect(
-        invoice.to_h, 'a30a93197a2598e42ad10013abb5b8808bd816af30b71c6b780de4c58c22976a'
+        invoice.to_h, 'a98539e69b6c3b3686034c1a5b4062e94268f6759f19e7e921e08dab618f22e4'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
 
-        expect(actual.contract).to eq(
-          { _key: 'String:50+',
-            created_at: 'Time',
-            request: {
-              _key: 'String:50+',
-              amount: { millisatoshis: 'Integer:0..10' },
-              code: 'String:50+',
-              description: { hash: 'Nil', memo: 'String:0..10' },
-              secret: { hash: 'String:50+' }
-            },
-            settle_at: 'Nil',
-            state: 'Nil' }
-        )
+        expect(actual.contract).to eq(expected.contract)
       end
     end
   end

@@ -2,7 +2,7 @@
 
 require 'digest'
 
-require_relative 'all'
+require_relative './all'
 
 require_relative '../../models/edges/groups/channel_forwards'
 

@@ -28,10 +28,11 @@ module Lighstorm
         Decode.model(Decode.data(request_code, &vcr))
       end
 
-      def self.create(description: nil, millisatoshis: nil, preview: false, &vcr)
+      def self.create(payable:, description: nil, millisatoshis: nil, preview: false, &vcr)
         Create.perform(
           description: description,
           millisatoshis: millisatoshis,
+          payable: payable,
           preview: preview,
           &vcr
         )

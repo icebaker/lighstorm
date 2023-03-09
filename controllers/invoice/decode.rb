@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../ports/grpc'
-require_relative '../../adapters/invoice'
+require_relative '../../adapters/invoice_v2'
 require_relative '../../models/invoice'
 
 module Lighstorm
@@ -17,7 +17,7 @@ module Lighstorm
 
         def self.adapt(raw)
           {
-            decode_pay_req: Lighstorm::Adapter::Invoice.decode_pay_req(
+            decode_pay_req: Lighstorm::Adapter::InvoiceV2.decode_pay_req(
               raw[:decode_pay_req], raw[:_request_code]
             )
           }

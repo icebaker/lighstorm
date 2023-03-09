@@ -115,44 +115,21 @@ RSpec.describe Lighstorm::Adapter::Node do
 
         Contract.expect(
           raw,
-          'b533864b16e15b859d38c302e90999c33eaec0e35e80e3624e303eea091653d5'
+          '1d49c765e783b1a6d9e671b6774f4e5c24e07fb47b127c36fbf12f90eed33f3f'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
-          expect(actual.contract).to eq(
-            { addresses: [{ addr: 'String:11..20', network: 'String:0..10' }],
-              alias: 'String:0..10',
-              color: 'String:0..10',
-              custom_records: {},
-              features: {
-                1 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                5 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:21..30' },
-                7 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                8 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:0..10' },
-                11 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:0..10' },
-                13 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                14 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                17 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                19 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                27 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:11..20' },
-                45 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:21..30' },
-                47 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:0..10' },
-                51 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:0..10' },
-                55 => { is_known: 'Boolean', is_required: 'Boolean', name: 'String:0..10' }
-              },
-              last_update: 'Integer:0..10',
-              pub_key: 'String:50+' }
-          )
+          expect(actual.contract).to eq(expected.contract)
         end
 
         adapted = described_class.describe_graph(raw)
 
         expect(adapted).to eq(
           { _source: :describe_graph,
-            _key: '7a924eda93e428f641237c638305ef6a7003a1fd83f87183da91b52483cd0f1e',
-            public_key: '0200000000009482fa1bd99ec1d71a06ebfe27e8aee305e46bb53b78c7c6ab5b2a',
-            alias: 'Zero',
-            color: '#000000' }
+            _key: '2075df53e2c799228a5f89fe0b04382b4cb64cd218d75900a0dd5c69f64ad3b6',
+            public_key: '0200000000a3eff613189ca6c4070c89206ad658e286751eca1f29262948247a5f',
+            alias: 'pay.lnrouter.app',
+            color: '#f8fbff' }
         )
       end
     end
@@ -197,7 +174,7 @@ RSpec.describe Lighstorm::Adapter::Node do
 
   context 'subscribe_channel_graph' do
     it 'adapts' do
-      raw = JSON.parse(File.read('spec/data/gossip/node/sample-a.json'))
+      raw = JSON.parse(TestData.read('spec/data/gossip/node/sample-a.json'))
 
       Contract.expect(
         raw,

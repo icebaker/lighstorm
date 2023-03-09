@@ -43,7 +43,7 @@ RSpec.describe Lighstorm::Models::Node do
             myself: false }
         )
 
-        gossip = JSON.parse(File.read('spec/data/gossip/node/sample-a.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/node/sample-a.json'))
 
         expect(node.alias).not_to eq('SampleNode')
         expect(node.color).not_to eq('#ff5002')
@@ -65,7 +65,7 @@ RSpec.describe Lighstorm::Models::Node do
 
     context 'from empty' do
       it 'applies the gossip' do
-        gossip = JSON.parse(File.read('spec/data/gossip/node/sample-a.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/node/sample-a.json'))
 
         node = described_class.adapt(gossip: gossip)
 

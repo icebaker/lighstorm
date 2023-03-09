@@ -98,6 +98,49 @@ Lighstorm::Satoshis.new(
 ).satoshis # => 75621
 ```
 
+### Sending Money
+
+Paying an Invoice:
+
+```ruby
+invoice = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj')
+
+invoice.pay
+invoice.pay(millisatoshis: 1000, seconds: 5)
+
+action = invoice.pay(
+  millisatoshis: 1500,
+  message: 'here we go',
+  seconds: 5
+)
+
+action.result.fee.millisatoshis
+```
+
+Paying to a Node:
+```ruby
+Lighstorm::Node.myself.pay(millisatoshis: 1000)
+
+Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+).pay(millisatoshis: 1000, seconds: 5)
+
+Lighstorm::Node.myself.pay(
+  millisatoshis: 1200,
+  message: 'hello!',
+  through: 'keysend'
+)
+
+Lighstorm::Node.myself.pay(
+  millisatoshis: 1500,
+  message: 'hello!',
+  through: 'amp'
+)
+
+action = Lighstorm::Node.myself.pay(millisatoshis: 1000)
+action.result.fee.millisatoshis
+```
+
 # Data Modeling
 
 ## Graph Theory
@@ -373,7 +416,7 @@ Lighstorm::Invoice.find_by_secret_hash(
 invoice._key
 
 invoice.created_at
-invoice.settle_at
+invoice.settled_at
 
 invoice.state
 
@@ -1049,6 +1092,24 @@ expected: nil
 ```
 
 Remember to undo it afterward, replacing `expect!` with `expect`.
+
+### Extra Tips for Testing
+
+To auto-fix contracts:
+
+```sh
+rspec --format json | bundle exec rake contracts:fix
+```
+
+To delete unused test data files, update the `.env` file:
+```sh
+LIGHSTORM_DELETE_UNUSED_TEST_DATA=true
+```
+
+Deletion will only occur if you run all tests and no failures are found:
+```ruby
+bundle exec rspec
+```
 
 ## Generating Documentation
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../ports/grpc'
-require_relative '../../adapters/invoice'
+require_relative '../../adapters/invoice_v2'
 require_relative '../../models/invoice'
 
 module Lighstorm
@@ -16,7 +16,7 @@ module Lighstorm
 
         def self.adapt(raw)
           {
-            lookup_invoice: Lighstorm::Adapter::Invoice.lookup_invoice(raw[:lookup_invoice])
+            lookup_invoice: Lighstorm::Adapter::InvoiceV2.lookup_invoice(raw[:lookup_invoice])
           }
         end
 

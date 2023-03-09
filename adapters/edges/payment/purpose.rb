@@ -3,27 +3,34 @@
 module Lighstorm
   module Adapter
     class Purpose
-      def self.list_payments(grpc, node_get_info)
-        return 'self-payment' if self_payment?(grpc)
-        return 'peer-to-peer' if peer_to_peer?(grpc)
-        return 'rebalance' if rebalance?(grpc, node_get_info)
+      def self.send_payment_v2(grpc, node_get_info)
+        return 'self-payment' if self_payment?(grpc[:payment_route][:hops])
+        return 'peer-to-peer' if peer_to_peer?(grpc[:payment_route][:hops])
+        return 'rebalance' if rebalance?(grpc[:payment_route][:hops], node_get_info)
 
         'payment'
       end
 
-      def self.self_payment?(grpc)
-        grpc[:htlcs].first[:route][:hops].size == 2 &&
-          grpc[:htlcs].first[:route][:hops][0][:chan_id] == grpc[:htlcs].first[:route][:hops][1][:chan_id]
+      def self.list_payments(grpc, node_get_info)
+        return 'self-payment' if self_payment?(grpc[:htlcs].first[:route][:hops])
+        return 'peer-to-peer' if peer_to_peer?(grpc[:htlcs].first[:route][:hops])
+        return 'rebalance' if rebalance?(grpc[:htlcs].first[:route][:hops], node_get_info)
+
+        'payment'
       end
 
-      def self.peer_to_peer?(grpc)
-        grpc[:htlcs].first[:route][:hops].size == 1
+      def self.self_payment?(hops)
+        hops.size == 2 && hops[0][:chan_id] == hops[1][:chan_id]
       end
 
-      def self.rebalance?(grpc, node_get_info)
-        return false if grpc[:htlcs].first[:route][:hops].size <= 2
+      def self.peer_to_peer?(hops)
+        hops.size == 1
+      end
 
-        destination_public_key = grpc[:htlcs].first[:route][:hops].last[:pub_key]
+      def self.rebalance?(hops, node_get_info)
+        return false if hops.size <= 2
+
+        destination_public_key = hops.last[:pub_key]
 
         node_get_info[:identity_pubkey] == destination_public_key
       end

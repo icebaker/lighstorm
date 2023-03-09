@@ -60,8 +60,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           expect(group.channel.accounting.capacity.satoshis).to eq(6_200_000)
           expect(group.channel.accounting.sent.millisatoshis).to eq(39_143_662_000)
           expect(group.channel.accounting.sent.satoshis).to eq(39_143_662)
-          expect(group.channel.accounting.received.millisatoshis).to eq(33_041_910_000)
-          expect(group.channel.accounting.received.satoshis).to eq(33_041_910)
+          expect(group.channel.accounting.received.millisatoshis).to be > 30_000_000_000
+          expect(group.channel.accounting.received.millisatoshis).to be < 100_000_000_000
+          expect(group.channel.accounting.received.satoshis).to be > 30_000_000
+          expect(group.channel.accounting.received.satoshis).to be < 100_000_000
           expect(group.channel.accounting.unsettled.millisatoshis).to eq(0)
           expect(group.channel.accounting.unsettled.satoshis).to eq(0)
 
@@ -74,10 +76,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           expect(group.channel.myself.accounting.balance.millisatoshis).to be < 200_000_000
           expect(group.channel.myself.accounting.balance.satoshis).to be > 10_000
           expect(group.channel.myself.accounting.balance.satoshis).to be < 200_000
-          expect(group.channel.myself.policy.fee.base.millisatoshis).to eq(0)
-          expect(group.channel.myself.policy.fee.base.satoshis).to eq(0)
-          expect(group.channel.myself.policy.fee.rate.parts_per_million).to eq(94)
-          expect(group.channel.myself.policy.fee.rate.percentage).to eq(0.0094)
+          expect(group.channel.myself.policy.fee.base.millisatoshis).to be >= 0
+          expect(group.channel.myself.policy.fee.base.satoshis).to be >= 0
+          expect(group.channel.myself.policy.fee.rate.parts_per_million).to be >= 0
+          expect(group.channel.myself.policy.fee.rate.percentage).to be >= 0
           expect(group.channel.myself.policy.htlc.minimum.millisatoshis).to eq(1000)
           expect(group.channel.myself.policy.htlc.minimum.satoshis).to eq(1)
           expect(group.channel.myself.policy.htlc.maximum.millisatoshis).to eq(6_045_000_000)

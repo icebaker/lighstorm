@@ -21,7 +21,7 @@ RSpec.describe Lighstorm::Node do
 
     context 'dump' do
       let(:data) do
-        symbolize_keys(JSON.parse(File.read('spec/data/gossip/node/4dec8c315434/dump.json')))
+        symbolize_keys(JSON.parse(TestData.read('spec/data/gossip/node/4dec8c315434/dump.json')))
       end
 
       it do
@@ -51,7 +51,7 @@ RSpec.describe Lighstorm::Node do
 
     context 'gossip' do
       let(:data) do
-        JSON.parse(File.read('spec/data/gossip/node/4dec8c315434/gossip.json'))
+        JSON.parse(TestData.read('spec/data/gossip/node/4dec8c315434/gossip.json'))
       end
 
       it do

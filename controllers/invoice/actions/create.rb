@@ -15,15 +15,22 @@ module Lighstorm
           ).to_h
         end
 
-        def self.prepare(description: nil, millisatoshis: nil)
-          {
+        def self.prepare(payable:, description: nil, millisatoshis: nil)
+          request = {
             service: :lightning,
             method: :add_invoice,
-            params: {
-              memo: description,
-              value_msat: millisatoshis
-            }
+            params: { memo: description }
           }
+
+          request[:params][:value_msat] = millisatoshis unless millisatoshis.nil?
+
+          if payable.to_sym == :indefinitely
+            request[:params][:is_amp] = true
+          elsif payable.to_sym != :once
+            raise Errors::ArgumentError, "payable: accepts :indefinitely or :once, :#{payable} is not valid."
+          end
+
+          request
         end
 
         def self.dispatch(grpc_request, &vcr)
@@ -31,20 +38,20 @@ module Lighstorm
         end
 
         def self.adapt(response)
-          Lighstorm::Adapter::Invoice.add_invoice(response)
+          Lighstorm::Adapter::InvoiceV2.add_invoice(response)
         end
 
         def self.fetch(adapted, &vcr)
-          FindBySecretHash.data(adapted[:request][:secret][:hash], &vcr)
+          FindBySecretHash.data(adapted[:secret][:hash], &vcr)
         end
 
         def self.model(data)
           FindBySecretHash.model(data)
         end
 
-        def self.perform(description: nil, millisatoshis: nil, preview: false, &vcr)
+        def self.perform(payable:, description: nil, millisatoshis: nil, preview: false, &vcr)
           grpc_request = prepare(
-            description: description, millisatoshis: millisatoshis
+            description: description, millisatoshis: millisatoshis, payable: payable
           )
 
           return grpc_request if preview

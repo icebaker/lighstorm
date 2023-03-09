@@ -2,6 +2,14 @@
 
 module Sanitizer
   SAFE = {
+    'total_time_lock <= payment_route' => true,
+    'total_fees <= payment_route' => true,
+    'total_amt <= payment_route' => true,
+    'custom_records <= hops' => true,
+    'total_fees_msat <= payment_route' => true,
+    'total_amt_msat <= payment_route' => true,
+    'payment_error' => true,
+    'payment_route' => true,
     '_error' => true,
     '_request_code' => true,
     'accept_time <= htlcs' => true,

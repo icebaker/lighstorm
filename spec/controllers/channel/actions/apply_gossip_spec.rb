@@ -2,10 +2,11 @@
 
 require 'json'
 
-require_relative '../../../../controllers/channel/find_by_id'
-
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../../models/edges/channel/hop'
 require_relative '../../../../models/edges/channel'
-
+require_relative '../../../../controllers/channel/find_by_id'
 require_relative '../../../../ports/dsl/lighstorm/errors'
 
 RSpec.describe Lighstorm::Models::Channel do
@@ -24,7 +25,7 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'applies the gossip' do
         previous_dump = channel.dump
 
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-a.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-a.json'))
 
         diff = channel.apply!(gossip: gossip)
 
@@ -40,7 +41,7 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'applies the gossip' do
         previous_dump = channel.dump
 
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-b.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-b.json'))
 
         expect { channel.apply!(gossip: gossip) }.to raise_error(
           IncoherentGossipError, "Gossip doesn't belong to this Channel"
@@ -55,7 +56,7 @@ RSpec.describe Lighstorm::Models::Channel do
         previous_to_h = channel.to_h
         previous_dump = channel.dump
 
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-b.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-b.json'))
 
         expect(channel.partners[0].policy.fee.base.millisatoshis).not_to eq(150)
 
@@ -79,7 +80,7 @@ RSpec.describe Lighstorm::Models::Channel do
         previous_to_h = channel.to_h
         previous_dump = channel.dump
 
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-c.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-c.json'))
 
         expect(channel.partners[0].state).not_to eq('inactive')
 
@@ -103,7 +104,7 @@ RSpec.describe Lighstorm::Models::Channel do
         previous_to_h = channel.to_h
         previous_dump = channel.dump
 
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-d.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-d.json'))
 
         expect(previous_to_h).to eq(
           { _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
@@ -320,7 +321,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'from empty' do
       it 'applies the gossip' do
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-d.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-d.json'))
 
         channel = described_class.adapt(gossip: gossip)
 

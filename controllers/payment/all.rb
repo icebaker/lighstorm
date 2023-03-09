@@ -3,7 +3,7 @@
 require_relative '../../ports/grpc'
 require_relative '../../adapters/nodes/node'
 require_relative '../../adapters/edges/payment'
-require_relative '../../adapters/invoice'
+require_relative '../../adapters/invoice_v2'
 require_relative '../../adapters/edges/payment/purpose'
 
 require_relative '../../models/edges/payment'
@@ -195,7 +195,7 @@ module Lighstorm
           raw[:decode_pay_req].each_key do |key|
             next if raw[:decode_pay_req][key][:_error]
 
-            adapted[:decode_pay_req][key] = Lighstorm::Adapter::PaymentRequest.decode_pay_req(
+            adapted[:decode_pay_req][key] = Lighstorm::Adapter::InvoiceV2.decode_pay_req(
               raw[:decode_pay_req][key]
             )
           end
@@ -203,7 +203,7 @@ module Lighstorm
           raw[:lookup_invoice].each_key do |key|
             next if raw[:lookup_invoice][key][:_error]
 
-            adapted[:lookup_invoice][key] = Lighstorm::Adapter::Invoice.lookup_invoice(
+            adapted[:lookup_invoice][key] = Lighstorm::Adapter::InvoiceV2.lookup_invoice(
               raw[:lookup_invoice][key]
             )
           end
@@ -309,30 +309,54 @@ module Lighstorm
         end
 
         def self.transform(list_payments, adapted)
-          if adapted[:lookup_invoice][list_payments[:request][:secret][:hash]] &&
-             !adapted[:lookup_invoice][list_payments[:request][:secret][:hash]][:_error]
+          if adapted[:lookup_invoice][list_payments[:secret][:hash]] &&
+             !adapted[:lookup_invoice][list_payments[:secret][:hash]][:_error]
 
-            list_payments[:request] = adapted[:lookup_invoice][list_payments[:request][:secret][:hash]][:request]
+            if list_payments[:invoice]
+              lookup = adapted[:lookup_invoice][list_payments[:secret][:hash]]
+
+              list_payments[:invoice][:description] = lookup[:description]
+
+              lookup.each_key do |key|
+                if lookup[key].is_a?(Hash)
+                  unless list_payments[:invoice].key?(key) && !list_payments[:invoice][key].nil?
+                    list_payments[:invoice][key] = lookup[:key]
+                  end
+
+                  next
+                end
+
+                unless list_payments[:invoice].key?(key) && !list_payments[:invoice][key].nil? &&
+                       (!list_payments[:invoice][key].is_a?(String) || !list_payments[:invoice][key].empty?)
+                  list_payments[:invoice][key] = lookup[key]
+                end
+              end
+            else
+              list_payments[:invoice] = adapted[:lookup_invoice][list_payments[:secret][:hash]]
+            end
           else
-            list_payments[:request][:_key] = Digest::SHA256.hexdigest(
-              list_payments[:request][:code]
+            list_payments[:invoice][:_key] = Digest::SHA256.hexdigest(
+              list_payments[:invoice][:code]
             )
           end
+
           list_payments[:hops].each do |hop|
             hop[:channel] = transform_channel(hop[:channel], adapted)
           end
 
-          if adapted[:decode_pay_req][list_payments[:request][:code]]
-            decoded = adapted[:decode_pay_req][list_payments[:request][:code]]
-            request = list_payments[:request]
+          if adapted[:decode_pay_req][list_payments[:invoice][:code]]
+            decoded = adapted[:decode_pay_req][list_payments[:invoice][:code]]
+            invoice = list_payments[:invoice]
 
             decoded.each_key do |key|
-              request[key] = decoded[key] unless request.key?(key)
+              invoice[key] = decoded[key] unless invoice.key?(key)
 
               next unless decoded[key].is_a?(Hash)
 
               decoded[key].each_key do |sub_key|
-                request[key][sub_key] = decoded[key][sub_key] unless request[key].key?(sub_key)
+                unless invoice[key].key?(sub_key) && !invoice[key][sub_key].nil?
+                  invoice[key][sub_key] = decoded[key][sub_key]
+                end
               end
             end
           end

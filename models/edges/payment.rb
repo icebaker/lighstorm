@@ -6,29 +6,38 @@ require_relative '../satoshis'
 
 require_relative '../connections/payment_channel'
 require_relative '../nodes/node'
-require_relative '../payment_request'
+require_relative '../invoice'
+require_relative '../secret'
 
 module Lighstorm
   module Models
     class Payment
-      attr_reader :_key, :hash, :request, :status, :created_at, :settled_at, :purpose
+      attr_reader :_key, :at, :state, :secret, :purpose, :through
 
       def initialize(data)
         @data = data
 
         @_key = data[:_key]
-        @status = data[:status]
-        @created_at = data[:created_at]
-        @settled_at = data[:settled_at]
+        @at = data[:at]
+        @state = data[:state]
         @purpose = data[:purpose]
+        @through = data[:through]
       end
 
-      def request
-        @request ||= PaymentRequest.new(@data[:request])
+      def invoice
+        @invoice ||= Invoice.new(@data[:invoice])
+      end
+
+      def amount
+        @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
       end
 
       def fee
         @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
+      end
+
+      def secret
+        @secret ||= Secret.new(@data[:secret])
       end
 
       def hops
@@ -51,15 +60,16 @@ module Lighstorm
       def to_h
         response = {
           _key: _key,
-          status: status,
-          created_at: created_at,
-          settled_at: settled_at,
-          purpose: purpose,
+          at: at,
+          state: state,
+          amount: amount.to_h,
           fee: {
             millisatoshis: fee.millisatoshis,
-            parts_per_million: fee.parts_per_million(request.amount.millisatoshis)
+            parts_per_million: fee.parts_per_million(amount.millisatoshis)
           },
-          request: request.to_h,
+          purpose: purpose,
+          invoice: invoice.to_h,
+          secret: secret.to_h,
           from: from.to_h,
           to: to.to_h,
           hops: hops.map(&:to_h)

@@ -39,7 +39,7 @@ RSpec.describe Lighstorm::Models::Node do
         node_myself = described_class.new(data[2])
 
         Contract.expect(
-          node_alias.dump, 'dd336ce8879b3461a2c4d0402f43467731f1464f9c4a6b207a41f140c7a810b4'
+          node_alias.dump, 'e383c9cb552c7d960adb867d7d584be794687ca0d0f4e1089be16f64296b62b3'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -47,7 +47,7 @@ RSpec.describe Lighstorm::Models::Node do
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               _source: 'Symbol:11..20',
-              alias: 'String:0..10',
+              alias: 'String:11..20',
               color: 'String:0..10',
               myself: 'Boolean',
               platform: { blockchain: 'String:0..10', network: 'String:0..10' },
