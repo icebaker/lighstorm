@@ -3,7 +3,7 @@
 require_relative '../../ports/grpc'
 require_relative '../../adapters/nodes/node'
 require_relative '../../adapters/edges/payment'
-require_relative '../../adapters/invoice_v2'
+require_relative '../../adapters/invoice'
 require_relative '../../adapters/edges/payment/purpose'
 
 require_relative '../../models/edges/payment'
@@ -195,7 +195,7 @@ module Lighstorm
           raw[:decode_pay_req].each_key do |key|
             next if raw[:decode_pay_req][key][:_error]
 
-            adapted[:decode_pay_req][key] = Lighstorm::Adapter::InvoiceV2.decode_pay_req(
+            adapted[:decode_pay_req][key] = Lighstorm::Adapter::Invoice.decode_pay_req(
               raw[:decode_pay_req][key]
             )
           end
@@ -203,7 +203,7 @@ module Lighstorm
           raw[:lookup_invoice].each_key do |key|
             next if raw[:lookup_invoice][key][:_error]
 
-            adapted[:lookup_invoice][key] = Lighstorm::Adapter::InvoiceV2.lookup_invoice(
+            adapted[:lookup_invoice][key] = Lighstorm::Adapter::Invoice.lookup_invoice(
               raw[:lookup_invoice][key]
             )
           end

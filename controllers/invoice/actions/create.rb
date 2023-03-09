@@ -38,7 +38,7 @@ module Lighstorm
         end
 
         def self.adapt(response)
-          Lighstorm::Adapter::InvoiceV2.add_invoice(response)
+          Lighstorm::Adapter::Invoice.add_invoice(response)
         end
 
         def self.fetch(adapted, &vcr)

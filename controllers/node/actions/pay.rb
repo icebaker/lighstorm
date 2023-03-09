@@ -73,7 +73,7 @@ module Lighstorm
         end
 
         def self.adapt(response, node_get_info)
-          Adapter::Payment.send_payment_v2(response.last, node_get_info, :node_send)
+          Adapter::Payment.send_payment_v2(response.last, node_get_info)
         end
 
         def self.model(data)

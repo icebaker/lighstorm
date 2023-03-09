@@ -6,7 +6,7 @@ require_relative '../ports/dsl/lighstorm/errors'
 
 module Lighstorm
   module Adapter
-    class InvoiceV2
+    class Invoice
       def self.add_invoice(grpc)
         {
           _source: :add_invoice,

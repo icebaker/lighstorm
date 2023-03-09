@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../../adapters/invoice_v2'
+require_relative '../../adapters/invoice'
 require_relative '../../ports/grpc'
 
-RSpec.describe Lighstorm::Adapter::InvoiceV2 do
+RSpec.describe Lighstorm::Adapter::Invoice do
   context 'decode_pay_req' do
     let(:request_code) do
       'lnbc20n1pjq2ywjpp5qy4mms9xqe7h3uhgtct7gt4qxmx56630xwdgenup9x73ggcsk7lsdqggaexzur9cqzpgxqyz5vqsp5je8mp8d49gvq0hj37jkp6y7vapvsgc6nflehhwpqw0yznclzuuqq9qyyssqt38umwt9wdd09dgejd68v88jnwezr9j2y87pv3yr5yglw77kqk6hn3jv6ue573m003n06r2yfa8yzzyh8zr3rgkkwqg9sf4arv490eqps7h0k9'
