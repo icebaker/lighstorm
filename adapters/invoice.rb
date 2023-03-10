@@ -59,24 +59,70 @@ module Lighstorm
       end
 
       def self.list_or_lookup_invoice(grpc)
-        {
+        adapted = {
           _key: _key(grpc),
           created_at: Time.at(grpc[:creation_date]),
           settled_at: grpc[:settle_date].nil? || !grpc[:settle_date].positive? ? nil : Time.at(grpc[:settle_date]),
           state: grpc[:state].to_s.downcase,
-          code: grpc[:payment_request],
+          code: grpc[:payment_request].empty? ? nil : grpc[:payment_request],
           payable: grpc[:is_amp] == true ? :indefinitely : :once,
-          amount: { millisatoshis: grpc[:value_msat] },
           description: {
-            memo: grpc[:memo],
-            hash: grpc[:description_hash] == '' ? nil : grpc[:description_hash]
+            memo: grpc[:memo].empty? ? nil : grpc[:memo],
+            hash: grpc[:description_hash].empty? ? nil : grpc[:description_hash]
           },
           address: grpc[:payment_addr].unpack1('H*'),
           secret: {
-            preimage: grpc[:r_preimage].unpack1('H*'),
-            hash: grpc[:r_hash].unpack1('H*')
+            preimage: grpc[:r_preimage].empty? ? nil : grpc[:r_preimage].unpack1('H*'),
+            hash: grpc[:r_hash].empty? ? nil : grpc[:r_hash].unpack1('H*')
           }
         }
+
+        adapted[:amount] = { millisatoshis: grpc[:value_msat] } if grpc[:value_msat] != 0
+
+        adapted[:paid] = { millisatoshis: grpc[:amt_paid_msat] } if grpc[:amt_paid_msat] != 0
+
+        # grpc[:is_amp]
+        # grpc[:amp_invoice_state]
+
+        adapted[:payments] = []
+
+        grpc[:htlcs].each do |htlc|
+          next unless htlc[:state] == :SETTLED
+
+          payment = {
+            amount: { millisatoshis: htlc[:amt_msat] },
+            hops: [{ channel: { id: htlc[:chan_id] } }],
+            at: Time.at(htlc[:resolve_time])
+          }
+
+          if grpc[:is_amp]
+            payment[:secret] = {
+              preimage: htlc[:amp][:preimage].unpack1('H*'),
+              hash: htlc[:amp][:hash].unpack1('H*')
+            }
+          end
+
+          # https://github.com/satoshisstream/satoshis.stream/blob/main/TLV_registry.md
+          if htlc[:custom_records][34_349_334]
+            payment[:message] = htlc[:custom_records][34_349_334].dup
+
+            unless payment[:message].force_encoding('UTF-8').valid_encoding?
+              payment[:message] = payment[:message].unpack1('H*')
+
+              unless payment[:message].force_encoding('UTF-8').valid_encoding?
+                payment[:message] = payment[:message].scrub('?')
+              end
+            end
+          end
+
+          adapted[:payments] << payment
+        end
+
+        adapted[:payments] = adapted[:payments].sort_by { |payment| -payment[:at].to_i }
+
+        adapted.delete(:payments) if adapted[:payments].empty?
+
+        adapted
       end
 
       def self.send_payment_v2(grpc)
@@ -120,9 +166,11 @@ module Lighstorm
           }
         }
 
-        grpc[:htlcs].first[:route][:hops].map do |raw_hop|
-          if raw_hop[:mpp_record] && raw_hop[:mpp_record][:payment_addr]
-            data[:address] = raw_hop[:mpp_record][:payment_addr].unpack1('H*')
+        unless grpc[:htlcs].empty?
+          grpc[:htlcs].first[:route][:hops].map do |raw_hop|
+            if raw_hop[:mpp_record] && raw_hop[:mpp_record][:payment_addr]
+              data[:address] = raw_hop[:mpp_record][:payment_addr].unpack1('H*')
+            end
           end
         end
 

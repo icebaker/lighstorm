@@ -4,15 +4,60 @@ require_relative '../../../../controllers/invoice/actions/pay'
 require_relative '../../../../models/satoshis'
 require_relative '../../../../models/invoice'
 require_relative '../../../../ports/dsl/lighstorm/errors'
+require_relative '../../../../helpers/time_expression'
 
 RSpec.describe Lighstorm::Controllers::Invoice::Pay do
   describe 'pay invoice' do
     let(:vcr_key) { 'Controllers::Invoice::Pay' }
     let(:params) do
       {
-        request_code: 'lnbc10n1pjq3ch2pp5tjjmm2vtxe5mmhpq4kpkwsfgx03hqr8xkf8m9eaxwwcr323gaw4qdq2gdhkven9v5cqzpgxqyz5vqsp5jnk63q3g85xhtsfeuyt90zwl5838na48lcf7hfn22sf8yxx6tyqs9qyyssq2wlk567j0a8y9nnzkykr2lycvqy4qkjv0yrjcklmenw755ych7g42ggundskzs7zj0eez9nqttyjej3gdf8kh8gh6j6sdr0jv50ydjqqc6m25v',
+        request_code: 'lnbc10n1pjqnkegpp58ykalpph7w5xdmfmdqjx2xkshlylrz04q609xhr99ctqgz7uk0ssdq2gdhkven9v5cqzpgxqyz5vqsp5kpxvnm8yc3d9rwuajpc47l7uawv0tzczn4f0cc94putudpqx5z3q9qyyssq9p083thk8ed0pq0cpg4sda4nkere8qspn5g53x7fk0xdmrexrd3njj2cwpp6mpds2c08yv9mqxetjmw7w0mjpvpxsyw3dezlxsgak8gpmke2ya',
         millisatoshis: 1_000
       }
+    end
+
+    context 'timeout and expiration' do
+      context 'seconds' do
+        it 'times out' do
+          request = described_class.prepare(
+            request_code: params[:request_code],
+            millisatoshis: params[:millisatoshis],
+            times_out_in: { seconds: 15 }
+          )
+
+          expect(request).to eq(
+            { service: :router,
+              method: :send_payment_v2,
+              params: {
+                payment_request: 'lnbc10n1pjqnkegpp58ykalpph7w5xdmfmdqjx2xkshlylrz04q609xhr99ctqgz7uk0ssdq2gdhkven9v5cqzpgxqyz5vqsp5kpxvnm8yc3d9rwuajpc47l7uawv0tzczn4f0cc94putudpqx5z3q9qyyssq9p083thk8ed0pq0cpg4sda4nkere8qspn5g53x7fk0xdmrexrd3njj2cwpp6mpds2c08yv9mqxetjmw7w0mjpvpxsyw3dezlxsgak8gpmke2ya',
+                timeout_seconds: 15,
+                allow_self_payment: true,
+                amt_msat: 1000
+              } }
+          )
+        end
+      end
+
+      context 'minutes' do
+        it 'times out' do
+          request = described_class.prepare(
+            request_code: params[:request_code],
+            millisatoshis: params[:millisatoshis],
+            times_out_in: { minutes: 1, seconds: 15 }
+          )
+
+          expect(request).to eq(
+            { service: :router,
+              method: :send_payment_v2,
+              params: {
+                payment_request: 'lnbc10n1pjqnkegpp58ykalpph7w5xdmfmdqjx2xkshlylrz04q609xhr99ctqgz7uk0ssdq2gdhkven9v5cqzpgxqyz5vqsp5kpxvnm8yc3d9rwuajpc47l7uawv0tzczn4f0cc94putudpqx5z3q9qyyssq9p083thk8ed0pq0cpg4sda4nkere8qspn5g53x7fk0xdmrexrd3njj2cwpp6mpds2c08yv9mqxetjmw7w0mjpvpxsyw3dezlxsgak8gpmke2ya',
+                timeout_seconds: 75,
+                allow_self_payment: true,
+                amt_msat: 1000
+              } }
+          )
+        end
+      end
     end
 
     context 'gradual' do
@@ -20,7 +65,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         request = described_class.prepare(
           request_code: params[:request_code],
           millisatoshis: params[:millisatoshis],
-          seconds: 5
+          times_out_in: { seconds: 5 }
         )
 
         expect(request).to eq(
@@ -36,7 +81,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
         request = described_class.prepare(
           request_code: params[:request_code],
-          seconds: 5
+          times_out_in: { seconds: 5 }
         )
 
         expect(request).to eq(
@@ -68,14 +113,14 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
         model = described_class.model(adapted)
 
-        expect(model.at.utc.to_s).to eq('2023-03-08 20:38:12 UTC')
+        expect(model.at.utc.to_s).to eq('2023-03-09 14:49:54 UTC')
         expect(model.state).to eq('succeeded')
         expect(model.amount.millisatoshis).to eq(1000)
         expect(model.fee.millisatoshis).to eq(0)
         expect(model.purpose).to eq('self-payment')
 
-        expect(model.invoice.created_at.utc.to_s).to eq('2023-03-08 20:38:12 UTC')
-        expect(model.invoice.settled_at.utc.to_s).to eq('2023-03-08 20:38:16 UTC')
+        expect(model.invoice.created_at.utc.to_s).to eq('2023-03-09 14:49:54 UTC')
+        expect(model.invoice.settled_at.utc.to_s).to eq('2023-03-09 14:49:59 UTC')
 
         expect(model.at).to be > model.invoice.created_at
         expect(model.at).to be < model.invoice.settled_at
@@ -85,7 +130,6 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         expect(model.invoice.code).to eq(params[:request_code])
         expect(model.invoice.amount.millisatoshis).to eq(params[:millisatoshis])
         expect(model.invoice.payable).to eq(:once)
-        expect(model.invoice.address.size).to eq(64)
         expect(model.invoice.description.memo).to be_nil
         expect(model.invoice.description.hash).to be_nil
 
@@ -98,7 +142,9 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
-            request_code: params[:request_code], preview: true
+            request_code: params[:request_code],
+            times_out_in: { seconds: 5 },
+            preview: true
           )
 
           expect(request).to eq(
@@ -116,7 +162,8 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'perform' do
         it 'performs' do
           action = described_class.perform(
-            request_code: params[:request_code]
+            request_code: params[:request_code],
+            times_out_in: { seconds: 5 }
           ) do |fn, from = :fetch|
             VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
           end
@@ -124,19 +171,18 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(action.response.first[:creation_time_ns].to_s.size).to eq(19)
           expect(action.result.class).to eq(Lighstorm::Models::Payment)
 
-          expect(action.result.at.utc.to_s).to eq('2023-03-08 20:38:12 UTC')
+          expect(action.result.at.utc.to_s).to eq('2023-03-09 14:49:54 UTC')
           expect(action.result.state).to eq('succeeded')
           expect(action.result.amount.millisatoshis).to eq(1000)
           expect(action.result.fee.millisatoshis).to eq(0)
           expect(action.result.purpose).to eq('self-payment')
 
-          expect(action.result.invoice.created_at.utc.to_s).to eq('2023-03-08 20:38:12 UTC')
-          expect(action.result.invoice.settled_at.utc.to_s).to eq('2023-03-08 20:38:16 UTC')
+          expect(action.result.invoice.created_at.utc.to_s).to eq('2023-03-09 14:49:54 UTC')
+          expect(action.result.invoice.settled_at.utc.to_s).to eq('2023-03-09 14:49:59 UTC')
           expect(action.result.invoice.state).to be_nil
           expect(action.result.invoice.code).to eq(params[:request_code])
           expect(action.result.invoice.amount.millisatoshis).to eq(params[:millisatoshis])
           expect(action.result.invoice.payable).to eq(:once)
-          expect(action.result.invoice.address.size).to eq(64)
           expect(action.result.invoice.description.memo).to be_nil
           expect(action.result.invoice.description.hash).to be_nil
 
@@ -144,7 +190,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, '4f218b6cf9cac261ffe28e92fa578a40eecb177f0fe4e0acb6a541f4e120aa60'
+            action.to_h, 'edd9d4f7eb808ee51ac8c4c4ebea431d45082164c68150e3e690b1014ac04d2d'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -159,6 +205,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           request = described_class.perform(
             request_code: params[:request_code],
             message: 'hello!',
+            times_out_in: { seconds: 5 },
             preview: true
           )
 
@@ -185,12 +232,59 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       end
     end
 
+    context 'amp defined' do
+      let(:params) do
+        {
+          request_code: 'lnbc10n1pjqhfldpp502qqwwx8gxks3l0c05uj7a4f072206d2vt7m632nve5l4wzf07hsdqcg3hkuct5v5srz6eqd4ekzarncqzpgxqyz5vqsp5lmj5suzpg93uhk5268lk6axn3gz3dvamcg5n6fcgskr8968spwwq9q8pqqqssq0qced26llyuk3583yrf7yhq4mt89nnd8tnrelm6dmap2gp0wva736ppgdrj9gvl5pvupkm8lvnhx36nkpfjq6seduzjysggcwuv3sgqpynrw75',
+          millisatoshis: 1_000
+        }
+      end
+
+      it 'performs' do
+        action = described_class.perform(
+          request_code: params[:request_code],
+          times_out_in: { seconds: 5 }
+        ) do |fn, from = :fetch|
+          VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
+        end
+
+        expect(action.response.first[:creation_time_ns].to_s.size).to eq(19)
+        expect(action.result.class).to eq(Lighstorm::Models::Payment)
+
+        expect(action.result.at.utc.to_s).to eq('2023-03-10 22:41:06 UTC')
+        expect(action.result.state).to eq('succeeded')
+        expect(action.result.amount.millisatoshis).to eq(1000)
+        expect(action.result.fee.millisatoshis).to eq(0)
+        expect(action.result.purpose).to eq('self-payment')
+
+        expect(action.result.invoice.created_at.utc.to_s).to eq('2023-03-10 22:41:06 UTC')
+        expect(action.result.invoice.settled_at.utc.to_s).to eq('2023-03-10 22:41:10 UTC')
+        expect(action.result.invoice.state).to be_nil
+        expect(action.result.invoice.code).to eq(params[:request_code])
+        expect(action.result.invoice.amount.millisatoshis).to eq(params[:millisatoshis])
+        expect(action.result.invoice.payable).to eq(:once)
+        expect(action.result.invoice.description.memo).to be_nil
+        expect(action.result.invoice.description.hash).to be_nil
+
+        expect(action.result.hops.size).to eq(2)
+        expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
+
+        Contract.expect(
+          action.to_h, 'edd9d4f7eb808ee51ac8c4c4ebea431d45082164c68150e3e690b1014ac04d2d'
+        ) do |actual, expected|
+          expect(actual.hash).to eq(expected.hash)
+          expect(actual.contract).to eq(expected.contract)
+        end
+      end
+    end
+
     context 'errors' do
       context 'already paid' do
         it 'raises error' do
           expect do
             described_class.perform(
-              request_code: params[:request_code]
+              request_code: params[:request_code],
+              times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
               VCR.reel.replay("#{vcr_key}/#{from}/already-paid", params) { fn.call }
             end
@@ -198,14 +292,15 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
           begin
             described_class.perform(
-              request_code: params[:request_code]
+              request_code: params[:request_code],
+              times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
               VCR.reel.replay("#{vcr_key}/#{from}/already-paid", params) { fn.call }
             end
           rescue StandardError => e
             expect(e.grpc.class).to eq(GRPC::AlreadyExists)
             expect(e.grpc.message).to eq(
-              '6:invoice is already paid. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {grpc_message:"invoice is already paid", grpc_status:6, created_time:"2023-03-08T17:39:59.94268418-03:00"}}'
+              '6:invoice is already paid. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {created_time:"2023-03-09T12:08:45.066316581-03:00", grpc_status:6, grpc_message:"invoice is already paid"}}'
             )
           end
         end
@@ -215,7 +310,8 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         it 'raises error' do
           expect do
             described_class.perform(
-              request_code: params[:request_code], millisatoshis: params[:millisatoshis]
+              request_code: params[:request_code], millisatoshis: params[:millisatoshis],
+              times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
               VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
             end
@@ -226,14 +322,15 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
           begin
             described_class.perform(
-              request_code: params[:request_code], millisatoshis: params[:millisatoshis]
+              request_code: params[:request_code], millisatoshis: params[:millisatoshis],
+              times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
               VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
             end
           rescue StandardError => e
             expect(e.grpc.class).to eq(GRPC::Unknown)
             expect(e.grpc.message).to eq(
-              '2:amount must not be specified when paying a non-zero  amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {grpc_message:"amount must not be specified when paying a non-zero  amount invoice", grpc_status:2, created_time:"2023-03-08T17:39:59.945965215-03:00"}}'
+              '2:amount must not be specified when paying a non-zero  amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {created_time:"2023-03-09T12:11:16.78336031-03:00", grpc_status:2, grpc_message:"amount must not be specified when paying a non-zero  amount invoice"}}'
             )
           end
         end
@@ -250,7 +347,8 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         it 'raises error' do
           expect do
             described_class.perform(
-              request_code: params[:request_code]
+              request_code: params[:request_code],
+              times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
               VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
             end
@@ -261,14 +359,15 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
           begin
             described_class.perform(
-              request_code: params[:request_code]
+              request_code: params[:request_code],
+              times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
               VCR.reel.replay("#{vcr_key}/#{from}/millisatoshis", params) { fn.call }
             end
           rescue StandardError => e
             expect(e.grpc.class).to eq(GRPC::Unknown)
             expect(e.grpc.message).to eq(
-              '2:amount must be specified when paying a zero amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {grpc_message:"amount must be specified when paying a zero amount invoice", grpc_status:2, created_time:"2023-03-08T17:43:24.54179933-03:00"}}'
+              '2:amount must be specified when paying a zero amount invoice. debug_error_string:{UNKNOWN:Error received from peer ipv4:127.0.0.1:10009 {created_time:"2023-03-09T12:11:49.444917646-03:00", grpc_status:2, grpc_message:"amount must be specified when paying a zero amount invoice"}}'
             )
           end
         end

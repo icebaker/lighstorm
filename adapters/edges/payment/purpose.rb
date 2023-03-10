@@ -4,6 +4,8 @@ module Lighstorm
   module Adapter
     class Purpose
       def self.send_payment_v2(grpc, node_get_info)
+        return 'unknown' if grpc[:payment_route][:hops].empty?
+
         return 'self-payment' if self_payment?(grpc[:payment_route][:hops])
         return 'peer-to-peer' if peer_to_peer?(grpc[:payment_route][:hops])
         return 'rebalance' if rebalance?(grpc[:payment_route][:hops], node_get_info)
@@ -12,6 +14,8 @@ module Lighstorm
       end
 
       def self.list_payments(grpc, node_get_info)
+        return 'unknown' if grpc[:htlcs].empty?
+
         return 'self-payment' if self_payment?(grpc[:htlcs].first[:route][:hops])
         return 'peer-to-peer' if peer_to_peer?(grpc[:htlcs].first[:route][:hops])
         return 'rebalance' if rebalance?(grpc[:htlcs].first[:route][:hops], node_get_info)

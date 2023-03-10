@@ -12,23 +12,29 @@ require_relative '../../invoice'
 require_relative '../../action'
 require_relative '../../node/myself'
 
+require_relative '../../payment/actions/pay'
+
 module Lighstorm
   module Controllers
     module Node
       module Pay
-        def self.call(grpc_request)
-          result = []
-          Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
-            grpc_request[:method], grpc_request[:params]
-          ) do |response|
-            result << response.to_h
-          end
-          result
-        rescue StandardError => e
-          { _error: e }
+        def self.dispatch(grpc_request, &vcr)
+          Payment::Pay.dispatch(grpc_request, &vcr)
         end
 
-        def self.prepare(public_key:, millisatoshis:, seconds:, secret:, through:, message: nil)
+        def self.fetch(&vcr)
+          Payment::Pay.fetch(&vcr)
+        end
+
+        def self.adapt(data, node_get_info)
+          Payment::Pay.adapt(data, node_get_info)
+        end
+
+        def self.model(data)
+          Payment::Pay.model(data)
+        end
+
+        def self.prepare(public_key:, millisatoshis:, times_out_in:, secret:, through:, message: nil)
           # Appreciation note for people that suffered in the past and shared
           # their knowledge, so we don't have to struggle the same:
           # - https://github.com/lightningnetwork/lnd/discussions/6357
@@ -41,7 +47,7 @@ module Lighstorm
             params: {
               dest: [public_key].pack('H*'),
               amt_msat: millisatoshis,
-              timeout_seconds: seconds,
+              timeout_seconds: Helpers::TimeExpression.seconds(times_out_in),
               allow_self_payment: true,
               dest_custom_records: {}
             }
@@ -49,7 +55,7 @@ module Lighstorm
 
           if !message.nil? && !message.empty?
             # https://github.com/satoshisstream/satoshis.stream/blob/main/TLV_registry.md
-            request[:params][:dest_custom_records][34_349_334] = [message].pack('H*')
+            request[:params][:dest_custom_records][34_349_334] = message
           end
 
           if through.to_sym == :keysend
@@ -64,30 +70,19 @@ module Lighstorm
           request
         end
 
-        def self.dispatch(grpc_request, &vcr)
-          vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
-        end
-
-        def self.fetch(&vcr)
-          Node::Myself.data(&vcr)
-        end
-
-        def self.adapt(response, node_get_info)
-          Adapter::Payment.send_payment_v2(response.last, node_get_info)
-        end
-
-        def self.model(data)
-          Models::Payment.new(data)
-        end
-
-        def self.perform(public_key:, millisatoshis:, through:, seconds:, message: nil, secret: nil, preview: false, &vcr)
-          secret = Models::Secret.generate.to_h if secret.nil? && through.to_sym == :keysend
+        def self.perform(
+          public_key:, millisatoshis:, through:,
+          times_out_in:,
+          message: nil, secret: nil,
+          preview: false, &vcr
+        )
+          secret = Models::Secret.create.to_h if secret.nil? && through.to_sym == :keysend
 
           grpc_request = prepare(
             public_key: public_key,
             millisatoshis: millisatoshis,
             through: through,
-            seconds: seconds,
+            times_out_in: times_out_in,
             secret: secret,
             message: message
           )
@@ -96,13 +91,17 @@ module Lighstorm
 
           response = dispatch(grpc_request, &vcr)
 
+          Payment::Pay.raise_error_if_exists!(response)
+
           data = fetch(&vcr)
 
           adapted = adapt(response, data)
 
           model = self.model(adapted)
 
-          Action::Output.new({ response: response, result: model })
+          Payment::Pay.raise_failure_if_exists!(model, response)
+
+          Action::Output.new({ response: response[:response], result: model })
         end
       end
     end

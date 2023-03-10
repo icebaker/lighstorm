@@ -10,7 +10,9 @@ RSpec.describe Lighstorm::Invoice do
     let(:vcr_key) { 'Controllers::Invoice::Create' }
     let(:params) do
       {
-        millisatoshis: 1_000, description: 'Coffee',
+        millisatoshis: 1_000,
+        description: 'Coffee',
+        expires_in: { hours: 24 },
         payable: :once
       }
     end
@@ -28,7 +30,11 @@ RSpec.describe Lighstorm::Invoice do
           expect(request).to eq(
             { service: :lightning,
               method: :add_invoice,
-              params: { memo: params[:description], value_msat: params[:millisatoshis] } }
+              params: {
+                memo: params[:description],
+                expiry: 86_400,
+                value_msat: params[:millisatoshis]
+              } }
           )
         end
       end
@@ -38,6 +44,7 @@ RSpec.describe Lighstorm::Invoice do
           action = described_class.create(
             millisatoshis: params[:millisatoshis],
             description: params[:description],
+            expires_in: { hours: 24 },
             payable: params[:payable]
           ) do |fn, from = :fetch|
             VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
@@ -46,7 +53,7 @@ RSpec.describe Lighstorm::Invoice do
           expect(action.result.class).to eq(Lighstorm::Models::Invoice)
 
           Contract.expect(
-            action.to_h, '8a00e4520f7a1a33bd03fe47a57de37fa0a02f6e8915004af96215267aa88646'
+            action.to_h, 'c7e200d91b57b04e64c725f8ff8b11da517bc5f28472e22f30c48bda5836eca5'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
 
@@ -73,7 +80,7 @@ RSpec.describe Lighstorm::Invoice do
       invoice_to_h = invoice.to_h
 
       Contract.expect(
-        invoice.to_h, 'a98539e69b6c3b3686034c1a5b4062e94268f6759f19e7e921e08dab618f22e4'
+        invoice.to_h, 'ae89beb4adf69b2981c59d93e27ad75f908d1012e05c54090c23d63a05c4a343'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)

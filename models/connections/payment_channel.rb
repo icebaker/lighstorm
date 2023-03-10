@@ -24,11 +24,11 @@ module Lighstorm
       end
 
       def amount
-        @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
+        @amount ||= @data[:amount] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
       end
 
       def fee
-        @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
+        @fee ||= @data[:fee] ? Satoshis.new(millisatoshis: @data[:fee][:millisatoshis]) : nil
       end
 
       def channel
@@ -36,15 +36,20 @@ module Lighstorm
       end
 
       def to_h
-        {
+        result = {
           hop: hop,
-          amount: amount.to_h,
-          fee: {
-            millisatoshis: fee.millisatoshis,
-            parts_per_million: fee.parts_per_million(amount.millisatoshis)
-          },
           channel: channel.to_h
         }
+
+        result[:amount] = amount.to_h if amount
+        if fee
+          result[:fee] = {
+            millisatoshis: fee.millisatoshis,
+            parts_per_million: fee.parts_per_million(amount.millisatoshis)
+          }
+        end
+
+        result
       end
     end
   end

@@ -63,8 +63,20 @@ require 'lighstorm'
 puts Lighstorm.version # => 0.0.8
 
 Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000
+  description: 'Coffee', millisatoshis: 1000, payable: 'once'
 )
+
+Lighstorm::Invoice.decode(
+  'lnbc20m1pv...qqdhhwkj'
+).pay
+
+Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+).pay(millisatoshis: 1000)
+
+Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+).send_message('Hello from Lighstorm!', millisatoshis: 1000)
 
 Lighstorm::Node.myself.alias # => icebaker/old-stone
 Lighstorm::Node.myself.public_key # => 02d3...e997
@@ -95,50 +107,7 @@ payment.hops.first.channel.partner.node.alias
 
 Lighstorm::Satoshis.new(
   millisatoshis: 75621650
-).satoshis # => 75621
-```
-
-### Sending Money
-
-Paying an Invoice:
-
-```ruby
-invoice = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj')
-
-invoice.pay
-invoice.pay(millisatoshis: 1000, seconds: 5)
-
-action = invoice.pay(
-  millisatoshis: 1500,
-  message: 'here we go',
-  seconds: 5
-)
-
-action.result.fee.millisatoshis
-```
-
-Paying to a Node:
-```ruby
-Lighstorm::Node.myself.pay(millisatoshis: 1000)
-
-Lighstorm::Node.find_by_public_key(
-  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
-).pay(millisatoshis: 1000, seconds: 5)
-
-Lighstorm::Node.myself.pay(
-  millisatoshis: 1200,
-  message: 'hello!',
-  through: 'keysend'
-)
-
-Lighstorm::Node.myself.pay(
-  millisatoshis: 1500,
-  message: 'hello!',
-  through: 'amp'
-)
-
-action = Lighstorm::Node.myself.pay(millisatoshis: 1000)
-action.result.fee.millisatoshis
+).satoshis # => 75621.65
 ```
 
 # Data Modeling
@@ -281,6 +250,76 @@ node.platform.network
 node.platform.lightning.implementation
 node.platform.lightning.version
 ```
+
+### Pay
+
+Read more about [_Spontaneous Payments_](https://docs.lightning.engineering/lightning-network-tools/lnd/send-messages-with-keysend#send-a-spontaneous-payment).
+
+```ruby
+destination = Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+)
+
+destination.alias # => 'icebaker/old-stone'
+
+destination.pay(millisatoshis: 1000)
+
+destination.pay(
+  millisatoshis: 1500,
+  message: 'Hello from Lighstorm!',
+  through: 'amp',
+  times_out_in: { seconds: 5 }
+)
+
+destination.pay(
+  millisatoshis: 1200,
+  message: 'Hello from Lighstorm!',
+  through: 'keysend',
+  times_out_in: { seconds: 5 }
+)
+
+action = destination.pay(millisatoshis: 1000)
+action.result.fee.millisatoshis
+```
+
+### Send Messages
+
+**Warning:** Sending messages through Lightning Network requires you to spend satoshis and potentially pay fees.
+
+```ruby
+destination = Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+)
+
+destination.alias # => 'icebaker/old-stone'
+
+destination.send_message('Hello from Lighstorm!', millisatoshis: 1000)
+
+destination.send_message(
+  'Hello from Lighstorm!',
+  millisatoshis: 1000,
+  through: 'amp',
+  times_out_in: { seconds: 5 }
+)
+
+destination.send_message(
+  'Hello from Lighstorm!',
+  millisatoshis: 1000,
+  through: 'keysend',
+  times_out_in: { seconds: 5 }
+)
+
+action = destination.send_message('Hello from Lighstorm!', millisatoshis: 1000)
+action.result.fee.millisatoshis
+```
+
+Read more about sending messages:
+- [_Send a message to other nodes_](https://docs.lightning.engineering/lightning-network-tools/lnd/send-messages-with-keysend#send-a-message-to-other-nodes)
+- [_Does Private messaging over Bitcoin’s Lightning Network have potential?_](https://cryptopurview.com/private-messaging-over-bitcoins-lightning-network/)
+- [_How Bitcoin's Lightning Can Be Used for Private Messaging_](https://www.coindesk.com/markets/2019/11/09/how-bitcoins-lightning-can-be-used-for-private-messaging/)
+
+### Error Handling
+Same error handling used for [Invoices Payment Errors](?id=error-handling-1)
 
 ## Channel
 
@@ -427,8 +466,6 @@ invoice.amount.millisatoshis
 
 invoice.payable # 'once' or 'indefinitely'
 
-invoice.address
-
 invoice.description.memo
 invoice.description.hash
 
@@ -451,6 +488,10 @@ preview = Lighstorm::Invoice.create(
 
 action = Lighstorm::Invoice.create(
   description: 'Coffee', millisatoshis: 1000, payable: 'once' 
+)
+
+action = Lighstorm::Invoice.create(
+  description: 'Beer', payable: 'once' 
 )
 
 action = Lighstorm::Invoice.create(
@@ -483,8 +524,13 @@ payment = action.result
 
 payment.at
 payment.state
+
 payment.amount.millisatoshis
 payment.fee.millisatoshis
+payment.fee.parts_per_million(
+  payment.amount.millisatoshis
+)
+
 payment.purpose
 payment.hops.size
 ```
@@ -493,12 +539,12 @@ payment.hops.size
 invoice.pay(
   millisatoshis: 1500,
   message: 'here we go',
-  seconds: 5
+  times_out_in: { seconds: 5 }
 )
 ```
 
 #### Error Handling
-Check [Error Handling](?id=error-handling-1)
+Check [Error Handling](?id=error-handling-2)
 
 ```ruby
 begin
@@ -533,11 +579,24 @@ end
 ```ruby
 begin
   invoice.pay
-rescue LighstormError => error
+rescue NoRouteFoundError => error
+  error.message # 'FAILURE_REASON_NO_ROUTE'
+  e.response
+  e.response.last[:failure_reason] # => :FAILURE_REASON_NO_ROUTE
+end
+```
+
+
+```ruby
+begin
+  invoice.pay
+rescue PaymentError => error
   error.class
   error.message
-  error.grpc.class
-  error.grpc.message
+
+  error.grpc
+  error.response
+  error.result
 end
 ```
 ## Payment
@@ -587,7 +646,6 @@ payment.invoice.code # "lnbc20m1pv...qqdhhwkj"
 payment.invoice.amount.millisatoshis
 
 payment.invoice.payable # 'once' or 'indefinitely'
-payment.invoice.address
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
 payment.invoice.secret.preimage
@@ -868,33 +926,26 @@ end
 ```ruby
 LighstormError
 
-GRPCError
+ArgumentError
+IncoherentGossipError
+MissingCredentialsError
+MissingGossipHandlerError
+MissingPartsPerMillionError
+NegativeNotAllowedError
+NotYourChannelError
+NotYourNodeError
+OperationNotAllowedError
+TooManyArgumentsError
+UnexpectedNumberOfHTLCsError
+UnknownChannelError
+UpdateChannelPolicyError
+
+PaymentError
 
 AlreadyPaidError
 AmountForNonZeroError
-
-IncoherentGossipError
-
-MissingCredentialsError
-MissingGossipHandlerError
 MissingMillisatoshisError
-MissingPartsPerMillionError
-MissingTTLError
-
-NegativeNotAllowedError
-
-NotYourChannelError
-NotYourNodeError
-
-OperationNotAllowedError
-
-TooManyArgumentsError
-
-UnexpectedNumberOfHTLCsError
-
-UnknownChannelError
-
-UpdateChannelPolicyError
+NoRouteFoundError
 ```
 
 # Development

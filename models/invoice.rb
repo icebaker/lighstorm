@@ -10,7 +10,7 @@ require_relative '../controllers/invoice/actions/pay_through_route'
 module Lighstorm
   module Models
     class Invoice
-      attr_reader :_key, :created_at, :settled_at, :state, :payable, :code, :address
+      attr_reader :_key, :created_at, :settled_at, :state, :payable, :code
 
       def initialize(data)
         @data = data
@@ -23,11 +23,26 @@ module Lighstorm
         @payable = data[:payable]
 
         @code = data[:code]
-        @address = data[:address]
+      end
+
+      def payment
+        if payable != :once || @data[:payments].size > 1
+          raise InvoiceMayHaveMultiplePaymentsError, "payable: #{payable}, payments: #{@data[:payments].size.size}"
+        end
+
+        @payment ||= payments.first
+      end
+
+      def payments
+        @payments ||= @data[:payments]&.map { |data| Payment.new(data) }
       end
 
       def amount
-        @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
+        @amount ||= @data[:amount] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
+      end
+
+      def paid
+        @paid ||= @data[:paid] ? Satoshis.new(millisatoshis: @data[:paid][:millisatoshis]) : nil
       end
 
       def secret
@@ -51,21 +66,26 @@ module Lighstorm
       end
 
       def to_h
-        {
+        result = {
           _key: _key,
           created_at: created_at,
           settled_at: settled_at,
           payable: payable,
           state: state,
           code: code,
-          amount: amount.to_h,
-          address: address,
+          amount: amount&.to_h,
+          paid: paid&.to_h,
           description: description.to_h,
-          secret: secret.to_h
+          secret: secret.to_h,
+          payments: payments&.map(&:to_h)
         }
       end
 
-      def pay(seconds: 5, millisatoshis: nil, message: nil, route: nil, preview: false)
+      def pay(
+        millisatoshis: nil, message: nil, route: nil,
+        times_out_in: { seconds: 5 },
+        preview: false
+      )
         if route
           Controllers::Invoice::PayThroughRoute.perform(self, route: route, preview: preview)
         else
@@ -73,7 +93,7 @@ module Lighstorm
             request_code: code,
             millisatoshis: millisatoshis,
             message: message,
-            seconds: seconds,
+            times_out_in: times_out_in,
             preview: preview
           )
         end

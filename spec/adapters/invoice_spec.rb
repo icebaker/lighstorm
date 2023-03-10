@@ -80,7 +80,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       adapted = described_class.list_invoices(raw)
 
       Contract.expect(
-        adapted, 'ed609f317b6e3eee4825d406b96b66bd78aea93ff9d69e54e01a18f6255eaa09'
+        adapted, '8cda14b80ed7824acf4078f547e82fb0b17dbaf64ad4d111749c57f4e6e4c3ac'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -93,7 +93,10 @@ RSpec.describe Lighstorm::Adapter::Invoice do
             code: 'String:50+',
             created_at: 'Time',
             description: { hash: 'Nil', memo: 'String:21..30' },
+            paid: { millisatoshis: 'Integer:0..10' },
             payable: 'Symbol:0..10',
+            payments: [{ amount: { millisatoshis: 'Integer:0..10' }, at: 'Time',
+                         hops: [{ channel: { id: 'Integer:11..20' } }] }],
             secret: { hash: 'String:50+', preimage: 'String:50+' },
             settled_at: 'Time',
             state: 'String:0..10' }
@@ -123,7 +126,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         adapted = described_class.lookup_invoice(raw)
 
         Contract.expect(
-          adapted, 'ed609f317b6e3eee4825d406b96b66bd78aea93ff9d69e54e01a18f6255eaa09'
+          adapted, '8cda14b80ed7824acf4078f547e82fb0b17dbaf64ad4d111749c57f4e6e4c3ac'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -136,7 +139,10 @@ RSpec.describe Lighstorm::Adapter::Invoice do
               code: 'String:50+',
               created_at: 'Time',
               description: { hash: 'Nil', memo: 'String:21..30' },
+              paid: { millisatoshis: 'Integer:0..10' },
               payable: 'Symbol:0..10',
+              payments: [{ amount: { millisatoshis: 'Integer:0..10' }, at: 'Time',
+                           hops: [{ channel: { id: 'Integer:11..20' } }] }],
               secret: { hash: 'String:50+', preimage: 'String:50+' },
               settled_at: 'Time',
               state: 'String:0..10' }

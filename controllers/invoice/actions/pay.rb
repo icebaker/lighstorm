@@ -8,29 +8,35 @@ require_relative '../../invoice'
 require_relative '../../action'
 require_relative '../../node/myself'
 
+require_relative '../../payment/actions/pay'
+
 module Lighstorm
   module Controllers
     module Invoice
       module Pay
-        def self.call(grpc_request)
-          result = []
-          Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
-            grpc_request[:method], grpc_request[:params]
-          ) do |response|
-            result << response.to_h
-          end
-          result
-        rescue StandardError => e
-          { _error: e }
+        def self.dispatch(grpc_request, &vcr)
+          Payment::Pay.dispatch(grpc_request, &vcr)
         end
 
-        def self.prepare(request_code:, seconds:, millisatoshis: nil, message: nil)
+        def self.fetch(&vcr)
+          Payment::Pay.fetch(&vcr)
+        end
+
+        def self.adapt(data, node_get_info)
+          Payment::Pay.adapt(data, node_get_info)
+        end
+
+        def self.model(data)
+          Payment::Pay.model(data)
+        end
+
+        def self.prepare(request_code:, times_out_in:, millisatoshis: nil, message: nil)
           request = {
             service: :router,
             method: :send_payment_v2,
             params: {
               payment_request: request_code,
-              timeout_seconds: seconds,
+              timeout_seconds: Helpers::TimeExpression.seconds(times_out_in),
               allow_self_payment: true,
               dest_custom_records: {}
             }
@@ -40,7 +46,7 @@ module Lighstorm
 
           if !message.nil? && !message.empty?
             # https://github.com/satoshisstream/satoshis.stream/blob/main/TLV_registry.md
-            request[:params][:dest_custom_records][34_349_334] = [message].pack('H*')
+            request[:params][:dest_custom_records][34_349_334] = message
           end
 
           request[:params].delete(:dest_custom_records) if request[:params][:dest_custom_records].empty?
@@ -48,59 +54,21 @@ module Lighstorm
           request
         end
 
-        def self.dispatch(grpc_request, &vcr)
-          vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
-        end
-
-        def self.fetch(&vcr)
-          Node::Myself.data(&vcr)
-        end
-
-        def self.adapt(response, node_get_info)
-          Adapter::Payment.send_payment_v2(response.last, node_get_info)
-        end
-
-        def self.model(data)
-          Models::Payment.new(data)
-        end
-
-        def self.perform(request_code: nil, millisatoshis: nil, message: nil, seconds: 5, preview: false, &vcr)
+        def self.perform(
+          times_out_in:, request_code: nil, millisatoshis: nil, message: nil, preview: false, &vcr
+        )
           grpc_request = prepare(
             request_code: request_code,
             millisatoshis: millisatoshis,
             message: message,
-            seconds: seconds
+            times_out_in: times_out_in
           )
 
           return grpc_request if preview
 
           response = dispatch(grpc_request, &vcr)
 
-          if response.is_a?(Hash) && response[:_error]
-            if response[:_error].is_a?(GRPC::AlreadyExists)
-              raise AlreadyPaidError.new(
-                'The invoice is already paid.',
-                response[:_error]
-              )
-            end
-
-            if response[:_error].message =~ /amount must not be specified when paying a non-zero/
-              raise AmountForNonZeroError.new(
-                'Millisatoshis must not be specified when paying a non-zero amount invoice.',
-                response[:_error]
-              )
-            end
-
-            if response[:_error].message =~ /amount must be specified when paying a zero amount/
-              raise MissingMillisatoshisError.new(
-                'Millisatoshis must be specified when paying a zero amount invoice.',
-                response[:_error]
-              )
-            end
-
-            raise GRPCError.new('Unknown error.', response[:_error])
-
-          end
+          Payment::Pay.raise_error_if_exists!(response)
 
           data = fetch(&vcr)
 
@@ -108,7 +76,9 @@ module Lighstorm
 
           model = self.model(adapted)
 
-          Action::Output.new({ response: response, result: model })
+          Payment::Pay.raise_failure_if_exists!(model, response)
+
+          Action::Output.new({ response: response[:response], result: model })
         end
       end
     end

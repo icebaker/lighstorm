@@ -12,7 +12,7 @@ require_relative '../secret'
 module Lighstorm
   module Models
     class Payment
-      attr_reader :_key, :at, :state, :secret, :purpose, :through
+      attr_reader :_key, :at, :state, :secret, :purpose, :through, :message
 
       def initialize(data)
         @data = data
@@ -22,26 +22,28 @@ module Lighstorm
         @state = data[:state]
         @purpose = data[:purpose]
         @through = data[:through]
+        @message = data[:message]
       end
 
       def invoice
-        @invoice ||= Invoice.new(@data[:invoice])
+        @invoice ||= @data[:invoice] ? Invoice.new(@data[:invoice]) : nil
       end
 
       def amount
-        @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
+        @amount ||= @data[:amount] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
       end
 
       def fee
-        @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
+        @fee ||= @data[:fee] ? Satoshis.new(millisatoshis: @data[:fee][:millisatoshis]) : nil
       end
 
       def secret
-        @secret ||= Secret.new(@data[:secret])
+        @secret ||= @data[:secret] ? Secret.new(@data[:secret]) : nil
       end
 
       def hops
         return @hops if @hops
+        return nil if @data[:hops].nil?
 
         @data[:hops].last[:is_last] = true
         @hops = @data[:hops].map do |hop|
@@ -50,11 +52,11 @@ module Lighstorm
       end
 
       def from
-        @from ||= hops.first
+        @from ||= @data[:hops].nil? ? nil : hops.first
       end
 
       def to
-        @to ||= hops.last
+        @to ||= @data[:hops].nil? ? nil : hops.last
       end
 
       def to_h
@@ -62,18 +64,25 @@ module Lighstorm
           _key: _key,
           at: at,
           state: state,
-          amount: amount.to_h,
-          fee: {
+          purpose: purpose,
+          message: message,
+          invoice: invoice&.to_h,
+          from: from.to_h,
+          to: to.to_h
+        }
+
+        response[:secret] = secret.to_h if secret
+        response[:amount] = amount.to_h if amount
+        if fee
+          response[:fee] = {
             millisatoshis: fee.millisatoshis,
             parts_per_million: fee.parts_per_million(amount.millisatoshis)
-          },
-          purpose: purpose,
-          invoice: invoice.to_h,
-          secret: secret.to_h,
-          from: from.to_h,
-          to: to.to_h,
-          hops: hops.map(&:to_h)
-        }
+          }
+        end
+
+        response[:hops] = hops.map(&:to_h) unless hops.nil?
+
+        response
       end
     end
   end

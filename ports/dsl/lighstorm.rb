@@ -11,6 +11,7 @@ require_relative '../../controllers/channel'
 require_relative '../../controllers/payment'
 require_relative '../../controllers/forward'
 require_relative '../../controllers/invoice'
+require_relative '../../controllers/transaction'
 
 module Lighstorm
   Node = Controllers::Node
@@ -18,6 +19,7 @@ module Lighstorm
   Payment = Controllers::Payment
   Forward = Controllers::Forward
   Invoice = Controllers::Invoice
+  Transaction = Controllers::Transaction
 
   Satoshis = Models::Satoshis
 

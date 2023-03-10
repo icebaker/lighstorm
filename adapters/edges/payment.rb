@@ -40,25 +40,30 @@ module Lighstorm
           fee: { millisatoshis: grpc[:fee_msat] },
           amount: { millisatoshis: grpc[:value_msat] },
           purpose: Purpose.list_payments(grpc, node_get_info),
-          invoice: Invoice.list_payments(grpc),
-          hops: grpc[:htlcs].first[:route][:hops].map.with_index do |raw_hop, i|
+          invoice: Invoice.list_payments(grpc)
+        }
+
+        unless grpc[:htlcs].empty?
+          data[:hops] = grpc[:htlcs].first[:route][:hops].map.with_index do |raw_hop, i|
             hop = PaymentChannel.list_payments(raw_hop, i)
             hop[:channel][:target] = { public_key: raw_hop[:pub_key] }
             hop
           end
-        }
+        end
 
         data[:secret] = data[:invoice][:secret]
 
-        if grpc[:htlcs].first[:resolve_time_ns]
+        if !grpc[:htlcs].empty? && grpc[:htlcs].first[:resolve_time_ns]
           data[:invoice][:settled_at] = Time.at(grpc[:htlcs].first[:resolve_time_ns] / 1e+9)
         end
 
-        data[:through] = if grpc[:htlcs].first[:route][:hops].last[:mpp_record]
-                           'amp'
-                         else
-                           'keysend'
-                         end
+        unless grpc[:htlcs].empty?
+          data[:through] = if grpc[:htlcs].first[:route][:hops].last[:mpp_record]
+                             'amp'
+                           else
+                             'keysend'
+                           end
+        end
 
         data
       end

@@ -61,7 +61,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 1000)
       end
 
-      let(:to_h_contract) { '760ff5aed96d18df3855c08cfb38eb9c6565026b9181773c19a8a8eacc52350d' }
+      let(:to_h_contract) { '7b53170ac2bf6700a7478e9ef59564b3ebad2d844ddeee56bda1d479eb2d9fc6' }
 
       it 'models' do
         expect(data[:meta][:calls][:decode_pay_req]).to be_nil
@@ -100,8 +100,6 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.secret.preimage.class).to eq(String)
         expect(payment.invoice.secret.preimage.size).to eq(64)
         expect(payment.invoice.secret.hash).to eq('8e798fbcca7baccab5029f70717fea13d86de2534ab8c7669472813b8da3da16')
-        expect(payment.invoice.address.class).to eq(String)
-        expect(payment.invoice.address.size).to eq(64)
         expect(payment.invoice.description.memo).to be_nil
         expect(payment.invoice.description.hash).to be_nil
 
@@ -170,7 +168,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 1000)
       end
 
-      let(:to_h_contract) { 'eead383e0656a3bb08b07df272655542d1f08f5b512aac7204055d85bbbf32a8' }
+      let(:to_h_contract) { 'c2b67ce7fcaeba818579a4910f4a44f97de9932a4f2e11be2181cd6d17af9b6c' }
 
       it 'models' do
         expect(data[:meta][:calls].keys.sort).to eq(
@@ -213,8 +211,6 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.secret.preimage.class).to eq(String)
         expect(payment.invoice.secret.preimage.size).to eq(64)
         expect(payment.invoice.secret.hash).to eq(secret_hash)
-        expect(payment.invoice.address.class).to eq(String)
-        expect(payment.invoice.address.size).to eq(64)
         expect(payment.invoice.description.memo).to eq('Chocolate')
         expect(payment.invoice.description.hash).to be_nil
 
@@ -283,7 +279,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 150_000)
       end
 
-      let(:to_h_contract) { '6e7ee9f4e7bb32d72e1d27ae58b4bd526eba3f0eee1564e287af1b71f5eee6be' }
+      let(:to_h_contract) { '8970d1d5e12a1ffe7bae1cfaee1914ff3252c0e80ca41e4de1d2b8979a918c07' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
@@ -311,8 +307,6 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.secret.preimage.class).to eq(String)
         expect(payment.invoice.secret.preimage.size).to eq(64)
         expect(payment.invoice.secret.hash).to eq(secret_hash)
-        expect(payment.invoice.address.class).to eq(String)
-        expect(payment.invoice.address.size).to eq(64)
         expect(payment.invoice.description.memo).to eq('Read: How to use BalanceOfSatoshis to ')
         expect(payment.invoice.description.hash).to be_nil
 
@@ -378,7 +372,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 3_050_000_000)
       end
 
-      let(:to_h_contract) { '79f6224633a285dc7c222af69f16b4a4013d4bf3f0ef371cfcfe8301c163edab' }
+      let(:to_h_contract) { '63e4b443f12f1efb58923fc0505d708ce7b358660818934967b049d4601e1a4e' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
@@ -403,8 +397,6 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.secret.preimage.class).to eq(String)
         expect(payment.invoice.secret.preimage.size).to eq(64)
         expect(payment.invoice.secret.hash).to eq(secret_hash)
-        expect(payment.invoice.address.class).to eq(String)
-        expect(payment.invoice.address.size).to eq(64)
         expect(payment.invoice.description.memo).to eq('if paid deezy will send 3045893 sats at 1 sats/vb to bc1qpyycq33xqdzmxlan3n35mh05psqnsp5hq36nty')
         expect(payment.invoice.description.hash).to be_nil
 
@@ -471,7 +463,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 137_000)
       end
 
-      let(:to_h_contract) { '88d85af7480f4b9b10ceeafa90e47551b30acb9076b5be6f18688a0cf522ea3d' }
+      let(:to_h_contract) { 'c47c66df9804d1ace5eee376d8008a15e515fa84e1c87cec1f72af47616a2079' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
@@ -496,8 +488,6 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.secret.preimage.class).to eq(String)
         expect(payment.invoice.secret.preimage.size).to eq(64)
         expect(payment.invoice.secret.hash).to eq(secret_hash)
-        expect(payment.invoice.address.class).to eq(String)
-        expect(payment.invoice.address.size).to eq(64)
         expect(payment.invoice.description.memo).to eq('Rebalance of channel with ID 848916435345801217')
         expect(payment.invoice.description.hash).to be_nil
 
@@ -568,7 +558,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 130_000_000)
       end
 
-      let(:to_h_contract) { '57292c204602a8dec18d35f35093e177b91eba274df8c60261dcbdeee1d5684c' }
+      let(:to_h_contract) { '629f340e58a13377b81341a3d86b96932b67ff22566826ae71252e6b767a9184' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
@@ -593,8 +583,6 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.secret.preimage.class).to eq(String)
         expect(payment.invoice.secret.preimage.size).to eq(64)
         expect(payment.invoice.secret.hash).to eq(secret_hash)
-        expect(payment.invoice.address.class).to eq(String)
-        expect(payment.invoice.address.size).to eq(64)
         expect(payment.invoice.description.memo).to eq('')
         expect(payment.invoice.description.hash).to be_nil
 

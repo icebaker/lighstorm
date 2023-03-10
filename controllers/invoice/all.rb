@@ -8,7 +8,7 @@ module Lighstorm
   module Controllers
     module Invoice
       module All
-        def self.fetch(limit: nil)
+        def self.fetch(limit: nil, spontaneous: false)
           last_offset = 0
 
           invoices = []
@@ -19,7 +19,9 @@ module Lighstorm
               num_max_invoices: 10
             )
 
-            response.invoices.each { |invoice| invoices << invoice.to_h }
+            response.invoices.each do |invoice|
+              invoices << invoice.to_h if spontaneous || !invoice.payment_request.empty?
+            end
 
             # TODO: How to optimize this?
             # break if !limit.nil? && invoices.size >= limit
@@ -51,8 +53,12 @@ module Lighstorm
           end
         end
 
-        def self.data(limit: nil, &vcr)
-          raw = vcr.nil? ? fetch(limit: limit) : vcr.call(-> { fetch(limit: limit) })
+        def self.data(limit: nil, spontaneous: false, &vcr)
+          raw = if vcr.nil?
+                  fetch(limit: limit, spontaneous: spontaneous)
+                else
+                  vcr.call(-> { fetch(limit: limit, spontaneous: spontaneous) })
+                end
 
           adapted = adapt(raw)
 

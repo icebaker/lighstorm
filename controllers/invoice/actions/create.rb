@@ -2,6 +2,7 @@
 
 require_relative '../../../ports/grpc'
 require_relative '../../../models/errors'
+require_relative '../../../helpers/time_expression'
 require_relative '../../invoice'
 require_relative '../../action'
 
@@ -15,11 +16,16 @@ module Lighstorm
           ).to_h
         end
 
-        def self.prepare(payable:, description: nil, millisatoshis: nil)
+        def self.prepare(payable:, expires_in:, description: nil, millisatoshis: nil)
           request = {
             service: :lightning,
             method: :add_invoice,
-            params: { memo: description }
+            params: {
+              memo: description,
+              # Lightning Invoice Expiration: UX Considerations
+              # https://d.elor.me/2022/01/lightning-invoice-expiration-ux-considerations/
+              expiry: Helpers::TimeExpression.seconds(expires_in)
+            }
           }
 
           request[:params][:value_msat] = millisatoshis unless millisatoshis.nil?
@@ -49,9 +55,12 @@ module Lighstorm
           FindBySecretHash.model(data)
         end
 
-        def self.perform(payable:, description: nil, millisatoshis: nil, preview: false, &vcr)
+        def self.perform(payable:, expires_in:, description: nil, millisatoshis: nil, preview: false, &vcr)
           grpc_request = prepare(
-            description: description, millisatoshis: millisatoshis, payable: payable
+            description: description,
+            millisatoshis: millisatoshis,
+            expires_in: expires_in,
+            payable: payable
           )
 
           return grpc_request if preview

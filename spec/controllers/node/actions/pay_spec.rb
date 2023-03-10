@@ -14,8 +14,8 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         millisatoshis: 1_000,
         message: 'hello',
         secret: {
-          preimage: 'ab36558ca4d30f14dbbac393113bb6c7249aff34208aed0228859979fcc30f53',
-          hash: '3cf1ed5317db6d172dd0dc91d61854d923e72958af67572478ee55c6417e7ac6'
+          preimage: '03005c92d5d5b0ee2aa22f2be2f0e86a89f316b9fa63b3d1ed57277e021f9d50',
+          hash: 'dffa98e079d9c4d478a40570d689e3213c0ee6fc3b9256a759f7bc3be6278ef1'
         }
       }
     end
@@ -28,7 +28,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           millisatoshis: params[:millisatoshis],
           secret: params[:secret],
           message: params[:message],
-          seconds: 5
+          times_out_in: { seconds: 5 }
         )
 
         expect(request[:service]).to eq(:router)
@@ -85,7 +85,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         expect(model.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
         Contract.expect(
-          model.to_h, '11d29a4e5ece4962c8d29f22ba48e58dc4e09e5f7dab1d8bbb0b1befa54ff6bf'
+          model.to_h, 'ec185e14378f51f7da0fb26547cca461298e48cd0189e4250a0b7630c8d0332d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -102,7 +102,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             millisatoshis: params[:millisatoshis],
             secret: params[:secret],
             message: params[:message],
-            seconds: 5,
+            times_out_in: { seconds: 5 },
             preview: true
           )
 
@@ -140,7 +140,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             millisatoshis: params[:millisatoshis],
             secret: params[:secret],
             message: params[:message],
-            seconds: 5
+            times_out_in: { seconds: 5 }
           ) do |fn, from = :fetch|
             VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
           end
@@ -156,7 +156,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, 'befeb3c4581320d95f039af14b898838e9b21aa22fc1fafb28703ed26d92bb60'
+            action.to_h, 'c88a7384acbf7f88ffc540af02b4b06ce45511cbcb5fad3bb3a3e39571f18c91'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -175,8 +175,8 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         millisatoshis: 1_350,
         message: 'hello',
         secret: {
-          preimage: '7ec807a2d955f878ccbda17ef38cfbdce9d264b1985f3e77598b2aed17dbcead',
-          hash: '843df5337eb59970990944327ded9965443df2a956b36b5b48a459eec427af27'
+          preimage: 'ad6cd0a63e741f4ad433fa67132d5dda3d317fb761e6352580046a7c333980f0',
+          hash: '5be29554bc6feb305b42b11fb0cefb100ef2ba2d87792dd84ec8bf015b3bdcab'
         }
       }
     end
@@ -189,7 +189,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           millisatoshis: params[:millisatoshis],
           secret: params[:secret],
           message: params[:message],
-          seconds: 5
+          times_out_in: { seconds: 5 }
         )
 
         expect(request[:service]).to eq(:router)
@@ -243,7 +243,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         expect(model.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
         Contract.expect(
-          model.to_h, '334112aedcfeab7c351d9d5b155bc314031f609e840ad4fef52f0a543c8187f2'
+          model.to_h, 'ec185e14378f51f7da0fb26547cca461298e48cd0189e4250a0b7630c8d0332d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -260,7 +260,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             millisatoshis: params[:millisatoshis],
             secret: params[:secret],
             message: params[:message],
-            seconds: 3,
+            times_out_in: { seconds: 3 },
             preview: true
           )
 
@@ -298,7 +298,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             millisatoshis: params[:millisatoshis],
             secret: params[:secret],
             message: params[:message],
-            seconds: 5
+            times_out_in: { seconds: 5 }
           ) do |fn, from = :fetch|
             VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
           end
@@ -313,10 +313,166 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, '7f802535846e6a440d2a27a2e84a569b6ae84e31a4f2797eed31f752bf79b156'
+            action.to_h, '9ea3b9ad2de71dd1e97f93000f2dbd984d7b1980c82a33af30ae19fe8353b692'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
+          end
+        end
+      end
+    end
+  end
+
+  context 'errors' do
+    describe 'send message through amp' do
+      let(:vcr_key) { 'Controllers::Node::Pay' }
+      let(:params) do
+        {
+          through: 'amp',
+          public_key: '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
+          millisatoshis: 1,
+          message: 'Hello from Lighstorm!',
+          secret: {
+            preimage: '0c484d9821d1c6bebb0903965db1f437138f39cddcfe6dc2e42c6b5f70502191',
+            hash: '2b980e42d4c9535620f9c9cacc35fb7a1466db4d17b20e0a0475be6e9ce7099f'
+          }
+        }
+      end
+
+      context 'gradual' do
+        it 'flows' do
+          request = described_class.prepare(
+            through: params[:through],
+            public_key: params[:public_key],
+            millisatoshis: params[:millisatoshis],
+            secret: params[:secret],
+            message: params[:message],
+            times_out_in: { seconds: 5 }
+          )
+
+          expect(request[:service]).to eq(:router)
+          expect(request[:method]).to eq(:send_payment_v2)
+
+          Contract.expect(
+            request, '5f75aafcf7f4307dc16f2ecf8aeb9babb7bb5b34b067bf83759b8c06179a5679'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+            expect(actual.contract).to eq(
+              { method: 'Symbol:11..20',
+                params: { allow_self_payment: 'Boolean',
+                          amp: 'Boolean',
+                          amt_msat: 'Integer:0..10',
+                          dest: 'String:31..40',
+                          dest_custom_records: { 34_349_334 => 'String:21..30' },
+                          timeout_seconds: 'Integer:0..10' },
+                service: 'Symbol:0..10' }
+            )
+          end
+
+          response = described_class.dispatch(request) do |grpc|
+            VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
+          end
+
+          data = described_class.fetch do |fetch|
+            VCR.tape.replay("#{vcr_key}/fetch", params) { fetch.call }
+          end
+
+          adapted = described_class.adapt(response, data)
+
+          Contract.expect(
+            adapted.to_h, '38d96dbd6c704827db6a33899256424c183f8675f9abca4f307b2559d96ec9b4'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+            expect(actual.contract).to eq(expected.contract)
+          end
+
+          model = described_class.model(adapted)
+
+          expect(model.state).to eq('failed')
+          expect(model.amount.millisatoshis).to eq(1)
+          expect(model.fee.millisatoshis).to eq(0)
+          expect(model.purpose).to eq('unknown')
+          expect(model.through).to be_nil
+          expect(model.secret.preimage.size).to eq(64)
+          expect(model.secret.hash.size).to eq(64)
+          expect(model.hops).to be_nil
+
+          Contract.expect(
+            model.to_h, 'deade61a6e275df16dbecb7e6f8c876b11769e8dc5e54001ff77b697676d541d'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+            expect(actual.contract).to eq(expected.contract)
+          end
+        end
+      end
+
+      context 'straightforward' do
+        context 'preview' do
+          it 'previews' do
+            request = described_class.perform(
+              through: params[:through],
+              public_key: params[:public_key],
+              millisatoshis: params[:millisatoshis],
+              secret: params[:secret],
+              message: params[:message],
+              times_out_in: { seconds: 3 },
+              preview: true
+            )
+
+            expect(request[:service]).to eq(:router)
+            expect(request[:method]).to eq(:send_payment_v2)
+            expect(request[:params][:timeout_seconds]).to eq(3)
+
+            Contract.expect(
+              request, '5f75aafcf7f4307dc16f2ecf8aeb9babb7bb5b34b067bf83759b8c06179a5679'
+            ) do |actual, expected|
+              expect(actual.hash).to eq(expected.hash)
+              expect(actual.contract).to eq(
+                { method: 'Symbol:11..20',
+                  params: { allow_self_payment: 'Boolean',
+                            amp: 'Boolean',
+                            amt_msat: 'Integer:0..10',
+                            dest: 'String:31..40',
+                            dest_custom_records: { 34_349_334 => 'String:21..30' },
+                            timeout_seconds: 'Integer:0..10' },
+                  service: 'Symbol:0..10' }
+              )
+            end
+          end
+        end
+
+        context 'perform' do
+          it 'performs' do
+            described_class.perform(
+              through: params[:through],
+              public_key: params[:public_key],
+              millisatoshis: params[:millisatoshis],
+              secret: params[:secret],
+              message: params[:message],
+              times_out_in: { seconds: 5 }
+            ) do |fn, from = :fetch|
+              VCR.reel.replay("#{vcr_key}/#{from}", params) { fn.call }
+            end
+          rescue PaymentError => e
+            expect(e.class).to eq(NoRouteFoundError)
+
+            expect(e.result.class).to eq(Lighstorm::Models::Payment)
+
+            expect(e.result.state).to eq('failed')
+            expect(e.result.amount.millisatoshis).to eq(1)
+            expect(e.result.fee.millisatoshis).to eq(0)
+            expect(e.result.purpose).to eq('unknown')
+            expect(e.result.hops).to be_nil
+
+            expect(e.response.last[:status]).to eq(:FAILED)
+            expect(e.response.last[:failure_reason]).to eq(:FAILURE_REASON_NO_ROUTE)
+
+            Contract.expect(
+              e.to_h, '0189e6eb0ec7efc15db929e14fcb4c9a63c5d87e6b33b1f8e16af9620834cb5a'
+            ) do |actual, expected|
+              expect(actual.hash).to eq(expected.hash)
+              expect(actual.contract).to eq(expected.contract)
+            end
           end
         end
       end

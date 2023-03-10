@@ -7,7 +7,7 @@ module Lighstorm
     class Secret
       attr_reader :preimage, :hash
 
-      def self.generate
+      def self.create
         data = { preimage: SecureRandom.hex(32) }
         data[:hash] = Digest::SHA256.hexdigest([data[:preimage]].pack('H*'))
         Secret.new(data)

@@ -20,18 +20,33 @@ module Lighstorm
     class UnexpectedNumberOfHTLCsError < LighstormError; end
     class UnknownChannelError < LighstormError; end
 
-    class GRPCError < LighstormError
-      attr_reader :grpc
+    class InvoiceMayHaveMultiplePaymentsError < LighstormError; end
 
-      def initialize(message, grpc = nil)
+    class PaymentError < LighstormError
+      attr_reader :response, :result, :grpc
+
+      def initialize(message, response: nil, result: nil, grpc: nil)
         super(message)
+        @response = response
+        @result = result
         @grpc = grpc
+      end
+
+      def to_h
+        output = { message: message }
+
+        output[:response] = response unless response.nil?
+        output[:result] = result.to_h unless result.nil?
+        output[:grpc] = grpc.message unless grpc.nil?
+
+        output
       end
     end
 
-    class AlreadyPaidError < GRPCError; end
-    class AmountForNonZeroError < GRPCError; end
-    class MissingMillisatoshisError < GRPCError; end
+    class NoRouteFoundError < PaymentError; end
+    class AlreadyPaidError < PaymentError; end
+    class AmountForNonZeroError < PaymentError; end
+    class MissingMillisatoshisError < PaymentError; end
 
     class UpdateChannelPolicyError < LighstormError
       attr_reader :response
