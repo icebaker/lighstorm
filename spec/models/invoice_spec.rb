@@ -423,14 +423,14 @@ RSpec.describe Lighstorm::Models::Invoice do
 
         expect(invoice.payments.size).to eq(2)
 
-        expect(invoice.payments.first.at.to_s).to eq('2023-03-10 18:50:24 -0300')
+        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-10 21:50:24 UTC')
         expect(invoice.payments.first.amount.millisatoshis).to eq(1210)
         expect(invoice.payments.first.from.channel.id).to eq(850_181_973_150_531_585)
         expect(invoice.payments.first.secret.hash).to eq('73c41594fe95817ba15dc38acc67a6da800fb627327e0b0145af4de76ed905ce')
         expect(invoice.payments.first.secret.preimage.size).to eq(64)
         expect(invoice.payments.first.message).to eq('here we go!')
 
-        expect(invoice.payments.last.at.to_s).to eq('2023-03-10 18:50:02 -0300')
+        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-10 21:50:02 UTC')
         expect(invoice.payments.last.amount.millisatoshis).to eq(1345)
         expect(invoice.payments.last.from.channel.id).to eq(850_181_973_150_531_585)
         expect(invoice.payments.last.secret.hash).to eq('87c3e0431a92f2901af7d33907aa73c9dd7b9793f51f8508cfc5a254b9ac096e')
@@ -482,14 +482,14 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.preimage).to be_nil
         expect(invoice.secret.hash).to eq('7a800738c741ad08fdf87d392f76a97f94a7e9aa62fdbd45536669fab8497faf')
 
-        expect(invoice.payments.first.at.to_s).to eq('2023-03-10 19:18:06 -0300')
+        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-10 22:18:06 UTC')
         expect(invoice.payments.first.amount.millisatoshis).to eq(1000)
         expect(invoice.payments.first.from.channel.id).to eq(850_181_973_150_531_585)
         expect(invoice.payments.first.secret.hash).to eq('b1b1435cd4d931b6ed4b5ffe59f85dcb978be9bbf77efb02723290b75101c839')
         expect(invoice.payments.first.secret.preimage.size).to eq(64)
         expect(invoice.payments.first.message).to eq('+1000')
 
-        expect(invoice.payments.last.at.to_s).to eq('2023-03-10 19:17:40 -0300')
+        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-10 22:17:40 UTC')
         expect(invoice.payments.last.amount.millisatoshis).to eq(1000)
         expect(invoice.payments.last.from.channel.id).to eq(850_181_973_150_531_585)
         expect(invoice.payments.last.secret.hash).to eq('20e5e8e550f41359b29f6e021c8863d34af46baeba74b88c5792790bc4ea3e7c')
