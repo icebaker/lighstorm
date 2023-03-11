@@ -38,17 +38,12 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       expect(request).to eq(
         { service: :lightning,
           method: :update_channel_policy,
-          params: {
-            chan_point: {
-              funding_txid_str: '240c0825d4757459e694e5c9e8a7bf6b2d244de4bd9eca5f94adef777d0c2956',
-              output_index: 1
-            },
-            base_fee_msat: 1,
-            fee_rate_ppm: 95,
-            time_lock_delta: 40,
-            max_htlc_msat: 6_045_000_000,
-            min_htlc_msat: 1000
-          } }
+          params: { chan_point: { funding_txid_str: '240c0825d4757459e694e5c9e8a7bf6b2d244de4bd9eca5f94adef777d0c2956', output_index: 1 },
+                    base_fee_msat: 2,
+                    fee_rate_ppm: 96,
+                    time_lock_delta: 40,
+                    max_htlc_msat: 6_045_000_000,
+                    min_htlc_msat: 1000 } }
       )
 
       response = described_class.dispatch(request) do |grpc|
@@ -174,8 +169,8 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
 
       expect(action.result.to_h).to eq(
         { fee: {
-            base: { millisatoshis: 1 },
-            rate: { parts_per_million: 95 }
+            base: { millisatoshis: 2 },
+            rate: { parts_per_million: 96 }
           },
           htlc: {
             minimum: { millisatoshis: 1000 },

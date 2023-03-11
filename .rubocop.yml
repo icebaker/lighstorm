@@ -22,3 +22,4 @@ Security/MarshalLoad:
 
 require:
  - rubocop-rspec
+ - rubocop-rake

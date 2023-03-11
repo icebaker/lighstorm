@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../controllers/node/actions/apply_gossip'
+require_relative '../../controllers/node/actions/pay'
 require_relative '../../controllers/channel'
 require_relative '../../adapters/nodes/node'
 require_relative '../concerns/protectable'
@@ -95,6 +96,37 @@ module Lighstorm
       def apply!(gossip:)
         Controllers::Node::ApplyGossip.perform(
           self, gossip
+        )
+      end
+
+      def send_message(
+        message, millisatoshis:, secret: nil,
+        times_out_in: { seconds: 5 }, through: 'amp',
+        preview: false
+      )
+        pay(
+          message: message,
+          millisatoshis: millisatoshis,
+          secret: secret,
+          times_out_in: times_out_in,
+          through: through,
+          preview: preview
+        )
+      end
+
+      def pay(
+        millisatoshis:, message: nil, secret: nil,
+        times_out_in: { seconds: 5 }, through: 'amp',
+        preview: false
+      )
+        Controllers::Node::Pay.perform(
+          public_key: public_key,
+          millisatoshis: millisatoshis,
+          through: through,
+          secret: secret,
+          message: message,
+          times_out_in: times_out_in,
+          preview: preview
         )
       end
     end

@@ -9,7 +9,7 @@ require_relative '../../components/lnd'
 require_relative '../../components/cache'
 
 require_relative '../nodes/node'
-require_relative 'channel/accounting'
+require_relative './channel/accounting'
 
 require_relative '../../controllers/channel/actions/apply_gossip'
 require_relative '../connections/channel_node'

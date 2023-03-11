@@ -21,7 +21,7 @@ RSpec.describe Lighstorm::Channel do
 
     context 'dump' do
       let(:data) do
-        symbolize_keys(JSON.parse(File.read('spec/data/gossip/channel/29f0873593ae/dump.json')))
+        symbolize_keys(JSON.parse(TestData.read('spec/data/gossip/channel/29f0873593ae/dump.json')))
       end
 
       it do
@@ -109,7 +109,7 @@ RSpec.describe Lighstorm::Channel do
 
     context 'gossip' do
       let(:data) do
-        JSON.parse(File.read('spec/data/gossip/channel/29f0873593ae/gossip.json'))
+        JSON.parse(TestData.read('spec/data/gossip/channel/29f0873593ae/gossip.json'))
       end
 
       it do

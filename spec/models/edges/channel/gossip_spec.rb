@@ -18,8 +18,8 @@ RSpec.describe Lighstorm::Models::Channel do
   end
 
   describe '.apply!' do
-    let(:dump) { symbolize_keys(JSON.parse(File.read("spec/data/gossip/channel/#{hash}/dump.json"))) }
-    let(:gossip) { JSON.parse(File.read("spec/data/gossip/channel/#{hash}/gossip.json")) }
+    let(:dump) { symbolize_keys(JSON.parse(TestData.read("spec/data/gossip/channel/#{hash}/dump.json"))) }
+    let(:gossip) { JSON.parse(TestData.read("spec/data/gossip/channel/#{hash}/gossip.json")) }
 
     context '29f0873593ae' do
       let(:hash) { '29f0873593ae' }

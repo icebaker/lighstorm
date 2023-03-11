@@ -63,8 +63,20 @@ require 'lighstorm'
 puts Lighstorm.version # => 0.0.8
 
 Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000
+  description: 'Coffee', millisatoshis: 1000, payable: 'once'
 )
+
+Lighstorm::Invoice.decode(
+  'lnbc20m1pv...qqdhhwkj'
+).pay
+
+Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+).pay(millisatoshis: 1000)
+
+Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+).send_message('Hello from Lighstorm!', millisatoshis: 1000)
 
 Lighstorm::Node.myself.alias # => icebaker/old-stone
 Lighstorm::Node.myself.public_key # => 02d3...e997
@@ -95,7 +107,7 @@ payment.hops.first.channel.partner.node.alias
 
 Lighstorm::Satoshis.new(
   millisatoshis: 75621650
-).satoshis # => 75621
+).satoshis # => 75621.65
 ```
 
 # Data Modeling
@@ -146,7 +158,9 @@ forward = Lighstorm::Forward.last
 forward.at
 
 forward.fee.millisatoshis
-forward.fee.parts_per_million
+forward.fee.parts_per_million(
+  forward.in.amount.millisatoshis
+)
 
 forward.in.amount.millisatoshis
 forward.out.amount.millisatoshis
@@ -168,15 +182,15 @@ forward.out.channel.partner.node.alias
 ### Payment
 
 ```ruby
-payment = Payment.last
+payment = Lighstorm::Payment.last
 
-payment.status
-payment.created_at
+payment.at
+payment.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
-payment.request.code # "lnbc20m1pv...qqdhhwkj"
+payment.invoice.code # "lnbc20m1pv...qqdhhwkj"
 
-payment.request.amount.millisatoshis
+payment.invoice.amount.millisatoshis
 
 payment.from.hop
 payment.from.amount.millisatoshis
@@ -238,6 +252,76 @@ node.platform.network
 node.platform.lightning.implementation
 node.platform.lightning.version
 ```
+
+### Pay
+
+Read more about [_Spontaneous Payments_](https://docs.lightning.engineering/lightning-network-tools/lnd/send-messages-with-keysend#send-a-spontaneous-payment).
+
+```ruby
+destination = Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+)
+
+destination.alias # => 'icebaker/old-stone'
+
+destination.pay(millisatoshis: 1000)
+
+destination.pay(
+  millisatoshis: 1500,
+  message: 'Hello from Lighstorm!',
+  through: 'amp',
+  times_out_in: { seconds: 5 }
+)
+
+destination.pay(
+  millisatoshis: 1200,
+  message: 'Hello from Lighstorm!',
+  through: 'keysend',
+  times_out_in: { seconds: 5 }
+)
+
+action = destination.pay(millisatoshis: 1000)
+action.result.fee.millisatoshis
+```
+
+### Send Messages
+
+**Warning:** Sending messages through Lightning Network requires you to spend satoshis and potentially pay fees.
+
+```ruby
+destination = Lighstorm::Node.find_by_public_key(
+  '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
+)
+
+destination.alias # => 'icebaker/old-stone'
+
+destination.send_message('Hello from Lighstorm!', millisatoshis: 1000)
+
+destination.send_message(
+  'Hello from Lighstorm!',
+  millisatoshis: 1000,
+  through: 'amp',
+  times_out_in: { seconds: 5 }
+)
+
+destination.send_message(
+  'Hello from Lighstorm!',
+  millisatoshis: 1000,
+  through: 'keysend',
+  times_out_in: { seconds: 5 }
+)
+
+action = destination.send_message('Hello from Lighstorm!', millisatoshis: 1000)
+action.result.fee.millisatoshis
+```
+
+Read more about sending messages:
+- [_Send a message to other nodes_](https://docs.lightning.engineering/lightning-network-tools/lnd/send-messages-with-keysend#send-a-message-to-other-nodes)
+- [_Does Private messaging over Bitcoin’s Lightning Network have potential?_](https://cryptopurview.com/private-messaging-over-bitcoins-lightning-network/)
+- [_How Bitcoin's Lightning Can Be Used for Private Messaging_](https://www.coindesk.com/markets/2019/11/09/how-bitcoins-lightning-can-be-used-for-private-messaging/)
+
+### Error Handling
+Same error handling used for [Invoices Payment Errors](?id=error-handling-1)
 
 ## Channel
 
@@ -373,23 +457,24 @@ Lighstorm::Invoice.find_by_secret_hash(
 invoice._key
 
 invoice.created_at
-invoice.settle_at
+invoice.expires_at
+invoice.settled_at
 
 invoice.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
-invoice.request.code # "lnbc20m1pv...qqdhhwkj"
+invoice.code # "lnbc20m1pv...qqdhhwkj"
 
-invoice.request.amount.millisatoshis
+invoice.amount.millisatoshis
 
-invoice.request.description.memo
-invoice.request.description.hash
+invoice.payable # 'once' or 'indefinitely'
+
+invoice.description.memo
+invoice.description.hash
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-invoice.request.secret.preimage
-invoice.request.secret.hash
-
-invoice.request.address
+invoice.secret.preimage
+invoice.secret.hash
 ```
 
 ### Create
@@ -400,11 +485,27 @@ invoice.request.address
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
 preview = Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000, preview: true
+  description: 'Coffee', millisatoshis: 1000,
+  payable: 'once', preview: true
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Piña Colada', millisatoshis: 1000
+  description: 'Coffee', millisatoshis: 1000,
+  payable: 'once', expires_in: { minutes: 5 }
+)
+
+action = Lighstorm::Invoice.create(
+  description: 'Beer', payable: 'once'
+)
+
+action = Lighstorm::Invoice.create(
+  description: 'Donations', payable: 'indefinitely',
+  expires_in: { hours: 24 }
+)
+
+action = Lighstorm::Invoice.create(
+  description: 'Concert Ticket', millisatoshis: 500000000,
+  payable: 'indefinitely', expires_in: { days: 5 }
 )
 
 action.to_h
@@ -413,6 +514,101 @@ action.response
 invoice = action.result
 ```
 
+### Pay
+
+[Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
+
+```ruby
+invoice = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj')
+
+# 'preview' let you check the expected operation
+# before actually performing it for debug purposes
+invoice.pay(preview: true)
+
+action = invoice.pay
+
+action.to_h
+
+action.response
+payment = action.result
+
+payment.at
+payment.state
+
+payment.amount.millisatoshis
+payment.fee.millisatoshis
+payment.fee.parts_per_million(
+  payment.amount.millisatoshis
+)
+
+payment.purpose
+payment.hops.size
+```
+
+```ruby
+invoice.pay(
+  millisatoshis: 1500,
+  message: 'here we go',
+  times_out_in: { seconds: 5 }
+)
+```
+
+#### Error Handling
+Check [Error Handling](?id=error-handling-2)
+
+```ruby
+begin
+  invoice.pay
+rescue AlreadyPaidError => error
+  error.message # 'The invoice is already paid.'
+  error.grpc.class # GRPC::AlreadyExists
+  error.grpc.message # '6:invoice is already paid. debug_error_string:{UNKNOWN...'
+end
+```
+
+```ruby
+begin
+  invoice.pay(millisatoshis: 1000)
+rescue AmountForNonZeroError => error
+  error.message # 'Millisatoshis must not be specified...'
+  error.grpc.class # GRPC::Unknown
+  error.grpc.message # '2:amount must not be specified when paying...'
+end
+```
+
+```ruby
+begin
+  invoice.pay
+rescue MissingMillisatoshisError => error
+  error.message # 'Millisatoshis must be specified...'
+  error.grpc.class # GRPC::Unknown
+  error.grpc.message # '2:amount must be specified when paying a zero...'
+end
+```
+
+```ruby
+begin
+  invoice.pay
+rescue NoRouteFoundError => error
+  error.message # 'FAILURE_REASON_NO_ROUTE'
+  e.response
+  e.response.last[:failure_reason] # => :FAILURE_REASON_NO_ROUTE
+end
+```
+
+
+```ruby
+begin
+  invoice.pay
+rescue PaymentError => error
+  error.class
+  error.message
+
+  error.grpc
+  error.response
+  error.result
+end
+```
 ## Payment
 
 [![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
@@ -430,7 +626,8 @@ Lighstorm::Payment.last
 Lighstorm::Payment.all(limit: 10, purpose: 'rebalance')
 
 # Possible Purposes:
-['self-payment', 'peer-to-peer', 'rebalance', 'payment']
+# 'self-payment', 'peer-to-peer',
+# 'rebalance', 'payment'
 
 # _key is helpful for reactive javascript frameworks.
 # Please don't consider it as a unique identifier
@@ -440,34 +637,53 @@ payment._key
 
 payment.to_h
 
-payment.status
-payment.created_at
-payment.settled_at
-payment.purpose
+payment.at
+
+payment.amount.millisatoshis
 
 payment.fee.millisatoshis
 payment.fee.parts_per_million(
-  payment.request.amount.millisatoshis
+  payment.amount.millisatoshis
 )
 
-# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
-payment.request.code # "lnbc20m1pv...qqdhhwkj"
+payment.state
+payment.message
 
-payment.request.amount.millisatoshis
+payment.how # 'spontaneously', 'with-invoice'
+payment.through # 'keysend', 'amp', 'non-amp'
+payment.purpose
+# 'self-payment', 'peer-to-peer',
+# 'rebalance', 'payment'
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-payment.request.secret.preimage
-payment.request.secret.hash
+payment.secret.preimage
+payment.secret.hash
 
-payment.request.address
+payment.invoice.created_at
+payment.invoice.expires_at
+payment.invoice.settled_at
 
-payment.request.description.memo
-payment.request.description.hash
+payment.invoice.state
+
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+payment.invoice.code # "lnbc20m1pv...qqdhhwkj"
+payment.invoice.amount.millisatoshis
+
+payment.invoice.payable # 'once', 'indefinitely'
+
+payment.invoice.description.memo
+payment.invoice.description.hash
+
+# https://docs.lightning.engineering/the-lightning-network/multihop-payments
+payment.invoice.secret.preimage
+payment.invoice.secret.hash
 
 payment.from.hop
 payment.from.amount.millisatoshis
 payment.from.fee.millisatoshis
-payment.from.fee.parts_per_million(payment.from.amount.millisatoshis)
+payment.from.fee.parts_per_million(
+  payment.from.amount.millisatoshis
+)
 
 payment.from.channel.id
 
@@ -482,7 +698,9 @@ payment.from.channel.exit.color
 payment.to.hop
 payment.to.amount.millisatoshis
 payment.to.fee.millisatoshis
-payment.to.fee.parts_per_million(payment.to.amount.millisatoshis)
+payment.to.fee.parts_per_million(
+  payment.to.amount.millisatoshis
+)
 
 payment.to.channel.id
 
@@ -502,7 +720,9 @@ payment.hops[0].last?
 payment.hops[0].hop
 payment.hops[0].amount.millisatoshis
 payment.hops[0].fee.millisatoshis
-payment.hops[0].fee.parts_per_million(payment.hops[0].amount.millisatoshis)
+payment.hops[0].fee.parts_per_million(
+  payment.hops[0].amount.millisatoshis
+)
 
 payment.hops[0].channel.id
 
@@ -666,6 +886,7 @@ Lighstorm::Channel.adapt(dump: channel.dump)
 
 ```ruby
 Lighstorm::Satoshis
+Lighstorm::Satoshis.new(bitcoins: 0.005)
 Lighstorm::Satoshis.new(millisatoshis: 75621650)
 
 satoshis.to_h
@@ -736,24 +957,26 @@ end
 ```ruby
 LighstormError
 
+ArgumentError
 IncoherentGossipError
-
-TooManyArgumentsError
 MissingCredentialsError
 MissingGossipHandlerError
-MissingMillisatoshisError
 MissingPartsPerMillionError
-MissingTTLError
-
 NegativeNotAllowedError
-
 NotYourChannelError
 NotYourNodeError
-UnknownChannelError
-
 OperationNotAllowedError
+TooManyArgumentsError
 UnexpectedNumberOfHTLCsError
+UnknownChannelError
 UpdateChannelPolicyError
+
+PaymentError
+
+AlreadyPaidError
+AmountForNonZeroError
+MissingMillisatoshisError
+NoRouteFoundError
 ```
 
 # Development
@@ -968,6 +1191,24 @@ expected: nil
 ```
 
 Remember to undo it afterward, replacing `expect!` with `expect`.
+
+### Extra Tips for Testing
+
+To auto-fix contracts:
+
+```sh
+rspec --format json | bundle exec rake contracts:fix
+```
+
+To delete unused test data files, update the `.env` file:
+```sh
+LIGHSTORM_DELETE_UNUSED_TEST_DATA=true
+```
+
+Deletion will only occur if you run all tests and no failures are found:
+```ruby
+bundle exec rspec
+```
 
 ## Generating Documentation
 

@@ -200,7 +200,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
                                            blocks: { delta: { minimum: 144 } } } } }] }
         )
 
-        raw = JSON.parse(File.read('spec/data/gossip/channel/sample-a.json'))
+        raw = JSON.parse(TestData.read('spec/data/gossip/channel/sample-a.json'))
 
         Contract.expect(
           raw,
@@ -256,7 +256,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
                                  _key: '88e2a6fc09e5abe81b7d23e69a471e5bc0940be89c3b3d2de809121da6d5e34e',
                                  public_key: '0207ed361128e101a16605fd8e7b491e2d28f7db1677363c9712a3907523a414d2' },
                          state: 'active',
-                         policy: { fee: { base: { millisatoshis: 100 }, rate: { parts_per_million: 0 } },
+                         policy: { fee: { base: { millisatoshis: 100 }, rate: { parts_per_million: 24 } },
                                    htlc: { minimum: { millisatoshis: 1000 }, maximum: { millisatoshis: 396_000_000 },
                                            blocks: { delta: { minimum: 40 } } } } },
                        { _source: :get_chan_info,
@@ -269,7 +269,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
                                            blocks: { delta: { minimum: 20 } } } } }] }
         )
 
-        raw = JSON.parse(File.read('spec/data/gossip/channel/sample-b.json'))
+        raw = JSON.parse(TestData.read('spec/data/gossip/channel/sample-b.json'))
 
         Contract.expect(
           raw,
@@ -299,7 +299,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
 
     context 'inactive' do
       it 'adapts' do
-        raw = JSON.parse(File.read('spec/data/gossip/channel/sample-c.json'))
+        raw = JSON.parse(TestData.read('spec/data/gossip/channel/sample-c.json'))
 
         Contract.expect(
           raw,

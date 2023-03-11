@@ -6,33 +6,48 @@ require_relative '../satoshis'
 
 require_relative '../connections/payment_channel'
 require_relative '../nodes/node'
-require_relative '../payment_request'
+require_relative '../invoice'
+require_relative '../secret'
 
 module Lighstorm
   module Models
     class Payment
-      attr_reader :_key, :hash, :request, :status, :created_at, :settled_at, :purpose
+      attr_reader :_key, :at, :state, :secret, :purpose, :through, :message
 
       def initialize(data)
         @data = data
 
         @_key = data[:_key]
-        @status = data[:status]
-        @created_at = data[:created_at]
-        @settled_at = data[:settled_at]
+        @at = data[:at]
+        @state = data[:state]
         @purpose = data[:purpose]
+        @through = data[:through]
+        @message = data[:message]
       end
 
-      def request
-        @request ||= PaymentRequest.new(@data[:request])
+      def how
+        @how ||= spontaneous? ? 'spontaneously' : 'with-invoice'
+      end
+
+      def invoice
+        @invoice ||= !spontaneous? && @data[:invoice] ? Invoice.new(@data[:invoice]) : nil
+      end
+
+      def amount
+        @amount ||= @data[:amount] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
       end
 
       def fee
-        @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
+        @fee ||= @data[:fee] ? Satoshis.new(millisatoshis: @data[:fee][:millisatoshis]) : nil
+      end
+
+      def secret
+        @secret ||= @data[:secret] ? Secret.new(@data[:secret]) : nil
       end
 
       def hops
         return @hops if @hops
+        return nil if @data[:hops].nil?
 
         @data[:hops].last[:is_last] = true
         @hops = @data[:hops].map do |hop|
@@ -41,29 +56,45 @@ module Lighstorm
       end
 
       def from
-        @from ||= hops.first
+        @from ||= @data[:hops].nil? ? nil : hops.first
       end
 
       def to
-        @to ||= hops.last
+        @to ||= @data[:hops].nil? ? nil : hops.last
       end
 
       def to_h
         response = {
           _key: _key,
-          status: status,
-          created_at: created_at,
-          settled_at: settled_at,
+          at: at,
+          state: state,
+          through: through,
           purpose: purpose,
-          fee: {
-            millisatoshis: fee.millisatoshis,
-            parts_per_million: fee.parts_per_million(request.amount.millisatoshis)
-          },
-          request: request.to_h,
+          how: how,
+          message: message,
+          invoice: invoice&.to_h,
           from: from.to_h,
-          to: to.to_h,
-          hops: hops.map(&:to_h)
+          to: to.to_h
         }
+
+        response[:secret] = secret.to_h if secret
+        response[:amount] = amount.to_h if amount
+        if fee
+          response[:fee] = {
+            millisatoshis: fee.millisatoshis,
+            parts_per_million: fee.parts_per_million(amount.millisatoshis)
+          }
+        end
+
+        response[:hops] = hops.map(&:to_h) unless hops.nil?
+
+        response
+      end
+
+      private
+
+      def spontaneous?
+        !@data[:invoice] || @data[:invoice][:code].nil?
       end
     end
   end

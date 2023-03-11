@@ -6,6 +6,20 @@ require 'digest'
 
 # Inspired by https://github.com/vcr/vcr
 module VCR
+  class Monitor
+    include Singleton
+
+    attr_reader :accessed_files
+
+    def reboot!
+      @accessed_files = {}
+    end
+
+    def register_access!(path)
+      @accessed_files[path] = true
+    end
+  end
+
   RECORDER = Struct.new(:kind) do
     def replay(key, *params, &block)
       VCR.replay(key, *params, kind: kind, &block)
@@ -30,7 +44,10 @@ module VCR
   def self.replay(key, params = {}, kind:, &block)
     path = build_path_for(key, params, kind: kind)
 
-    return Marshal.load(File.read(path)) if File.exist?(path)
+    if File.exist?(path)
+      Monitor.instance.register_access!(path)
+      return Marshal.load(File.read(path))
+    end
 
     response = block.call
 
@@ -38,6 +55,7 @@ module VCR
 
     protected_response = Sanitizer.protect(response)
 
+    Monitor.instance.register_access!(path)
     File.write(path, Marshal.dump(protected_response))
 
     protected_response

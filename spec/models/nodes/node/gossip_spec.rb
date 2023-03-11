@@ -18,8 +18,8 @@ RSpec.describe Lighstorm::Models::Node do
   end
 
   describe '.apply!' do
-    let(:dump) { symbolize_keys(JSON.parse(File.read("spec/data/gossip/node/#{hash}/dump.json"))) }
-    let(:gossip) { JSON.parse(File.read("spec/data/gossip/node/#{hash}/gossip.json")) }
+    let(:dump) { symbolize_keys(JSON.parse(TestData.read("spec/data/gossip/node/#{hash}/dump.json"))) }
+    let(:gossip) { JSON.parse(TestData.read("spec/data/gossip/node/#{hash}/gossip.json")) }
 
     context '4dec8c315434' do
       let(:hash) { '4dec8c315434' }

@@ -127,9 +127,9 @@ RSpec.describe Lighstorm::Models::Node do
 
         expect(node_alias._key.size).to eq(64)
         expect(node_alias.myself?).to be(false)
-        expect(node_alias.alias).to eq('Zero')
-        expect(node_alias.public_key).to eq('0200000000009482fa1bd99ec1d71a06ebfe27e8aee305e46bb53b78c7c6ab5b2a')
-        expect(node_alias.color).to eq('#000000')
+        expect(node_alias.alias).to eq('pay.lnrouter.app')
+        expect(node_alias.public_key).to eq('0200000000a3eff613189ca6c4070c89206ad658e286751eca1f29262948247a5f')
+        expect(node_alias.color).to eq('#f8fbff')
         expect(node_alias.platform.blockchain).to eq('bitcoin')
         expect(node_alias.platform.network).to eq('mainnet')
 
@@ -138,7 +138,7 @@ RSpec.describe Lighstorm::Models::Node do
         )
 
         Contract.expect(
-          node_alias.to_h, 'b50a6234a2b3ca7838e5f7d3d455a2ab191c5ab07202ec195d89f3b5feac2a48'
+          node_alias.to_h, '8c8d06243280aa1ee28e90056abf58284cbcf5f033a53bf2fad30dfe0e862d37'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

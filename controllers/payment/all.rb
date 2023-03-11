@@ -195,7 +195,7 @@ module Lighstorm
           raw[:decode_pay_req].each_key do |key|
             next if raw[:decode_pay_req][key][:_error]
 
-            adapted[:decode_pay_req][key] = Lighstorm::Adapter::PaymentRequest.decode_pay_req(
+            adapted[:decode_pay_req][key] = Lighstorm::Adapter::Invoice.decode_pay_req(
               raw[:decode_pay_req][key]
             )
           end
@@ -204,7 +204,7 @@ module Lighstorm
             next if raw[:lookup_invoice][key][:_error]
 
             adapted[:lookup_invoice][key] = Lighstorm::Adapter::Invoice.lookup_invoice(
-              raw[:lookup_invoice][key]
+              raw[:lookup_invoice][key], raw[:at]
             )
           end
 
@@ -309,31 +309,64 @@ module Lighstorm
         end
 
         def self.transform(list_payments, adapted)
-          if adapted[:lookup_invoice][list_payments[:request][:secret][:hash]] &&
-             !adapted[:lookup_invoice][list_payments[:request][:secret][:hash]][:_error]
+          if adapted[:lookup_invoice][list_payments[:secret][:hash]] &&
+             !adapted[:lookup_invoice][list_payments[:secret][:hash]][:_error]
 
-            list_payments[:request] = adapted[:lookup_invoice][list_payments[:request][:secret][:hash]][:request]
-          else
-            list_payments[:request][:_key] = Digest::SHA256.hexdigest(
-              list_payments[:request][:code]
-            )
+            if list_payments[:invoice]
+              lookup = adapted[:lookup_invoice][list_payments[:secret][:hash]]
+
+              list_payments[:invoice][:description] = lookup[:description]
+
+              lookup.each_key do |key|
+                if lookup[key].is_a?(Hash)
+                  unless list_payments[:invoice].key?(key) && !list_payments[:invoice][key].nil?
+                    list_payments[:invoice][key] = lookup[:key]
+                  end
+
+                  next
+                end
+
+                unless list_payments[:invoice].key?(key) && !list_payments[:invoice][key].nil? &&
+                       (!list_payments[:invoice][key].is_a?(String) || !list_payments[:invoice][key].empty?)
+                  list_payments[:invoice][key] = lookup[key]
+                end
+              end
+            else
+              list_payments[:invoice] = adapted[:lookup_invoice][list_payments[:secret][:hash]]
+            end
           end
+
           list_payments[:hops].each do |hop|
             hop[:channel] = transform_channel(hop[:channel], adapted)
           end
 
-          if adapted[:decode_pay_req][list_payments[:request][:code]]
-            decoded = adapted[:decode_pay_req][list_payments[:request][:code]]
-            request = list_payments[:request]
+          if adapted[:decode_pay_req][list_payments[:invoice][:code]]
+            decoded = adapted[:decode_pay_req][list_payments[:invoice][:code]]
+            invoice = list_payments[:invoice]
 
             decoded.each_key do |key|
-              request[key] = decoded[key] unless request.key?(key)
+              if !decoded[key].is_a?(Hash)
+                invoice[key] = decoded[key]
+              elsif decoded[key].is_a?(Hash)
+                invoice[key] = {} unless invoice.key?(key)
 
-              next unless decoded[key].is_a?(Hash)
+                next if key == :secret
 
-              decoded[key].each_key do |sub_key|
-                request[key][sub_key] = decoded[key][sub_key] unless request[key].key?(sub_key)
+                decoded[key].each_key do |sub_key|
+                  next if decoded[key][sub_key].nil? ||
+                          (decoded[key][sub_key].is_a?(String) && decoded[key][sub_key].empty?)
+
+                  invoice[key][sub_key] = decoded[key][sub_key]
+                end
               end
+            end
+          end
+
+          if list_payments[:invoice][:code]
+            if list_payments[:invoice][:payable] == 'once'
+              list_payments[:through] = 'non-amp'
+            elsif list_payments[:invoice][:payable] == 'indefinitely'
+              list_payments[:through] = 'amp'
             end
           end
 

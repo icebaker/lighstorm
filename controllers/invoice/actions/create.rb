@@ -2,6 +2,7 @@
 
 require_relative '../../../ports/grpc'
 require_relative '../../../models/errors'
+require_relative '../../../helpers/time_expression'
 require_relative '../../invoice'
 require_relative '../../action'
 
@@ -15,15 +16,27 @@ module Lighstorm
           ).to_h
         end
 
-        def self.prepare(description: nil, millisatoshis: nil)
-          {
+        def self.prepare(payable:, expires_in:, description: nil, millisatoshis: nil)
+          request = {
             service: :lightning,
             method: :add_invoice,
             params: {
               memo: description,
-              value_msat: millisatoshis
+              # Lightning Invoice Expiration: UX Considerations
+              # https://d.elor.me/2022/01/lightning-invoice-expiration-ux-considerations/
+              expiry: Helpers::TimeExpression.seconds(expires_in)
             }
           }
+
+          request[:params][:value_msat] = millisatoshis unless millisatoshis.nil?
+
+          if payable.to_sym == :indefinitely
+            request[:params][:is_amp] = true
+          elsif payable.to_sym != :once
+            raise Errors::ArgumentError, "payable: accepts 'indefinitely' or 'once', '#{payable}' is not valid."
+          end
+
+          request
         end
 
         def self.dispatch(grpc_request, &vcr)
@@ -35,16 +48,19 @@ module Lighstorm
         end
 
         def self.fetch(adapted, &vcr)
-          FindBySecretHash.data(adapted[:request][:secret][:hash], &vcr)
+          FindBySecretHash.data(adapted[:secret][:hash], &vcr)
         end
 
         def self.model(data)
           FindBySecretHash.model(data)
         end
 
-        def self.perform(description: nil, millisatoshis: nil, preview: false, &vcr)
+        def self.perform(payable:, expires_in:, description: nil, millisatoshis: nil, preview: false, &vcr)
           grpc_request = prepare(
-            description: description, millisatoshis: millisatoshis
+            description: description,
+            millisatoshis: millisatoshis,
+            expires_in: expires_in,
+            payable: payable
           )
 
           return grpc_request if preview

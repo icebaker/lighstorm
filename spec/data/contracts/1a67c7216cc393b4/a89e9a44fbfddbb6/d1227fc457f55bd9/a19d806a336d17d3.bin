@@ -1,0 +1,1 @@
+{:methodI"Symbol:11..20:ET:params{	:allow_self_paymentI"Boolean;T:dest_custom_records{i!I"String:0..10;T:payment_requestI"String:50+;T:timeout_secondsI"Integer:0..10;T:serviceI"Symbol:0..10;T

@@ -2,6 +2,18 @@
 
 module Sanitizer
   UNSAFE = {
+    'root_share <= amp' => true,
+    'address <= invoice_decode' => true,
+    'preimage <= amp' => true,
+    'address <= data' => true,
+
+    'address <= invoice' => true,
+    'preimage <= secret' => true,
+    'state <= amp_invoice_state' => true,
+    'settle_index <= amp_invoice_state' => true,
+    'settle_time <= amp_invoice_state' => true,
+    'amt_paid_msat <= amp_invoice_state' => true,
+    'payment_preimage <= response' => true,
     '_error <= get_chan_info' => true,
     '_error <= lookup_invoice' => true,
     'accept_height <= htlcs' => true,
@@ -40,7 +52,6 @@ module Sanitizer
     'csv_delay <= local_constraints' => true,
     'csv_delay <= remote_constraints' => true,
     'csv_delay' => true,
-    'custom_records <= htlcs' => true,
     'day_fee_sum <= fee_report' => true,
     'destination <= decode_pay_req' => true,
     'destination' => true,
@@ -69,8 +80,6 @@ module Sanitizer
     'is_keysend <= list_invoices' => true,
     'is_keysend <= lookup_invoice' => true,
     'is_keysend' => true,
-    'is_known <= features' => true,
-    'is_required <= features' => true,
     'last_update <= describe_graph' => true,
     'last_update <= get_chan_info' => true,
     'last_update <= node' => true,
@@ -85,7 +94,6 @@ module Sanitizer
     'metadata <= hops' => true,
     'month_fee_sum <= fee_report' => true,
     'mpp_record <= hops' => true,
-    'name <= features' => true,
     'node1_policy <= describe_graph' => true,
     'node1_policy <= get_chan_info' => true,
     'node1_policy' => true,

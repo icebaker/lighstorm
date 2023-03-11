@@ -7,6 +7,20 @@ require 'fileutils'
 module Contract
   GENERATE = false
 
+  class Monitor
+    include Singleton
+
+    attr_reader :accessed_files
+
+    def reboot!
+      @accessed_files = {}
+    end
+
+    def register_access!(path)
+      @accessed_files[path] = true
+    end
+  end
+
   def self.expect!(actual_data, expected_hash, &block)
     expect(actual_data, expected_hash, generate: true, &block)
   end
@@ -51,6 +65,8 @@ module Contract
 
     return nil unless File.exist?(path)
 
+    Monitor.instance.register_access!(path)
+
     Marshal.load(File.read(path))
   end
 
@@ -67,6 +83,7 @@ module Contract
       unless File.exist?(path)
         FileUtils.mkdir_p(File.dirname(path))
         File.write(path, Marshal.dump(contract))
+        Monitor.instance.register_access!(path)
       end
     end
 

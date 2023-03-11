@@ -51,7 +51,8 @@ puts Lighstorm.version # => 0.0.8
 Lighstorm::Node.myself.alias # => icebaker/old-stone
 
 Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1_000
+  description: 'Coffee', millisatoshis: 1_000,
+  payable: 'once'
 )
 
 Lighstorm::Satoshis.new(

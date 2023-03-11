@@ -194,7 +194,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'gossip B' do
       it 'provides data portability' do
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-b.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-b.json'))
 
         channel = described_class.new(
           Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip)
@@ -237,7 +237,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'gossip A' do
       it 'provides data portability' do
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-a.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-a.json'))
 
         channel = described_class.new(
           Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip)
@@ -272,7 +272,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'gossip C' do
       it 'provides data portability' do
-        gossip = JSON.parse(File.read('spec/data/gossip/channel/sample-c.json'))
+        gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-c.json'))
 
         channel = described_class.new(
           Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip)
