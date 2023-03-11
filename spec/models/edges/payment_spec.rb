@@ -61,7 +61,7 @@ RSpec.describe Lighstorm::Models::Payment do
         Lighstorm::Models::Satoshis.new(millisatoshis: 1000)
       end
 
-      let(:to_h_contract) { '1a9544bc8c09286938c4485fd8ccabb39d376f9d232a6a1187ac69fccaf24640' }
+      let(:to_h_contract) { '1607e2a77583ad7d60c2123215d4c7e01fd1b39baa59af66f0853b83e26fdaab' }
 
       it 'models' do
         expect(data[:meta][:calls][:decode_pay_req]).to be_nil
@@ -151,7 +151,7 @@ RSpec.describe Lighstorm::Models::Payment do
         expect(payment.invoice.amount.millisatoshis).to eq(1000)
         expect(payment.message).to be_nil
         expect(payment.through).to eq('non-amp')
-        expect(payment.spontaneous?).to be(false)
+        expect(payment.how).to eq('with-invoice')
 
         Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
@@ -176,7 +176,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1000)
         end
 
-        let(:to_h_contract) { '0e0b114bdcd118e18f9a6e72de18c5b6c426303063d9a1d3b4a085811a1e9ef2' }
+        let(:to_h_contract) { '8f67d1bd69f41094ccb9551ae36a97732acbf20d98d4d71a7ea21dd46e5f6869' }
 
         it 'models' do
           expect(data[:meta][:calls].keys.sort).to eq(
@@ -269,7 +269,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(1000)
           expect(payment.message).to be_nil
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -293,7 +293,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 150_000)
         end
 
-        let(:to_h_contract) { '2e13a2f0e7bb93be9a744604c2c3bd9470f661cffc09e9a82903b497c0142187' }
+        let(:to_h_contract) { 'cb091a1f251312d16a270c5bf376e6abfbc7c2ca34eb615fe8d2f303f21aac97' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -368,7 +368,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(150_000)
           expect(payment.message).to be_nil
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -392,7 +392,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 3_050_000_000)
         end
 
-        let(:to_h_contract) { '55c503c34e06ddeefbf969c4ba7110a87011e5540d7443a7ab80a6b06ea0e2b4' }
+        let(:to_h_contract) { '5b261bd2b2a618bf93efce6d3d52ec41c5641fe3cc67d2829ed3eb6d8fd50dc2' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -465,7 +465,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(3_050_000_000)
           expect(payment.message).to be_nil
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -489,7 +489,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 137_000)
         end
 
-        let(:to_h_contract) { '466c3b2fe3d2c58bcb0355717bc811eb84c48f91c0a8e38633dc36279ac61d39' }
+        let(:to_h_contract) { 'ccd5cd8b21f2eaabcdac72eef23f48140b3008043c50ad6ea65e9ce0b3de315f' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -566,7 +566,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(137_000)
           expect(payment.message).to be_nil
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -590,7 +590,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 130_000_000)
         end
 
-        let(:to_h_contract) { '8839b3c8d55dcd1bfe27234077042a04e4103f2ca5aa065198b08cef3308491a' }
+        let(:to_h_contract) { '637d1e3f3cb6292dfe74c7a507338fb9863e02e137058aab0f978ddee3011e56' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -665,7 +665,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(130_000_000)
           expect(payment.message).to be_nil
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -691,7 +691,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1200)
         end
 
-        let(:to_h_contract) { '4f0eadc4b3e039d5fcaa66c27e22a8a849654c3bfa9718ee9645d1d2aab0c189' }
+        let(:to_h_contract) { 'e356e232eaecb96ed3c6390e5ec60fa595b5fccef1235b08563b4d10a15fc71b' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -752,7 +752,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice).to be_nil
           expect(payment.message).to eq('spontaneous keysend!')
           expect(payment.through).to eq('keysend')
-          expect(payment.spontaneous?).to be(true)
+          expect(payment.how).to eq('spontaneously')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -776,7 +776,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1500)
         end
 
-        let(:to_h_contract) { '4f0eadc4b3e039d5fcaa66c27e22a8a849654c3bfa9718ee9645d1d2aab0c189' }
+        let(:to_h_contract) { 'e356e232eaecb96ed3c6390e5ec60fa595b5fccef1235b08563b4d10a15fc71b' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -837,7 +837,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice).to be_nil
           expect(payment.message).to eq('spontaneous amp!')
           expect(payment.through).to eq('amp')
-          expect(payment.spontaneous?).to be(true)
+          expect(payment.how).to eq('spontaneously')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -861,7 +861,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1000)
         end
 
-        let(:to_h_contract) { 'ba9486e85c1d8938a946a30f5716b79a2e90f4ef36361f5574b599a29087fe62' }
+        let(:to_h_contract) { 'e1bcd2811d1e99be3ad929cfb591f0433d5123cffee246dd80313da27f93a014' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -951,7 +951,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(1000)
           expect(payment.message).to be_nil
           expect(payment.through).to eq('amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -975,7 +975,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1210)
         end
 
-        let(:to_h_contract) { '4d9b450a162f4b198e9fe8d146154efc351183bc66d9c04e755a7a29b352f050' }
+        let(:to_h_contract) { 'a49c9a57596bd763fafa707ef3643c4276652ef8588961867838885875ca6d45' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1064,7 +1064,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount).to be_nil
           expect(payment.message).to eq('here we go!')
           expect(payment.through).to eq('amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -1088,7 +1088,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1121)
         end
 
-        let(:to_h_contract) { '84d6b3aea1a5bf260e9bf6cc7dccbdd4c3041fde81052083511a0f4f9325104a' }
+        let(:to_h_contract) { 'eda7f464c6f86946a9faa4bbfdeb7b0ccc417f9e8966ed322aae6c5653eb3034' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1177,7 +1177,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount).to be_nil
           expect(payment.message).to eq('paying what I want')
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
@@ -1201,7 +1201,7 @@ RSpec.describe Lighstorm::Models::Payment do
           Lighstorm::Models::Satoshis.new(millisatoshis: 1278)
         end
 
-        let(:to_h_contract) { '6e5dce9ab7fab68daa6dea2520fff037329354b25ad1fc3ce4b4ce8a21c35c0d' }
+        let(:to_h_contract) { '2fa9dd1e169385e6cfef8ba02fb427680de67eb29503b22049fdb133c053c727' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1290,7 +1290,7 @@ RSpec.describe Lighstorm::Models::Payment do
           expect(payment.invoice.amount.millisatoshis).to eq(amount.millisatoshis)
           expect(payment.message).to eq('paying the coffee')
           expect(payment.through).to eq('non-amp')
-          expect(payment.spontaneous?).to be(false)
+          expect(payment.how).to eq('with-invoice')
 
           Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)

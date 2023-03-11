@@ -10,13 +10,14 @@ require_relative '../controllers/invoice/actions/pay_through_route'
 module Lighstorm
   module Models
     class Invoice
-      attr_reader :_key, :created_at, :settled_at, :state, :payable, :code
+      attr_reader :_key, :created_at, :expires_at, :settled_at, :state, :payable, :code
 
       def initialize(data)
         @data = data
 
         @_key = data[:_key]
         @created_at = data[:created_at]
+        @expires_at = data[:expires_at]
         @settled_at = data[:settled_at]
         @state = data[:state]
 
@@ -41,8 +42,8 @@ module Lighstorm
         @amount ||= @data[:amount] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
       end
 
-      def paid
-        @paid ||= @data[:paid] ? Satoshis.new(millisatoshis: @data[:paid][:millisatoshis]) : nil
+      def received
+        @received ||= @data[:received] ? Satoshis.new(millisatoshis: @data[:received][:millisatoshis]) : nil
       end
 
       def secret
@@ -69,12 +70,13 @@ module Lighstorm
         result = {
           _key: _key,
           created_at: created_at,
+          expires_at: expires_at,
           settled_at: settled_at,
           payable: payable,
           state: state,
           code: code,
           amount: amount&.to_h,
-          paid: paid&.to_h,
+          received: received&.to_h,
           description: description.to_h,
           secret: secret.to_h,
           payments: payments&.map(&:to_h)

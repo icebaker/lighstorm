@@ -105,7 +105,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         adapted = described_class.adapt(response, data)
 
         Contract.expect(
-          adapted.to_h, '857f946168042c9c48568b4ee9c08d2439440d6fe69890da1a69f907bd7823d8'
+          adapted.to_h, 'd89ad7c1bbbfad15665f238baad5282c86d0d013eb9172ec3b9decbe0bb0fc7d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -190,7 +190,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, '08e3d27b43ff86473c6da7e4221ee020bb744b417492344cb1c6c8611db8cb85'
+            action.to_h, 'e982a27619a6f2bf75935675dff1d9bb489db7bf894484e7816cf83e31a31043'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -270,7 +270,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
         Contract.expect(
-          action.to_h, '08e3d27b43ff86473c6da7e4221ee020bb744b417492344cb1c6c8611db8cb85'
+          action.to_h, 'e982a27619a6f2bf75935675dff1d9bb489db7bf894484e7816cf83e31a31043'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

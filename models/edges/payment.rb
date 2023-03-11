@@ -25,8 +25,8 @@ module Lighstorm
         @message = data[:message]
       end
 
-      def spontaneous?
-        !@data[:invoice] || @data[:invoice][:code].nil?
+      def how
+        @how ||= spontaneous? ? 'spontaneously' : 'with-invoice'
       end
 
       def invoice
@@ -68,7 +68,9 @@ module Lighstorm
           _key: _key,
           at: at,
           state: state,
+          through: through,
           purpose: purpose,
+          how: how,
           message: message,
           invoice: invoice&.to_h,
           from: from.to_h,
@@ -87,6 +89,12 @@ module Lighstorm
         response[:hops] = hops.map(&:to_h) unless hops.nil?
 
         response
+      end
+
+      private
+
+      def spontaneous?
+        !@data[:invoice] || @data[:invoice][:code].nil?
       end
     end
   end

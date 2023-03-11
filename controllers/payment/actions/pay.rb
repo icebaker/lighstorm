@@ -32,7 +32,7 @@ module Lighstorm
 
         def self.fetch_all(request_code)
           {
-            invoice_decode: Invoice::Decode.data(request_code),
+            invoice_decode: request_code.nil? ? nil : Invoice::Decode.data(request_code),
             node_myself: Node::Myself.data
           }
         end

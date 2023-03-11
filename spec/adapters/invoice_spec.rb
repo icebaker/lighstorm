@@ -4,6 +4,8 @@ require_relative '../../adapters/invoice'
 require_relative '../../ports/grpc'
 
 RSpec.describe Lighstorm::Adapter::Invoice do
+  let(:at) { Time.new(2023, 3, 11, 21, 23, 6, 'UTC') }
+
   context 'decode_pay_req' do
     let(:request_code) do
       'lnbc20n1pjq2ywjpp5qy4mms9xqe7h3uhgtct7gt4qxmx56630xwdgenup9x73ggcsk7lsdqggaexzur9cqzpgxqyz5vqsp5je8mp8d49gvq0hj37jkp6y7vapvsgc6nflehhwpqw0yznclzuuqq9qyyssqt38umwt9wdd09dgejd68v88jnwezr9j2y87pv3yr5yglw77kqk6hn3jv6ue573m003n06r2yfa8yzzyh8zr3rgkkwqg9sf4arv490eqps7h0k9'
@@ -24,7 +26,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       adapted = described_class.decode_pay_req(raw)
 
       Contract.expect(
-        adapted, 'e57975452daa612da16efe76e18c5efa14a98afb92d33638c34639da4ea4f880'
+        adapted, 'ff7ca6b569cce1b9b3f718171727c825cb001bc96fec0956ab1698c0edc30d64'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -35,6 +37,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
             address: 'String:50+',
             amount: { millisatoshis: 'Integer:0..10' },
             created_at: 'Time',
+            expires_at: 'Time',
             description: { hash: 'Nil', memo: 'String:0..10' },
             payable: 'String:0..10',
             secret: { hash: 'String:50+' } }
@@ -44,7 +47,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       adapted = described_class.decode_pay_req(raw, request_code)
 
       Contract.expect(
-        adapted, '9ac2c458497266e2aadd96b3485a6bc6e783f84716d455810b15db60b154211b'
+        adapted, '13e111e67a75fe4ef14e09e6af0b06e732b2aa8597ff7ecd1cb03f0ff24ba41e'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -56,6 +59,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
             amount: { millisatoshis: 'Integer:0..10' },
             code: 'String:50+',
             created_at: 'Time',
+            expires_at: 'Time',
             description: { hash: 'Nil', memo: 'String:0..10' },
             payable: 'String:0..10',
             secret: { hash: 'String:50+' } }
@@ -79,10 +83,10 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         expect(actual.contract).to eq(expected.contract)
       end
 
-      adapted = described_class.list_invoices(raw)
+      adapted = described_class.list_invoices(raw, at)
 
       Contract.expect(
-        adapted, 'd93e84246c887de90c7070775bded78ae58b0d3a91dcd7fec418631ab2e83328'
+        adapted, '2f5bc36ae472c3713ac92455d051ef3a2e285981bc143c41bc65c1e51d04b383'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -94,8 +98,9 @@ RSpec.describe Lighstorm::Adapter::Invoice do
             amount: { millisatoshis: 'Integer:0..10' },
             code: 'String:50+',
             created_at: 'Time',
+            expires_at: 'Time',
             description: { hash: 'Nil', memo: 'String:21..30' },
-            paid: { millisatoshis: 'Integer:0..10' },
+            received: { millisatoshis: 'Integer:0..10' },
             payable: 'String:0..10',
             payments: [{ amount: { millisatoshis: 'Integer:0..10' }, at: 'Time',
                          hops: [{ channel: { id: 'Integer:11..20' } }] }],
@@ -125,10 +130,10 @@ RSpec.describe Lighstorm::Adapter::Invoice do
           expect(actual.contract).to eq(expected.contract)
         end
 
-        adapted = described_class.lookup_invoice(raw)
+        adapted = described_class.lookup_invoice(raw, at)
 
         Contract.expect(
-          adapted, 'd93e84246c887de90c7070775bded78ae58b0d3a91dcd7fec418631ab2e83328'
+          adapted, '2f5bc36ae472c3713ac92455d051ef3a2e285981bc143c41bc65c1e51d04b383'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -140,8 +145,9 @@ RSpec.describe Lighstorm::Adapter::Invoice do
               amount: { millisatoshis: 'Integer:0..10' },
               code: 'String:50+',
               created_at: 'Time',
+              expires_at: 'Time',
               description: { hash: 'Nil', memo: 'String:21..30' },
-              paid: { millisatoshis: 'Integer:0..10' },
+              received: { millisatoshis: 'Integer:0..10' },
               payable: 'String:0..10',
               payments: [{ amount: { millisatoshis: 'Integer:0..10' }, at: 'Time',
                            hops: [{ channel: { id: 'Integer:11..20' } }] }],
@@ -170,10 +176,10 @@ RSpec.describe Lighstorm::Adapter::Invoice do
           expect(actual.contract).to eq(expected.contract)
         end
 
-        adapted = described_class.lookup_invoice(raw)
+        adapted = described_class.lookup_invoice(raw, at)
 
         Contract.expect(
-          adapted, '7d4526938ae3fe18206b17bb8692d6d71eb96886da2e3ca44e7c79ca037448e1'
+          adapted, '2ca4434e2046948f864254ba3cda1bc936aa3e8d7f173505317a44970441352f'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -185,6 +191,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
               amount: { millisatoshis: 'Integer:0..10' },
               code: 'String:50+',
               created_at: 'Time',
+              expires_at: 'Time',
               description: { hash: 'Nil', memo: 'String:0..10' },
               payable: 'String:0..10',
               secret: { hash: 'String:50+', preimage: 'String:50+' },

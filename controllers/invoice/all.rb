@@ -9,6 +9,8 @@ module Lighstorm
     module Invoice
       module All
         def self.fetch(limit: nil, spontaneous: false)
+          at = Time.now
+
           last_offset = 0
 
           invoices = []
@@ -35,13 +37,15 @@ module Lighstorm
 
           invoices = invoices[0..limit - 1] unless limit.nil?
 
-          { list_invoices: invoices }
+          { at: at, list_invoices: invoices }
         end
 
         def self.adapt(raw)
+          raise 'missing at' if raw[:at].nil?
+
           {
             list_invoices: raw[:list_invoices].map do |raw_invoice|
-              Lighstorm::Adapter::Invoice.list_invoices(raw_invoice)
+              Lighstorm::Adapter::Invoice.list_invoices(raw_invoice, raw[:at])
             end
           }
         end

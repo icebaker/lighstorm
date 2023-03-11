@@ -43,7 +43,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
         expect(invoice.amount.millisatoshis).to eq(982_342_000)
         expect(invoice.amount.satoshis).to eq(982_342.0)
-        expect(invoice.paid.millisatoshis).to eq(982_342_000)
+        expect(invoice.received.millisatoshis).to eq(982_342_000)
         expect(invoice.description.memo).to eq('Local-Rebalance-982342-Sats')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.class).to eq(String)
@@ -51,7 +51,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, 'f10dfd433f5005262ae4ef0912b1a6f630ac5db1542ccd2d482de2cba598954b'
+          invoice.to_h, '8360b42081b5e7716668e8028d8d334a62d4a44064ffe16a1d5779e51e1c2f2d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -84,7 +84,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.code).to eq('lnbc9823420n1p3u2xx7pp50hq2v50jg8zujs9wxqen36t2l9ptw4vsp9egu24sgmv0vkp5rxaqdpvf3hkxctv94fx2cnpd3skucm995unsv3nxsez65mpw3escqzpgxqrrsssp53fgraya36c9x3qugf5cxkls52shxzhflln6k8p7w23amkufwsycs9qyyssqffdlwu4pvvyyzy79jtkcsr97ttqy0c4fr9xrq63akg2fmfxhzruj9lz2wwnzyzmyalf7mu7vmxn3rf4az5w2c03z5axdmdnv423q9cqq62y7jd')
         expect(invoice.amount.millisatoshis).to eq(982_342_000)
         expect(invoice.amount.satoshis).to eq(982_342.0)
-        expect(invoice.paid.millisatoshis).to eq(982_342_000)
+        expect(invoice.received.millisatoshis).to eq(982_342_000)
         expect(invoice.description.memo).to eq('Local-Rebalance-982342-Sats')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.class).to eq(String)
@@ -92,7 +92,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, 'f10dfd433f5005262ae4ef0912b1a6f630ac5db1542ccd2d482de2cba598954b'
+          invoice.to_h, '8360b42081b5e7716668e8028d8d334a62d4a44064ffe16a1d5779e51e1c2f2d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -102,7 +102,7 @@ RSpec.describe Lighstorm::Models::Invoice do
 
     context 'open' do
       it 'models' do
-        secret_hash = 'f1eec36442c3caa6f46eb85894f5778c3ba95d67d08fcf7549af79df6829f0ee'
+        secret_hash = 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e'
 
         data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
@@ -123,7 +123,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.code.size).to eq(267)
         expect(invoice.amount.millisatoshis).to eq(1000)
         expect(invoice.amount.satoshis).to eq(1.0)
-        expect(invoice.paid).to be_nil
+        expect(invoice.received).to be_nil
         expect(invoice.description.memo).to eq('Coffee')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.class).to eq(String)
@@ -131,7 +131,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq(secret_hash)
 
         Contract.expect(
-          invoice.to_h, 'b155d010d473ceeac7a0f782d01520f386884370cce47c52fff288e8efed7b93'
+          invoice.to_h, 'e206115c9b0709d46e46382eefbc0e25e9e49682dce2aac62f3844e5e8bbb9d5'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
@@ -165,14 +165,14 @@ RSpec.describe Lighstorm::Models::Invoice do
       expect(invoice.code).to eq(request_code)
       expect(invoice.amount.millisatoshis).to eq(2000)
       expect(invoice.amount.satoshis).to eq(2)
-      expect(invoice.paid).to be_nil
+      expect(invoice.received).to be_nil
       expect(invoice.description.memo).to eq('Grape')
       expect(invoice.description.hash).to be_nil
       expect(invoice.secret.preimage).to be_nil
       expect(invoice.secret.hash).to eq('012bbdc0a6067d78f2e85e17e42ea036cd4d6a2f339a8ccf8129bd142310b7bf')
 
       Contract.expect(
-        invoice.to_h, '52a964699bfc5b4bbb664db7643233a259c9c07e6dec8432a65aba1e2936dacd'
+        invoice.to_h, '4a13965e8c7a02bf362b9db710a39bc4e4ca8ef3de15a6b2b14cd5681a876201'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
 
@@ -205,7 +205,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.code).to be_nil
         expect(invoice.amount.millisatoshis).to eq(1789)
         expect(invoice.amount.satoshis).to eq(1.789)
-        expect(invoice.paid.millisatoshis).to eq(1789)
+        expect(invoice.received.millisatoshis).to eq(1789)
         expect(invoice.description.memo).to be_nil
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.class).to eq(String)
@@ -217,7 +217,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect { JSON.generate(invoice.to_h) }.not_to raise_error
 
         Contract.expect(
-          invoice.to_h, '5a55f6c0d4b0dd07d0590529805e18660f24656c316cff0e0078c80105895f86'
+          invoice.to_h, '0cbf4cba89284e635e3a3e2d6e7fba1cd73b361ed83a9011574b3312866aefe0'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -248,7 +248,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.code).to be_nil
         expect(invoice.amount.millisatoshis).to eq(1500)
         expect(invoice.amount.satoshis).to eq(1.500)
-        expect(invoice.paid.millisatoshis).to eq(1500)
+        expect(invoice.received.millisatoshis).to eq(1500)
         expect(invoice.description.memo).to be_nil
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.class).to eq(String)
@@ -258,7 +258,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payment.message).to eq('spontaneous keysend self-payment')
 
         Contract.expect(
-          invoice.to_h, '5a55f6c0d4b0dd07d0590529805e18660f24656c316cff0e0078c80105895f86'
+          invoice.to_h, '0cbf4cba89284e635e3a3e2d6e7fba1cd73b361ed83a9011574b3312866aefe0'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -281,7 +281,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice._key.size).to eq(64)
 
         expect(invoice.created_at).to be_a(Time)
-        expect(invoice.created_at.utc.to_s).to eq('2023-03-10 22:27:24 UTC')
+        expect(invoice.created_at.utc.to_s).to eq('2023-03-11 21:43:38 UTC')
 
         expect(invoice.settled_at).to be_nil
 
@@ -289,7 +289,7 @@ RSpec.describe Lighstorm::Models::Invoice do
 
         expect(invoice.code).to be_nil
         expect(invoice.amount.millisatoshis).to eq(1500)
-        expect(invoice.paid.millisatoshis).to eq(1500)
+        expect(invoice.received.millisatoshis).to eq(1500)
         expect(invoice.description.memo).to be_nil
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage).to be_nil
@@ -301,11 +301,11 @@ RSpec.describe Lighstorm::Models::Invoice do
         )
 
         expect(invoice.payments.first.at).to be_a(Time)
-        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-10 22:27:24 UTC')
+        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-11 21:43:38 UTC')
         expect(invoice.payments.first.message).to eq('spontaneous amp self-payment')
 
         Contract.expect(
-          invoice.to_h, 'a8393bc86e900254577bd25a66d3ffb79c038fa0991ec6c797653050af3dc294'
+          invoice.to_h, '29f189e7af8de3085990c0188005eca209e0e54a0fe4f488176942d3a1cf0df0'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -336,7 +336,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.code).to eq('lnbc12780p1pjqhfzzpp5az72atxyqll3ryjq0ndpy0lsya5038uj0z5gtk7jue58cfc63xmqdqcfahx2gz5d9kk2gzrdanxvet9cqzpgxqyz5vqsp5tw5mwdscy7jhtpjh3wn9lw43q4ffu047f5wnkc2g70fhwwmj7nts9qyyssqrthrhkehvwjx606v6hvhj5uwar7cxk523y0rx8dx4mm5zcavqwpncz2yla64ppk82nwx3xamzlca8kzjudl49mndeqlyzsdzqkj9jkcq74sv8g')
         expect(invoice.amount.millisatoshis).to eq(1278)
         expect(invoice.amount.satoshis).to eq(1.278)
-        expect(invoice.paid.millisatoshis).to eq(1278)
+        expect(invoice.received.millisatoshis).to eq(1278)
         expect(invoice.description.memo).to eq('One Time Coffee')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.size).to eq(64)
@@ -345,7 +345,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payment.message).to eq('paying the coffee')
 
         Contract.expect(
-          invoice.to_h, '97ad213f64c136110b1c67dcd8c489d959e5756edad746ffaf5573835cee5c6d'
+          invoice.to_h, 'e6c08c5b078b5a3800587d419da948fe32a99292c00dbb7a483b54334fadda4e'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -375,7 +375,7 @@ RSpec.describe Lighstorm::Models::Invoice do
 
         expect(invoice.code).to eq('lnbc1pjqhff0pp5zh8jr83ak2mjr500lz00vsg357l5luhhp2uxhhfvxkfy3v0ers8qdqafahx2gz5d9kk2gzzv4jhygz0wpjkucqzpgxqyz5vqsp54dxu84v66rzhmg98uzadgc9hqy7na7jtx62xltdyt0ug8te5w7dq9qyyssqgjl6avmq543x5gfw2zsplvvka7mpv78r8slkw8x5uhyv8lawdsppntn5texwr66vmv590szn5wdqk48vtguhxhvf2zvh58eqj2nmq5gpv54ehd')
         expect(invoice.amount).to be_nil
-        expect(invoice.paid.millisatoshis).to eq(1121)
+        expect(invoice.received.millisatoshis).to eq(1121)
         expect(invoice.description.memo).to eq('One Time Beer Open')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage.size).to eq(64)
@@ -384,7 +384,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payment.message).to eq('paying what I want')
 
         Contract.expect(
-          invoice.to_h, '2bc28f2f2be5b876b83c4b4007147133814fb1b402ee622d52e620d75ae0b27e'
+          invoice.to_h, '1d824aceeeb994793b0a15fadddccdcc346c0ea5c80dfe6c543a480005571a63'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -407,15 +407,18 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice._key.size).to eq(64)
 
         expect(invoice.created_at).to be_a(Time)
-        expect(invoice.created_at.utc.to_s).to eq('2023-03-10 21:49:35 UTC')
+        expect(invoice.created_at.utc.to_s).to eq('2023-03-11 21:46:48 UTC')
+
+        expect(invoice.expires_at).to be_a(Time)
+        expect(invoice.expires_at.utc.to_s).to eq('2023-03-12 21:46:48 UTC')
 
         expect(invoice.settled_at).to be_nil
 
-        expect(invoice.state).to eq('settled')
+        expect(invoice.state).to eq('open')
 
-        expect(invoice.code).to eq('lnbc1pjqhf00pp50wcqgps2scm7la8hwegtacadzc7efxh5535uzhqg5vk0cske5klsdq4facx2m3qg3hkuct5d9hkucqzpgxqyz5vqsp54ry4te3hyvkaatzt60qr56z8z8fdvzkr3m2va5g0vpdnzfuawads9q8pqqqssq36wvptehc6tka3d938eh4zrgrhanxmpfk3ptkty0cqjcwcrln609h45252peagstjf527d7y5emhl8m5jh20pdnlqtl7tnhav56zp9cqspw2e3')
+        expect(invoice.code).to eq('lnbc1pjqeakgpp54n5rsd6x48ku26h6dutr2tvmljjmr85t6apsud8p9ka4pxjd4edsdq4facx2m3qg3hkuct5d9hkucqzpgxqyz5vqsp5kp4klrul4kh8jq7259uenz3gdppmqajcqp54tx9yp6j4p5q4ntks9q8pqqqssq2zn0emqa3emqcaylvst0xxvh9h9qrgdmzwz2vrwhr08fyf7f2qlke3elnsehhyncwd4j5t07k6ln94lrgd49602dj27c3jvpg36ruzqpwktt3h')
         expect(invoice.amount).to be_nil
-        expect(invoice.paid.millisatoshis).to eq(2555)
+        expect(invoice.received.millisatoshis).to eq(2555)
         expect(invoice.description.memo).to eq('Open Donation')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage).to be_nil
@@ -423,29 +426,29 @@ RSpec.describe Lighstorm::Models::Invoice do
 
         expect(invoice.payments.size).to eq(2)
 
-        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-10 21:50:24 UTC')
-        expect(invoice.payments.first.amount.millisatoshis).to eq(1210)
+        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-11 21:47:46 UTC')
+        expect(invoice.payments.first.amount.millisatoshis).to eq(1345)
         expect(invoice.payments.first.from.channel.id).to eq(850_181_973_150_531_585)
-        expect(invoice.payments.first.secret.hash).to eq('73c41594fe95817ba15dc38acc67a6da800fb627327e0b0145af4de76ed905ce')
+        expect(invoice.payments.first.secret.hash).to eq('b91e9712fbe67eee3f9140b2bacae075d85b9c8c7dd59d761c2a2345f4612409')
         expect(invoice.payments.first.secret.preimage.size).to eq(64)
-        expect(invoice.payments.first.message).to eq('here we go!')
+        expect(invoice.payments.first.message).to eq('happy to help!')
 
-        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-10 21:50:02 UTC')
-        expect(invoice.payments.last.amount.millisatoshis).to eq(1345)
+        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-11 21:47:23 UTC')
+        expect(invoice.payments.last.amount.millisatoshis).to eq(1210)
         expect(invoice.payments.last.from.channel.id).to eq(850_181_973_150_531_585)
-        expect(invoice.payments.last.secret.hash).to eq('87c3e0431a92f2901af7d33907aa73c9dd7b9793f51f8508cfc5a254b9ac096e')
+        expect(invoice.payments.last.secret.hash).to eq('528da8c037b3e11373b4fdeffa3a35dab8d43ab27232f4b8e482dbd31bffa64f')
         expect(invoice.payments.last.secret.preimage.size).to eq(64)
-        expect(invoice.payments.last.message).to eq('happy to help!')
+        expect(invoice.payments.last.message).to eq('here we go!')
 
         expect(invoice.payments.last.secret.hash).not_to eq(invoice.payments.first.secret.hash)
         expect(invoice.payments.last.secret.preimage).not_to eq(invoice.payments.first.secret.preimage)
 
         expect(
           invoice.payments.first.amount.millisatoshis + invoice.payments.last.amount.millisatoshis
-        ).to eq(invoice.paid.millisatoshis)
+        ).to eq(invoice.received.millisatoshis)
 
         Contract.expect(
-          invoice.to_h, '763eeeaf406359b1326897007500f3a3e0e1608b74729b1e623074b399c6a6d3'
+          invoice.to_h, 'b48b759c3c6b2a16ee90fb4c7af9c513616ea1beba17ad817c4ec7591a208149'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -468,39 +471,98 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice._key.size).to eq(64)
 
         expect(invoice.created_at).to be_a(Time)
-        expect(invoice.created_at.utc.to_s).to eq('2023-03-10 21:58:05 UTC')
+        expect(invoice.created_at.utc.to_s).to eq('2023-03-11 21:50:32 UTC')
 
         expect(invoice.settled_at).to be_nil
 
-        expect(invoice.state).to eq('settled')
+        expect(invoice.state).to eq('open')
 
-        expect(invoice.code).to eq('lnbc10n1pjqhfldpp502qqwwx8gxks3l0c05uj7a4f072206d2vt7m632nve5l4wzf07hsdqcg3hkuct5v5srz6eqd4ekzarncqzpgxqyz5vqsp5lmj5suzpg93uhk5268lk6axn3gz3dvamcg5n6fcgskr8968spwwq9q8pqqqssq0qced26llyuk3583yrf7yhq4mt89nnd8tnrelm6dmap2gp0wva736ppgdrj9gvl5pvupkm8lvnhx36nkpfjq6seduzjysggcwuv3sgqpynrw75')
+        expect(invoice.code).to eq('lnbc10n1pjqeaagpp547hctzgurgxt5gswku6yujyztf5c0mkr4zr7ts5d39vgkmpc0wzsdq6g3hkuct5v5srzgznv96x7umgdycqzpgxqyz5vqsp5zrhkyds6ggxqf5pcwqv6tj74nxwdtesdhfmjaavvp5kjzwn9qyps9q8pqqqssqnp765vtvlkphr8z0842t33xyejfex5eyf7umnsuxew9s2dswx64809rls45lcnpex2vnte50hrm3m4dsvr07603jsgv7tkj2n6r70gcpemuu5p')
         expect(invoice.amount.millisatoshis).to eq(1000)
-        expect(invoice.paid.millisatoshis).to eq(2000)
-        expect(invoice.description.memo).to eq('Donate 1k msats')
+        expect(invoice.received.millisatoshis).to eq(2000)
+        expect(invoice.description.memo).to eq('Donate 1 Satoshi')
         expect(invoice.description.hash).to be_nil
         expect(invoice.secret.preimage).to be_nil
-        expect(invoice.secret.hash).to eq('7a800738c741ad08fdf87d392f76a97f94a7e9aa62fdbd45536669fab8497faf')
+        expect(invoice.secret.hash).to eq('afaf85891c1a0cba220eb7344e48825a6987eec3a887e5c28d89588b6c387b85')
 
-        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-10 22:18:06 UTC')
+        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-11 21:51:11 UTC')
         expect(invoice.payments.first.amount.millisatoshis).to eq(1000)
         expect(invoice.payments.first.from.channel.id).to eq(850_181_973_150_531_585)
-        expect(invoice.payments.first.secret.hash).to eq('b1b1435cd4d931b6ed4b5ffe59f85dcb978be9bbf77efb02723290b75101c839')
+        expect(invoice.payments.first.secret.hash).to eq('072f401abff1bdb3a2bd5c9b486e8176ea1ec4f71eacf1b8b15abff5346e332e')
         expect(invoice.payments.first.secret.preimage.size).to eq(64)
-        expect(invoice.payments.first.message).to eq('+1000')
+        expect(invoice.payments.first.message).to eq('+1k going')
 
-        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-10 22:17:40 UTC')
+        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-11 21:51:01 UTC')
         expect(invoice.payments.last.amount.millisatoshis).to eq(1000)
         expect(invoice.payments.last.from.channel.id).to eq(850_181_973_150_531_585)
-        expect(invoice.payments.last.secret.hash).to eq('20e5e8e550f41359b29f6e021c8863d34af46baeba74b88c5792790bc4ea3e7c')
+        expect(invoice.payments.last.secret.hash).to eq('89436a7fd2644e7b36522ed5beab0c2ff89d2131b076ddd64739d3a089e493c6')
         expect(invoice.payments.last.secret.preimage.size).to eq(64)
-        expect(invoice.payments.last.message).to eq('+1000')
+        expect(invoice.payments.last.message).to eq('1k going')
 
         expect(invoice.payments.last.secret.hash).not_to eq(invoice.payments.first.secret.hash)
         expect(invoice.payments.last.secret.preimage).not_to eq(invoice.payments.first.secret.preimage)
 
         Contract.expect(
-          invoice.to_h, '6eda0abb2b4e3c92b72a3b521aee040277a4a57bb1a01c2247de2e6ffa9e9e6b'
+          invoice.to_h, '97246af2cdcb78d19b3f7c768f1f794ed0c67888e1fb00931d012e15546ca666'
+        ) do |actual, expected|
+          expect(actual.hash).to eq(expected.hash)
+          expect(actual.contract).to eq(expected.contract)
+        end
+      end
+    end
+
+    context 'expired undefined amount payable indefinitely invoice' do
+      let(:secret_hash) { '93ea9358cf63c4edb7bf88a451e6ac57d327dbd355c6814d2644053b8c190faf' }
+
+      it 'models' do
+        data = Lighstorm::Controllers::Invoice::All.data(spontaneous: true) do |fetch|
+          VCR.tape.replay('Controllers::Invoice.all.first/expired-indefinitely') do
+            data = fetch.call
+            data[:list_invoices] = [data[:list_invoices].find do |invoice|
+              invoice[:r_hash].unpack1('H*') == secret_hash
+            end]
+            data
+          end
+        end
+
+        invoice = described_class.new(data[0])
+
+        expect(invoice._key.size).to eq(64)
+
+        expect(invoice.created_at).to be_a(Time)
+        expect(invoice.created_at.utc.to_s).to eq('2023-03-09 23:04:56 UTC')
+
+        expect(invoice.settled_at).to be_nil
+
+        expect(invoice.state).to eq('settled')
+
+        expect(invoice.code).to eq('lnbc1pjq5escpp5j04fxkx0v0zwmdal3zj9re4v2lfj0k7n2hrgznfxgsznhrqep7hsdq0g3hkuct5d9hkuuccqzpgxqyz5vqsp5pxpdl2ftelf5vf4jqjpvynl3u29py5nmjlfrstvxj73hl0fu56fq9q8pqqqssqaaymvqdetmke004rhlk9dvjkdpy63mgjffve0dnzznm0arce78e4srkausw4grfwwwetazrk99rudt03apt9nxx9k4496usgneknqyqp7rrc5w')
+        expect(invoice.amount).to be_nil
+        expect(invoice.received.millisatoshis).to eq(7500)
+        expect(invoice.description.memo).to eq('Donations')
+        expect(invoice.description.hash).to be_nil
+        expect(invoice.secret.preimage).to be_nil
+        expect(invoice.secret.hash).to eq(secret_hash)
+
+        expect(invoice.payments.first.at.utc.to_s).to eq('2023-03-10 01:01:38 UTC')
+        expect(invoice.payments.first.amount.millisatoshis).to eq(1000)
+        expect(invoice.payments.first.from.channel.id).to eq(848_916_435_345_801_217)
+        expect(invoice.payments.first.secret.hash).to eq('7aff82949d9ffbbce0ccd517660d30b1de2c5228b43d300b9de0a9145cab2520')
+        expect(invoice.payments.first.secret.preimage.size).to eq(64)
+        expect(invoice.payments.first.message).to be_nil
+
+        expect(invoice.payments.last.at.utc.to_s).to eq('2023-03-09 23:07:00 UTC')
+        expect(invoice.payments.last.amount.millisatoshis).to eq(1000)
+        expect(invoice.payments.last.from.channel.id).to eq(850_181_973_150_531_585)
+        expect(invoice.payments.last.secret.hash).to eq('edeeb2a6e3fadb9fb803b3fd40cda2667c280fd26d67a18416d85d4ef0cbe284')
+        expect(invoice.payments.last.secret.preimage.size).to eq(64)
+        expect(invoice.payments.last.message).to be_nil
+
+        expect(invoice.payments.last.secret.hash).not_to eq(invoice.payments.first.secret.hash)
+        expect(invoice.payments.last.secret.preimage).not_to eq(invoice.payments.first.secret.preimage)
+
+        Contract.expect(
+          invoice.to_h, '7c314ec3eeeba0fc1de71159b0a0953fbe7972ac2e5bbc96ea97856cab76fa82'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

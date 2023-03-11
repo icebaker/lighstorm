@@ -31,6 +31,7 @@ module Lighstorm
           ),
           payable: 'once',
           created_at: Time.at(grpc[:timestamp]),
+          expires_at: Time.at(grpc[:timestamp] + grpc[:expiry]),
           amount: (grpc[:num_msat]).zero? ? nil : { millisatoshis: grpc[:num_msat] },
           description: {
             memo: grpc[:description].empty? ? nil : grpc[:description],
@@ -53,22 +54,25 @@ module Lighstorm
         adapted
       end
 
-      def self.lookup_invoice(grpc)
-        adapted = list_or_lookup_invoice(grpc)
+      def self.lookup_invoice(grpc, at)
+        adapted = list_or_lookup_invoice(grpc, at)
         adapted[:_source] = :lookup_invoice
         adapted
       end
 
-      def self.list_invoices(grpc)
-        adapted = list_or_lookup_invoice(grpc)
+      def self.list_invoices(grpc, at)
+        adapted = list_or_lookup_invoice(grpc, at)
         adapted[:_source] = :list_invoices
         adapted
       end
 
-      def self.list_or_lookup_invoice(grpc)
+      def self.list_or_lookup_invoice(grpc, at)
+        raise 'missing at' if at.nil?
+
         adapted = {
           _key: _key(grpc),
           created_at: Time.at(grpc[:creation_date]),
+          expires_at: Time.at(grpc[:creation_date] + grpc[:expiry]),
           settled_at: grpc[:settle_date].nil? || !grpc[:settle_date].positive? ? nil : Time.at(grpc[:settle_date]),
           state: grpc[:state].to_s.downcase,
           code: grpc[:payment_request].empty? ? nil : grpc[:payment_request],
@@ -86,10 +90,15 @@ module Lighstorm
 
         adapted[:amount] = { millisatoshis: grpc[:value_msat] } if grpc[:value_msat] != 0
 
-        adapted[:paid] = { millisatoshis: grpc[:amt_paid_msat] } if grpc[:amt_paid_msat] != 0
+        adapted[:received] = { millisatoshis: grpc[:amt_paid_msat] } if grpc[:amt_paid_msat] != 0
 
-        # grpc[:is_amp]
-        # grpc[:amp_invoice_state]
+        if adapted[:state] == 'settled' &&
+           adapted[:payable] == 'indefinitely' &&
+           adapted[:expires_at] > at
+          adapted[:state] = 'open'
+        end
+
+        raise 'todo: received with canceled' if !adapted[:received].nil? && adapted[:state] == 'canceled'
 
         adapted[:payments] = []
 
@@ -132,25 +141,6 @@ module Lighstorm
         adapted
       end
 
-      # def self.send_payment_v2(grpc)
-      #   data = {
-      #     _source: :send_payment_v2,
-      #     amount: { millisatoshis: grpc[:payment_route][:total_amt_msat] },
-      #     secret: {
-      #       preimage: grpc[:payment_preimage].unpack1('H*'),
-      #       hash: grpc[:payment_hash].unpack1('H*')
-      #     }
-      #   }
-
-      #   grpc[:payment_route][:hops].map do |raw_hop|
-      #     if raw_hop[:mpp_record] && raw_hop[:mpp_record][:payment_addr]
-      #       data[:address] = raw_hop[:mpp_record][:payment_addr].unpack1('H*')
-      #     end
-      #   end
-
-      #   data
-      # end
-
       def self.list_payments(grpc, invoice_decode = nil)
         raise UnexpectedNumberOfHTLCsError, "htlcs: #{grpc[:htlcs].size}" if grpc[:htlcs].size > 1
 
@@ -173,7 +163,10 @@ module Lighstorm
           }
         }
 
-        data[:payable] = invoice_decode[:payable] unless invoice_decode.nil?
+        unless invoice_decode.nil?
+          data[:payable] = invoice_decode[:payable]
+          data[:expires_at] = invoice_decode[:expires_at]
+        end
 
         data
       end

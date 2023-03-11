@@ -6,7 +6,6 @@ require 'rainbow'
 module Tasks
   module Contracts
     def self.fix(raw_json)
-      # a30a93197a2598e42ad10013abb5b8808bd816af30b71c6b780de4c58c22976a
       examples = JSON.parse(raw_json)['examples'].filter do |example|
         example['status'] == 'failed'
       end.map do |raw|

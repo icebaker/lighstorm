@@ -204,7 +204,7 @@ module Lighstorm
             next if raw[:lookup_invoice][key][:_error]
 
             adapted[:lookup_invoice][key] = Lighstorm::Adapter::Invoice.lookup_invoice(
-              raw[:lookup_invoice][key]
+              raw[:lookup_invoice][key], raw[:at]
             )
           end
 

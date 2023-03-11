@@ -10,13 +10,19 @@ module Lighstorm
       module FindBySecretHash
         def self.fetch(secret_hash)
           {
+            at: Time.now,
             lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: secret_hash).to_h
           }
         end
 
         def self.adapt(raw)
+          raise 'missing at' if raw[:at].nil?
+
           {
-            lookup_invoice: Lighstorm::Adapter::Invoice.lookup_invoice(raw[:lookup_invoice])
+            lookup_invoice: Lighstorm::Adapter::Invoice.lookup_invoice(
+              raw[:lookup_invoice],
+              raw[:at]
+            )
           }
         end
 

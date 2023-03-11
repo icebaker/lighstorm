@@ -1,2 +1,0 @@
-{:response{	:add_indexI"Integer:0..10:ET:payment_addrI"String:31..40;T:payment_requestI"String:50+;T:r_hashI"String:31..40;T:result{:	_keyI"String:50+;T:amount{:millisatoshisI"Integer:0..10;T:	codeI"String:50+;T:created_atI"	Time;F:description{:	hashI"Nil;F:	memoI"String:0..10;T:	paidI"Nil;F:payableI"String:0..10;T:paymentsI"Nil;F:secret{;I"String:50+;T:preimageI"String:50+;T:settled_atI"Nil;F:
-stateI"String:0..10;T
