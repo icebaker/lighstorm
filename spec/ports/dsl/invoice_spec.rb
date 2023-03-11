@@ -13,7 +13,7 @@ RSpec.describe Lighstorm::Invoice do
         millisatoshis: 1_000,
         description: 'Coffee',
         expires_in: { hours: 24 },
-        payable: :once
+        payable: 'once'
       }
     end
 
@@ -53,7 +53,7 @@ RSpec.describe Lighstorm::Invoice do
           expect(action.result.class).to eq(Lighstorm::Models::Invoice)
 
           Contract.expect(
-            action.to_h, 'c7e200d91b57b04e64c725f8ff8b11da517bc5f28472e22f30c48bda5836eca5'
+            action.to_h, 'd8775187ddaab8f22d36ac91d8f7bb4d6beeab456e804bb533ffc9976f89047b'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
 

@@ -105,7 +105,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         adapted = described_class.adapt(response, data)
 
         Contract.expect(
-          adapted.to_h, '2413d48316048103141b8ef026bc8a8d03e6baf411aebe3212695468ac3fa7b8'
+          adapted.to_h, '5a3aa1707f36404f129f6a42b3f3ed5d968f7d19de8babcdf60e5b4fdf636c73'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -129,7 +129,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         expect(model.invoice.state).to be_nil
         expect(model.invoice.code).to eq(params[:request_code])
         expect(model.invoice.amount.millisatoshis).to eq(params[:millisatoshis])
-        expect(model.invoice.payable).to eq(:once)
+        expect(model.invoice.payable).to eq('once')
         expect(model.invoice.description.memo).to be_nil
         expect(model.invoice.description.hash).to be_nil
 
@@ -182,7 +182,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(action.result.invoice.state).to be_nil
           expect(action.result.invoice.code).to eq(params[:request_code])
           expect(action.result.invoice.amount.millisatoshis).to eq(params[:millisatoshis])
-          expect(action.result.invoice.payable).to eq(:once)
+          expect(action.result.invoice.payable).to eq('once')
           expect(action.result.invoice.description.memo).to be_nil
           expect(action.result.invoice.description.hash).to be_nil
 
@@ -190,7 +190,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, 'edd9d4f7eb808ee51ac8c4c4ebea431d45082164c68150e3e690b1014ac04d2d'
+            action.to_h, '08e3d27b43ff86473c6da7e4221ee020bb744b417492344cb1c6c8611db8cb85'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -262,7 +262,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         expect(action.result.invoice.state).to be_nil
         expect(action.result.invoice.code).to eq(params[:request_code])
         expect(action.result.invoice.amount.millisatoshis).to eq(params[:millisatoshis])
-        expect(action.result.invoice.payable).to eq(:once)
+        expect(action.result.invoice.payable).to eq('once')
         expect(action.result.invoice.description.memo).to be_nil
         expect(action.result.invoice.description.hash).to be_nil
 
@@ -270,7 +270,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
         Contract.expect(
-          action.to_h, 'edd9d4f7eb808ee51ac8c4c4ebea431d45082164c68150e3e690b1014ac04d2d'
+          action.to_h, '08e3d27b43ff86473c6da7e4221ee020bb744b417492344cb1c6c8611db8cb85'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

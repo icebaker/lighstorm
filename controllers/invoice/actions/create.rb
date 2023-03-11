@@ -33,7 +33,7 @@ module Lighstorm
           if payable.to_sym == :indefinitely
             request[:params][:is_amp] = true
           elsif payable.to_sym != :once
-            raise Errors::ArgumentError, "payable: accepts :indefinitely or :once, :#{payable} is not valid."
+            raise Errors::ArgumentError, "payable: accepts 'indefinitely' or 'once', '#{payable}' is not valid."
           end
 
           request

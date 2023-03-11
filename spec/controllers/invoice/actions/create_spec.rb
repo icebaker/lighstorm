@@ -13,7 +13,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           described_class.prepare(payable: :twice, expires_in: { hours: 24 })
         end.to raise_error(
           Lighstorm::Errors::ArgumentError,
-          'payable: accepts :indefinitely or :once, :twice is not valid.'
+          "payable: accepts 'indefinitely' or 'once', 'twice' is not valid."
         )
       end
     end
@@ -22,7 +22,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
   context 'amp' do
     describe 'create invoice' do
       let(:vcr_key) { 'Controllers::Invoice::Create' }
-      let(:params) { { description: 'Donation', payable: :indefinitely } }
+      let(:params) { { description: 'Donation', payable: 'indefinitely' } }
 
       context 'gradual' do
         it 'flows' do
@@ -67,7 +67,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               settled_at: nil,
               state: 'open',
               code: 'lnbc1pjq3e20pp5a3w6vjny89x4kxcnappjgjds00zqy2308g4a36z0r5uzruk9judsdqdg3hkuct5d9hkucqzpgxq9z0rgqsp5mpkrclfcj56xn8kgu5xg743l4nnujw76xgcfcc7ey4x6pf5kr8mq9q8pqqqssq2wp8qyh49r9sgpelxn8ggdeftz0cg8r4fx77yj04lx3jcv8al955mt42k7zlrpvptsspk38mgu743ee3y59rhuzsq932t26cksfv7zspjr0ja3',
-              payable: :indefinitely,
+              payable: 'indefinitely',
               description: { memo: 'Donation', hash: nil },
               address: '2aea2053dd044755fd4352c38f41ab6097997ee6714d7afc9e6a4164a61e39fe',
               secret: { preimage: nil,
@@ -78,13 +78,13 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
 
           model = described_class.model(data)
 
-          expect(model.payable).to be(:indefinitely)
+          expect(model.payable).to be('indefinitely')
 
           expect(model.to_h).to eq(
             { _key: '2088a8d6cee825b2b11f05ab6320211897a6cb9b41c3628a24b05e17d4ebb937',
               created_at: '2023-03-08 19:43:11 UTC',
               settled_at: nil,
-              payable: :indefinitely,
+              payable: 'indefinitely',
               state: 'open',
               code: 'lnbc1pjq3e20pp5a3w6vjny89x4kxcnappjgjds00zqy2308g4a36z0r5uzruk9judsdqdg3hkuct5d9hkucqzpgxq9z0rgqsp5mpkrclfcj56xn8kgu5xg743l4nnujw76xgcfcc7ey4x6pf5kr8mq9q8pqqqssq2wp8qyh49r9sgpelxn8ggdeftz0cg8r4fx77yj04lx3jcv8al955mt42k7zlrpvptsspk38mgu743ee3y59rhuzsq932t26cksfv7zspjr0ja3',
               amount: nil,
@@ -134,7 +134,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               { _key: '2088a8d6cee825b2b11f05ab6320211897a6cb9b41c3628a24b05e17d4ebb937',
                 created_at: '2023-03-08 19:43:11 UTC',
                 settled_at: nil,
-                payable: :indefinitely,
+                payable: 'indefinitely',
                 state: 'open',
                 code: 'lnbc1pjq3e20pp5a3w6vjny89x4kxcnappjgjds00zqy2308g4a36z0r5uzruk9judsdqdg3hkuct5d9hkucqzpgxq9z0rgqsp5mpkrclfcj56xn8kgu5xg743l4nnujw76xgcfcc7ey4x6pf5kr8mq9q8pqqqssq2wp8qyh49r9sgpelxn8ggdeftz0cg8r4fx77yj04lx3jcv8al955mt42k7zlrpvptsspk38mgu743ee3y59rhuzsq932t26cksfv7zspjr0ja3',
                 amount: nil,
@@ -160,30 +160,23 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             end
 
             Contract.expect(
-              action.to_h, '5493b7863fae94f751758809284227e846f004451884e799387232b0c6be7cd5'
+              action.to_h, '92a811419f89e7a303b04b05252157c64fa27a4dedc50f568aa33c57d6ff869d'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: {
-                    add_index: 'Integer:0..10',
-                    payment_addr: 'String:31..40',
-                    payment_request: 'String:50+',
-                    r_hash: 'String:31..40'
-                  },
-                  result: {
-                    _key: 'String:50+',
-                    amount: 'Nil',
-                    code: 'String:50+',
-                    created_at: 'Time',
-                    description: { hash: 'Nil', memo: 'String:0..10' },
-                    paid: 'Nil',
-                    payable: 'Symbol:11..20',
-                    payments: 'Nil',
-                    secret: { hash: 'String:50+', preimage: 'Nil' },
-                    settled_at: 'Nil',
-                    state: 'String:0..10'
-                  } }
+                { response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+', r_hash: 'String:31..40' },
+                  result: { _key: 'String:50+',
+                            amount: 'Nil',
+                            code: 'String:50+',
+                            created_at: 'Time',
+                            description: { hash: 'Nil', memo: 'String:0..10' },
+                            paid: 'Nil',
+                            payable: 'String:11..20',
+                            payments: 'Nil',
+                            secret: { hash: 'String:50+', preimage: 'Nil' },
+                            settled_at: 'Nil',
+                            state: 'String:0..10' } }
               )
             end
           end
@@ -195,7 +188,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
   context 'invoice' do
     describe 'create invoice' do
       let(:vcr_key) { 'Controllers::Invoice::Create' }
-      let(:params) { { millisatoshis: 1_000, description: 'Coffee', payable: :once } }
+      let(:params) { { millisatoshis: 1_000, description: 'Coffee', payable: 'once' } }
 
       context 'gradual' do
         it 'flows' do
@@ -242,7 +235,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               settled_at: nil,
               state: 'open',
               code: 'lnbc10n1pjq3e20pp578hvxezzc092darwhpvffath3sa6jht86z8u7a2f4aua76pf7rhqdq2gdhkven9v5cqzpgxqyz5vqsp5qjvvtyyqu8xnhlhkujxpydxfxseufhuwj98hfknmsl82ln4444sq9qyyssqevcj32l3rp6t2vw2jznh7v457wf3nxmenl870hun2w2fz2kmeheswwf738esxzauc8wnzz502sxedcl0uzr9vyvdafj2fdjnzjmec5cqk7m7v7',
-              payable: :once,
+              payable: 'once',
               amount: { millisatoshis: 1000 },
               description: { memo: 'Coffee', hash: nil },
               address: 'c5bab382a464cf5875eafd2eb85fe22ec08d79e4a5a8c964458d8a70860ba60b',
@@ -258,7 +251,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             { _key: '9a07be8f07c3f98d2ad8eab8ddf07689f230f76a18e578256353d34448c95030',
               created_at: '2023-03-08 19:43:11 UTC',
               settled_at: nil,
-              payable: :once,
+              payable: 'once',
               state: 'open',
               code: 'lnbc10n1pjq3e20pp578hvxezzc092darwhpvffath3sa6jht86z8u7a2f4aua76pf7rhqdq2gdhkven9v5cqzpgxqyz5vqsp5qjvvtyyqu8xnhlhkujxpydxfxseufhuwj98hfknmsl82ln4444sq9qyyssqevcj32l3rp6t2vw2jznh7v457wf3nxmenl870hun2w2fz2kmeheswwf738esxzauc8wnzz502sxedcl0uzr9vyvdafj2fdjnzjmec5cqk7m7v7',
               amount: { millisatoshis: 1000 },
@@ -315,7 +308,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               { _key: '9a07be8f07c3f98d2ad8eab8ddf07689f230f76a18e578256353d34448c95030',
                 created_at: '2023-03-08 19:43:11 UTC',
                 settled_at: nil,
-                payable: :once,
+                payable: 'once',
                 state: 'open',
                 code: 'lnbc10n1pjq3e20pp578hvxezzc092darwhpvffath3sa6jht86z8u7a2f4aua76pf7rhqdq2gdhkven9v5cqzpgxqyz5vqsp5qjvvtyyqu8xnhlhkujxpydxfxseufhuwj98hfknmsl82ln4444sq9qyyssqevcj32l3rp6t2vw2jznh7v457wf3nxmenl870hun2w2fz2kmeheswwf738esxzauc8wnzz502sxedcl0uzr9vyvdafj2fdjnzjmec5cqk7m7v7',
                 amount: { millisatoshis: 1000 },
@@ -341,32 +334,23 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             end
 
             Contract.expect(
-              action.to_h, 'c7e200d91b57b04e64c725f8ff8b11da517bc5f28472e22f30c48bda5836eca5'
+              action.to_h, 'd8775187ddaab8f22d36ac91d8f7bb4d6beeab456e804bb533ffc9976f89047b'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                {
-                  response: {
-                    add_index: 'Integer:0..10',
-                    payment_addr: 'String:31..40',
-                    payment_request: 'String:50+',
-                    r_hash: 'String:31..40'
-                  },
-                  result: {
-                    _key: 'String:50+',
-                    amount: { millisatoshis: 'Integer:0..10' },
-                    code: 'String:50+',
-                    created_at: 'Time',
-                    description: { hash: 'Nil', memo: 'String:0..10' },
-                    paid: 'Nil',
-                    payable: 'Symbol:0..10',
-                    payments: 'Nil',
-                    secret: { hash: 'String:50+', preimage: 'String:50+' },
-                    settled_at: 'Nil',
-                    state: 'String:0..10'
-                  }
-                }
+                { response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+', r_hash: 'String:31..40' },
+                  result: { _key: 'String:50+',
+                            amount: { millisatoshis: 'Integer:0..10' },
+                            code: 'String:50+',
+                            created_at: 'Time',
+                            description: { hash: 'Nil', memo: 'String:0..10' },
+                            paid: 'Nil',
+                            payable: 'String:0..10',
+                            payments: 'Nil',
+                            secret: { hash: 'String:50+', preimage: 'String:50+' },
+                            settled_at: 'Nil',
+                            state: 'String:0..10' } }
               )
             end
           end

@@ -158,7 +158,9 @@ forward = Lighstorm::Forward.last
 forward.at
 
 forward.fee.millisatoshis
-forward.fee.parts_per_million
+forward.fee.parts_per_million(
+  forward.in.amount.millisatoshis
+)
 
 forward.in.amount.millisatoshis
 forward.out.amount.millisatoshis
@@ -180,7 +182,7 @@ forward.out.channel.partner.node.alias
 ### Payment
 
 ```ruby
-payment = Payment.last
+payment = Lighstorm::Payment.last
 
 payment.at
 payment.state
@@ -657,7 +659,9 @@ payment.invoice.description.hash
 payment.from.hop
 payment.from.amount.millisatoshis
 payment.from.fee.millisatoshis
-payment.from.fee.parts_per_million(payment.from.amount.millisatoshis)
+payment.from.fee.parts_per_million(
+  payment.from.amount.millisatoshis
+)
 
 payment.from.channel.id
 
@@ -672,7 +676,9 @@ payment.from.channel.exit.color
 payment.to.hop
 payment.to.amount.millisatoshis
 payment.to.fee.millisatoshis
-payment.to.fee.parts_per_million(payment.to.amount.millisatoshis)
+payment.to.fee.parts_per_million(
+  payment.to.amount.millisatoshis
+)
 
 payment.to.channel.id
 
@@ -692,7 +698,9 @@ payment.hops[0].last?
 payment.hops[0].hop
 payment.hops[0].amount.millisatoshis
 payment.hops[0].fee.millisatoshis
-payment.hops[0].fee.parts_per_million(payment.hops[0].amount.millisatoshis)
+payment.hops[0].fee.parts_per_million(
+  payment.hops[0].amount.millisatoshis
+)
 
 payment.hops[0].channel.id
 

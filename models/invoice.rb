@@ -26,7 +26,7 @@ module Lighstorm
       end
 
       def payment
-        if payable != :once || @data[:payments].size > 1
+        if payable != 'once' || @data[:payments].size > 1
           raise InvoiceMayHaveMultiplePaymentsError, "payable: #{payable}, payments: #{@data[:payments].size.size}"
         end
 

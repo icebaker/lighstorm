@@ -65,7 +65,7 @@ module Lighstorm
           settled_at: grpc[:settle_date].nil? || !grpc[:settle_date].positive? ? nil : Time.at(grpc[:settle_date]),
           state: grpc[:state].to_s.downcase,
           code: grpc[:payment_request].empty? ? nil : grpc[:payment_request],
-          payable: grpc[:is_amp] == true ? :indefinitely : :once,
+          payable: grpc[:is_amp] == true ? 'indefinitely' : 'once',
           description: {
             memo: grpc[:memo].empty? ? nil : grpc[:memo],
             hash: grpc[:description_hash].empty? ? nil : grpc[:description_hash]
@@ -153,7 +153,7 @@ module Lighstorm
           created_at: Time.at(grpc[:creation_date]),
           settled_at: grpc[:settle_date].nil? || !grpc[:settle_date].positive? ? nil : Time.at(grpc[:settle_date]),
           state: nil,
-          payable: grpc[:is_amp] == true ? :indefinitely : :once,
+          payable: grpc[:is_amp] == true ? 'indefinitely' : 'once',
           code: grpc[:payment_request],
           amount: { millisatoshis: grpc[:value_msat] },
           description: {

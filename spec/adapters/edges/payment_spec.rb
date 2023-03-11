@@ -81,7 +81,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
       adapted = described_class.list_payments(raw, node_get_info)
 
       Contract.expect(
-        adapted, '1d21f56af2bb0e5339ae142312b9d4a3d1ce25f579dbabc6070c5c465b2fa787'
+        adapted, '4a3aee72f7f3737816f8af2317cc62bd41f026f333f0b52899f40a4d16f85e96'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -91,7 +91,6 @@ RSpec.describe Lighstorm::Adapter::Payment do
             _source: 'Symbol:11..20',
             amount: { millisatoshis: 'Integer:0..10' },
             at: 'Time',
-            through: 'String:0..10',
             fee: { millisatoshis: 'Integer:0..10' },
             hops: [{ _source: 'Symbol:11..20',
                      amount: { millisatoshis: 'Integer:0..10' },
@@ -116,13 +115,14 @@ RSpec.describe Lighstorm::Adapter::Payment do
                        code: 'String:50+',
                        created_at: 'Time',
                        description: { hash: 'Nil', memo: 'Nil' },
-                       payable: 'Symbol:0..10',
+                       payable: 'String:0..10',
                        secret: { hash: 'String:50+', preimage: 'String:50+' },
                        settled_at: 'Time',
                        state: 'Nil' },
             purpose: 'String:0..10',
             secret: { hash: 'String:50+', preimage: 'String:50+' },
-            state: 'String:0..10' }
+            state: 'String:0..10',
+            through: 'String:0..10' }
         )
       end
     end

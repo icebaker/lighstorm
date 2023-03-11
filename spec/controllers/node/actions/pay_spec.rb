@@ -66,7 +66,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         adapted = described_class.adapt(response, data)
 
         Contract.expect(
-          adapted.to_h, '9f2aa869cc6d0b8603df52476494717d07f1c924c27f7dadca8b3e1b27533ebc'
+          adapted.to_h, '7cea60e05f0db7794c2a73cfaac91084e84254e0f18d85e59a583eba685fe110'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -85,7 +85,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         expect(model.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
         Contract.expect(
-          model.to_h, 'ec185e14378f51f7da0fb26547cca461298e48cd0189e4250a0b7630c8d0332d'
+          model.to_h, '35ec80451f74e2cdd469140c8e4f089db70434507e1190f99ff25619fb415515'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -156,7 +156,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, 'c88a7384acbf7f88ffc540af02b4b06ce45511cbcb5fad3bb3a3e39571f18c91'
+            action.to_h, 'f50d15efe544c71ea544e4f5a5d4d38e7d6698ba96d40e5a9564575082224a7a'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -224,7 +224,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         adapted = described_class.adapt(response, data)
 
         Contract.expect(
-          adapted.to_h, '267e1ad9ccc9794457e2dd8ac8bf4e2471603856601810e90bca6e4784b5e5cb'
+          adapted.to_h, '0cceeb8ba0d95c1e16a708c4174c0b92f1ae1c19b98f5032ae0f64a6ab75fa8e'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -243,7 +243,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         expect(model.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
         Contract.expect(
-          model.to_h, 'ec185e14378f51f7da0fb26547cca461298e48cd0189e4250a0b7630c8d0332d'
+          model.to_h, '35ec80451f74e2cdd469140c8e4f089db70434507e1190f99ff25619fb415515'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -313,7 +313,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
 
           Contract.expect(
-            action.to_h, '9ea3b9ad2de71dd1e97f93000f2dbd984d7b1980c82a33af30ae19fe8353b692'
+            action.to_h, '99ecbd38942bbb21359ea8a512112c117fd4fd92319c456710f02fae0247a27a'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -380,7 +380,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           adapted = described_class.adapt(response, data)
 
           Contract.expect(
-            adapted.to_h, '38d96dbd6c704827db6a33899256424c183f8675f9abca4f307b2559d96ec9b4'
+            adapted.to_h, '404eaee0ee7e5fb1cacfe5099022606aa7e7462e56bae11b72dd9337c7d91d92'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -398,7 +398,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(model.hops).to be_nil
 
           Contract.expect(
-            model.to_h, 'deade61a6e275df16dbecb7e6f8c876b11769e8dc5e54001ff77b697676d541d'
+            model.to_h, '563f6c040952280e1db97fd3f2edd23a361e0e219f5502a989dca240382f2636'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -468,7 +468,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             expect(e.response.last[:failure_reason]).to eq(:FAILURE_REASON_NO_ROUTE)
 
             Contract.expect(
-              e.to_h, '0189e6eb0ec7efc15db929e14fcb4c9a63c5d87e6b33b1f8e16af9620834cb5a'
+              e.to_h, 'ae67f9efd10430803f2e72cd694f4876fa76415e7f8d249c28544ae09bae1de1'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
               expect(actual.contract).to eq(expected.contract)

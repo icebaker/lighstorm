@@ -51,7 +51,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, 'bea94a6e02e18a9212e0cf0c6335702eb219d7522d3ae955393cc9e27196a8df'
+          invoice.to_h, 'f10dfd433f5005262ae4ef0912b1a6f630ac5db1542ccd2d482de2cba598954b'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -92,7 +92,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         Contract.expect(
-          invoice.to_h, 'bea94a6e02e18a9212e0cf0c6335702eb219d7522d3ae955393cc9e27196a8df'
+          invoice.to_h, 'f10dfd433f5005262ae4ef0912b1a6f630ac5db1542ccd2d482de2cba598954b'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -131,7 +131,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq(secret_hash)
 
         Contract.expect(
-          invoice.to_h, '954a1e219d2acf0ce53de8f36c2028813684f9083f476c0dfcd0a6cb7a7f3bd7'
+          invoice.to_h, 'b155d010d473ceeac7a0f782d01520f386884370cce47c52fff288e8efed7b93'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
 
@@ -217,7 +217,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect { JSON.generate(invoice.to_h) }.not_to raise_error
 
         Contract.expect(
-          invoice.to_h, '836c7bd1e5dbbe34e714db8a1abb1beda1a3cb6755f3347311eadb558bf2a623'
+          invoice.to_h, '5a55f6c0d4b0dd07d0590529805e18660f24656c316cff0e0078c80105895f86'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -258,7 +258,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payment.message).to eq('spontaneous keysend self-payment')
 
         Contract.expect(
-          invoice.to_h, '836c7bd1e5dbbe34e714db8a1abb1beda1a3cb6755f3347311eadb558bf2a623'
+          invoice.to_h, '5a55f6c0d4b0dd07d0590529805e18660f24656c316cff0e0078c80105895f86'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -305,7 +305,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payments.first.message).to eq('spontaneous amp self-payment')
 
         Contract.expect(
-          invoice.to_h, 'c45ba30b5064bf6973dd8390a928624456ffbcfbb488c6eaf2de6fa1e7f9777b'
+          invoice.to_h, 'a8393bc86e900254577bd25a66d3ffb79c038fa0991ec6c797653050af3dc294'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -345,7 +345,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payment.message).to eq('paying the coffee')
 
         Contract.expect(
-          invoice.to_h, 'b7ec2b48a963cd03b7867c0d09c7ba696698aebd3362874bf6152fce03b3cdee'
+          invoice.to_h, '97ad213f64c136110b1c67dcd8c489d959e5756edad746ffaf5573835cee5c6d'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -384,7 +384,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payment.message).to eq('paying what I want')
 
         Contract.expect(
-          invoice.to_h, '141eaa3a9392ae7c29d3a3f83abcde151afb69a8c6dbb46e9006e681169bb179'
+          invoice.to_h, '2bc28f2f2be5b876b83c4b4007147133814fb1b402ee622d52e620d75ae0b27e'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -445,7 +445,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         ).to eq(invoice.paid.millisatoshis)
 
         Contract.expect(
-          invoice.to_h, 'c1b7ac85b592a2fbf88bcbad7d26b41284be1f90e9f53659511246d2f0410037'
+          invoice.to_h, '763eeeaf406359b1326897007500f3a3e0e1608b74729b1e623074b399c6a6d3'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -500,7 +500,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.payments.last.secret.preimage).not_to eq(invoice.payments.first.secret.preimage)
 
         Contract.expect(
-          invoice.to_h, 'fd97386ad6d515764e0d92715a080b2405cdcbc5ba4265ffa258601630a3a47f'
+          invoice.to_h, '6eda0abb2b4e3c92b72a3b521aee040277a4a57bb1a01c2247de2e6ffa9e9e6b'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
