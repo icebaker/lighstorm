@@ -25,8 +25,12 @@ module Lighstorm
         @message = data[:message]
       end
 
+      def spontaneous?
+        !@data[:invoice] || @data[:invoice][:code].nil?
+      end
+
       def invoice
-        @invoice ||= @data[:invoice] ? Invoice.new(@data[:invoice]) : nil
+        @invoice ||= !spontaneous? && @data[:invoice] ? Invoice.new(@data[:invoice]) : nil
       end
 
       def amount

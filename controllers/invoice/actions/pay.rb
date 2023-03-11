@@ -18,8 +18,8 @@ module Lighstorm
           Payment::Pay.dispatch(grpc_request, &vcr)
         end
 
-        def self.fetch(&vcr)
-          Payment::Pay.fetch(&vcr)
+        def self.fetch(request_code, &vcr)
+          Payment::Pay.fetch(request_code, &vcr)
         end
 
         def self.adapt(data, node_get_info)
@@ -55,7 +55,7 @@ module Lighstorm
         end
 
         def self.perform(
-          times_out_in:, request_code: nil, millisatoshis: nil, message: nil, preview: false, &vcr
+          times_out_in:, request_code:, millisatoshis: nil, message: nil, preview: false, &vcr
         )
           grpc_request = prepare(
             request_code: request_code,
@@ -70,7 +70,7 @@ module Lighstorm
 
           Payment::Pay.raise_error_if_exists!(response)
 
-          data = fetch(&vcr)
+          data = fetch(request_code, &vcr)
 
           adapted = adapt(response, data)
 

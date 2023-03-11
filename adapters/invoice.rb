@@ -29,10 +29,11 @@ module Lighstorm
               grpc[:payment_addr]
             ].join('/')
           ),
+          payable: 'once',
           created_at: Time.at(grpc[:timestamp]),
-          amount: { millisatoshis: grpc[:num_msat] },
+          amount: (grpc[:num_msat]).zero? ? nil : { millisatoshis: grpc[:num_msat] },
           description: {
-            memo: grpc[:description],
+            memo: grpc[:description].empty? ? nil : grpc[:description],
             hash: grpc[:description_hash] == '' ? nil : grpc[:description_hash]
           },
           address: grpc[:payment_addr].unpack1('H*'),
@@ -42,6 +43,12 @@ module Lighstorm
         }
 
         adapted[:code] = request_code unless request_code.nil?
+
+        if grpc[:features].key?(30) && grpc[:features][30][:is_required]
+          raise "unexpected feature[30] name #{grpc[:features][30][:name]}" if grpc[:features][30][:name] != 'amp'
+
+          adapted[:payable] = 'indefinitely'
+        end
 
         adapted
       end
@@ -125,26 +132,26 @@ module Lighstorm
         adapted
       end
 
-      def self.send_payment_v2(grpc)
-        data = {
-          _source: :send_payment_v2,
-          amount: { millisatoshis: grpc[:payment_route][:total_amt_msat] },
-          secret: {
-            preimage: grpc[:payment_preimage].unpack1('H*'),
-            hash: grpc[:payment_hash].unpack1('H*')
-          }
-        }
+      # def self.send_payment_v2(grpc)
+      #   data = {
+      #     _source: :send_payment_v2,
+      #     amount: { millisatoshis: grpc[:payment_route][:total_amt_msat] },
+      #     secret: {
+      #       preimage: grpc[:payment_preimage].unpack1('H*'),
+      #       hash: grpc[:payment_hash].unpack1('H*')
+      #     }
+      #   }
 
-        grpc[:payment_route][:hops].map do |raw_hop|
-          if raw_hop[:mpp_record] && raw_hop[:mpp_record][:payment_addr]
-            data[:address] = raw_hop[:mpp_record][:payment_addr].unpack1('H*')
-          end
-        end
+      #   grpc[:payment_route][:hops].map do |raw_hop|
+      #     if raw_hop[:mpp_record] && raw_hop[:mpp_record][:payment_addr]
+      #       data[:address] = raw_hop[:mpp_record][:payment_addr].unpack1('H*')
+      #     end
+      #   end
 
-        data
-      end
+      #   data
+      # end
 
-      def self.list_payments(grpc)
+      def self.list_payments(grpc, invoice_decode = nil)
         raise UnexpectedNumberOfHTLCsError, "htlcs: #{grpc[:htlcs].size}" if grpc[:htlcs].size > 1
 
         data = {
@@ -154,7 +161,7 @@ module Lighstorm
           settled_at: grpc[:settle_date].nil? || !grpc[:settle_date].positive? ? nil : Time.at(grpc[:settle_date]),
           state: nil,
           payable: grpc[:is_amp] == true ? 'indefinitely' : 'once',
-          code: grpc[:payment_request],
+          code: grpc[:payment_request].empty? ? nil : grpc[:payment_request],
           amount: { millisatoshis: grpc[:value_msat] },
           description: {
             memo: grpc[:memo],
@@ -166,13 +173,7 @@ module Lighstorm
           }
         }
 
-        unless grpc[:htlcs].empty?
-          grpc[:htlcs].first[:route][:hops].map do |raw_hop|
-            if raw_hop[:mpp_record] && raw_hop[:mpp_record][:payment_addr]
-              data[:address] = raw_hop[:mpp_record][:payment_addr].unpack1('H*')
-            end
-          end
-        end
+        data[:payable] = invoice_decode[:payable] unless invoice_decode.nil?
 
         data
       end

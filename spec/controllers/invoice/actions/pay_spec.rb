@@ -98,14 +98,14 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
         end
 
-        data = described_class.fetch do |fetch|
+        data = described_class.fetch(params[:request_code]) do |fetch|
           VCR.tape.replay("#{vcr_key}/fetch", params) { fetch.call }
         end
 
         adapted = described_class.adapt(response, data)
 
         Contract.expect(
-          adapted.to_h, '5a3aa1707f36404f129f6a42b3f3ed5d968f7d19de8babcdf60e5b4fdf636c73'
+          adapted.to_h, '857f946168042c9c48568b4ee9c08d2439440d6fe69890da1a69f907bd7823d8'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

@@ -8,6 +8,7 @@ require_relative '../../../models/errors'
 require_relative '../../../models/edges/payment'
 require_relative '../../../adapters/edges/payment'
 require_relative '../../node/myself'
+require_relative '../../invoice/decode'
 
 module Lighstorm
   module Controllers
@@ -29,12 +30,23 @@ module Lighstorm
           vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
         end
 
-        def self.fetch(&vcr)
-          Node::Myself.data(&vcr)
+        def self.fetch_all(request_code)
+          {
+            invoice_decode: Invoice::Decode.data(request_code),
+            node_myself: Node::Myself.data
+          }
         end
 
-        def self.adapt(data, node_get_info)
-          Adapter::Payment.send_payment_v2(data[:response].last, node_get_info)
+        def self.fetch(request_code = nil, &vcr)
+          raw = vcr.nil? ? fetch_all(request_code) : vcr.call(-> { fetch_all(request_code) })
+        end
+
+        def self.adapt(grpc_data, fetch_data)
+          Adapter::Payment.send_payment_v2(
+            grpc_data[:response].last,
+            fetch_data[:node_myself],
+            fetch_data[:invoice_decode]
+          )
         end
 
         def self.model(data)

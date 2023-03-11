@@ -80,7 +80,7 @@ RSpec.describe Lighstorm::Invoice do
       invoice_to_h = invoice.to_h
 
       Contract.expect(
-        invoice.to_h, 'ae89beb4adf69b2981c59d93e27ad75f908d1012e05c54090c23d63a05c4a343'
+        invoice.to_h, '52a964699bfc5b4bbb664db7643233a259c9c07e6dec8432a65aba1e2936dacd'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)

@@ -3,7 +3,7 @@
 module Sanitizer
   UNSAFE = {
     'root_share <= amp' => true,
-
+    'address <= invoice_decode' => true,
     'preimage <= amp' => true,
     'address <= data' => true,
 
@@ -80,8 +80,6 @@ module Sanitizer
     'is_keysend <= list_invoices' => true,
     'is_keysend <= lookup_invoice' => true,
     'is_keysend' => true,
-    'is_known <= features' => true,
-    'is_required <= features' => true,
     'last_update <= describe_graph' => true,
     'last_update <= get_chan_info' => true,
     'last_update <= node' => true,
@@ -96,7 +94,6 @@ module Sanitizer
     'metadata <= hops' => true,
     'month_fee_sum <= fee_report' => true,
     'mpp_record <= hops' => true,
-    'name <= features' => true,
     'node1_policy <= describe_graph' => true,
     'node1_policy <= get_chan_info' => true,
     'node1_policy' => true,

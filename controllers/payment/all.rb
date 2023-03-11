@@ -334,10 +334,6 @@ module Lighstorm
             else
               list_payments[:invoice] = adapted[:lookup_invoice][list_payments[:secret][:hash]]
             end
-          else
-            list_payments[:invoice][:_key] = Digest::SHA256.hexdigest(
-              list_payments[:invoice][:code]
-            )
           end
 
           list_payments[:hops].each do |hop|
@@ -349,15 +345,28 @@ module Lighstorm
             invoice = list_payments[:invoice]
 
             decoded.each_key do |key|
-              invoice[key] = decoded[key] unless invoice.key?(key)
+              if !decoded[key].is_a?(Hash)
+                invoice[key] = decoded[key]
+              elsif decoded[key].is_a?(Hash)
+                invoice[key] = {} unless invoice.key?(key)
 
-              next unless decoded[key].is_a?(Hash)
+                next if key == :secret
 
-              decoded[key].each_key do |sub_key|
-                unless invoice[key].key?(sub_key) && !invoice[key][sub_key].nil?
+                decoded[key].each_key do |sub_key|
+                  next if decoded[key][sub_key].nil? ||
+                          (decoded[key][sub_key].is_a?(String) && decoded[key][sub_key].empty?)
+
                   invoice[key][sub_key] = decoded[key][sub_key]
                 end
               end
+            end
+          end
+
+          if list_payments[:invoice][:code]
+            if list_payments[:invoice][:payable] == 'once'
+              list_payments[:through] = 'non-amp'
+            elsif list_payments[:invoice][:payable] == 'indefinitely'
+              list_payments[:through] = 'amp'
             end
           end
 

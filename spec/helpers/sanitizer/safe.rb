@@ -2,6 +2,26 @@
 
 module Sanitizer
   SAFE = {
+    '_source <= invoice_decode' => true,
+    '_key <= invoice_decode' => true,
+    'payable <= invoice_decode' => true,
+    'created_at <= invoice_decode' => true,
+
+    'code <= invoice_decode' => true,
+    '_source <= node_myself' => true,
+    '_key <= node_myself' => true,
+    'public_key <= node_myself' => true,
+    'alias <= node_myself' => true,
+    'color <= node_myself' => true,
+    'blockchain <= platform' => true,
+    'network <= platform' => true,
+    'implementation <= lightning' => true,
+    'version <= lightning' => true,
+    'myself <= node_myself' => true,
+
+    'name <= features' => true,
+    'is_known <= features' => true,
+    'is_required <= features' => true,
     'set_id <= amp' => true,
     'child_index <= amp' => true,
     'hash <= amp' => true,
