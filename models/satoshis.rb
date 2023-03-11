@@ -5,10 +5,18 @@ require_relative '../ports/dsl/lighstorm/errors'
 module Lighstorm
   module Models
     class Satoshis
-      def initialize(millisatoshis: nil)
-        raise MissingMillisatoshisError, 'missing millisatoshis' if millisatoshis.nil?
+      def initialize(millisatoshis: nil, bitcoins: nil)
+        if [millisatoshis, bitcoins].compact.empty?
+          raise MissingMillisatoshisError, 'missing millisatoshis'
+        elsif [millisatoshis, bitcoins].compact.size > 1
+          raise Errors::TooManyArgumentsError, 'you need to pass millisatoshis: or bitcoins:, not both'
+        end
 
-        @amount_in_millisatoshis = millisatoshis
+        if !millisatoshis.nil?
+          @amount_in_millisatoshis = millisatoshis
+        elsif !bitcoins.nil?
+          @amount_in_millisatoshis = (bitcoins.to_f * 100_000_000_000.0).to_i
+        end
       end
 
       def parts_per_million(reference_millisatoshis)

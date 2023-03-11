@@ -457,6 +457,7 @@ Lighstorm::Invoice.find_by_secret_hash(
 invoice._key
 
 invoice.created_at
+invoice.expires_at
 invoice.settled_at
 
 invoice.state
@@ -484,20 +485,27 @@ invoice.secret.hash
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
 preview = Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000, payable: 'once',
-  preview: true
+  description: 'Coffee', millisatoshis: 1000,
+  payable: 'once', preview: true
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000, payable: 'once' 
+  description: 'Coffee', millisatoshis: 1000,
+  payable: 'once', expires_in: { minutes: 5 }
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Beer', payable: 'once' 
+  description: 'Beer', payable: 'once'
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Donations', payable: 'indefinitely'
+  description: 'Donations', payable: 'indefinitely',
+  expires_in: { hours: 24 }
+)
+
+action = Lighstorm::Invoice.create(
+  description: 'Concert Ticket', millisatoshis: 500000000,
+  payable: 'indefinitely', expires_in: { days: 5 }
 )
 
 action.to_h
@@ -618,7 +626,8 @@ Lighstorm::Payment.last
 Lighstorm::Payment.all(limit: 10, purpose: 'rebalance')
 
 # Possible Purposes:
-['self-payment', 'peer-to-peer', 'rebalance', 'payment']
+# 'self-payment', 'peer-to-peer',
+# 'rebalance', 'payment'
 
 # _key is helpful for reactive javascript frameworks.
 # Please don't consider it as a unique identifier
@@ -629,8 +638,6 @@ payment._key
 payment.to_h
 
 payment.at
-payment.state
-payment.purpose
 
 payment.amount.millisatoshis
 
@@ -639,22 +646,37 @@ payment.fee.parts_per_million(
   payment.amount.millisatoshis
 )
 
+payment.state
+payment.message
+
+payment.how # 'spontaneously', 'with-invoice'
+payment.through # 'keysend', 'amp', 'non-amp'
+payment.purpose
+# 'self-payment', 'peer-to-peer',
+# 'rebalance', 'payment'
+
+# https://docs.lightning.engineering/the-lightning-network/multihop-payments
+payment.secret.preimage
+payment.secret.hash
+
 payment.invoice.created_at
+payment.invoice.expires_at
 payment.invoice.settled_at
+
 payment.invoice.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
 payment.invoice.code # "lnbc20m1pv...qqdhhwkj"
 payment.invoice.amount.millisatoshis
 
-payment.invoice.payable # 'once' or 'indefinitely'
+payment.invoice.payable # 'once', 'indefinitely'
+
+payment.invoice.description.memo
+payment.invoice.description.hash
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
 payment.invoice.secret.preimage
 payment.invoice.secret.hash
-
-payment.invoice.description.memo
-payment.invoice.description.hash
 
 payment.from.hop
 payment.from.amount.millisatoshis
@@ -864,6 +886,7 @@ Lighstorm::Channel.adapt(dump: channel.dump)
 
 ```ruby
 Lighstorm::Satoshis
+Lighstorm::Satoshis.new(bitcoins: 0.005)
 Lighstorm::Satoshis.new(millisatoshis: 75621650)
 
 satoshis.to_h
