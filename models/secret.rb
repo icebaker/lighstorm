@@ -26,6 +26,14 @@ module Lighstorm
         @hash = data[:hash]
       end
 
+      def proof
+        @preimage
+      end
+
+      def valid_proof?(candidate_preimage)
+        candidate_preimage == preimage
+      end
+
       def to_h
         {
           preimage: preimage,
