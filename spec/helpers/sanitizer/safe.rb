@@ -2,6 +2,7 @@
 
 module Sanitizer
   SAFE = {
+    'at <= response' => true,
     'hash' => true,
     '_source <= invoice_decode' => true,
     '_key <= invoice_decode' => true,

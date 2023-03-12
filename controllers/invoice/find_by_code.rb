@@ -7,11 +7,16 @@ require_relative '../../models/invoice'
 module Lighstorm
   module Controllers
     module Invoice
-      module FindBySecretHash
-        def self.fetch(secret_hash)
+      module FindByCode
+        def self.fetch(code)
+          at = Time.now
+
+          decoded = Ports::GRPC.lightning.decode_pay_req(pay_req: code).to_h
+
           { response: {
-            at: Time.now,
-            lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: secret_hash).to_h
+            at: at,
+            decode_pay_req: decoded,
+            lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: decoded[:payment_hash]).to_h
           }, exception: nil }
         rescue StandardError => e
           { exception: e }
@@ -33,8 +38,10 @@ module Lighstorm
           adapted[:lookup_invoice]
         end
 
-        def self.data(secret_hash, &vcr)
-          raw = vcr.nil? ? fetch(secret_hash) : vcr.call(-> { fetch(secret_hash) })
+        def self.data(code, &vcr)
+          raw = vcr.nil? ? fetch(code) : vcr.call(-> { fetch(code) })
+
+          raise_error_if_exists!(raw)
 
           adapted = adapt(raw[:response])
 
@@ -43,6 +50,19 @@ module Lighstorm
 
         def self.model(data)
           Lighstorm::Models::Invoice.new(data)
+        end
+
+        def self.raise_error_if_exists!(response)
+          return if response[:exception].nil?
+
+          if response[:exception].is_a?(GRPC::NotFound)
+            raise NoInvoiceFoundError.new(
+              "Invoice not found. Try using Invoice.decode if you don't own the invoice.",
+              grpc: response[:exception]
+            )
+          end
+
+          raise LighstormError.new(grpc: response[:exception])
         end
       end
     end

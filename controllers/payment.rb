@@ -16,6 +16,14 @@ module Lighstorm
       def self.last(purpose: nil, fetch: {})
         All.model(All.data(purpose: purpose, fetch: fetch)).last
       end
+
+      def self.find_by_secret_hash(secret_hash, &vcr)
+        All.model(All.data(secret_hash: secret_hash, &vcr)).first
+      end
+
+      def self.find_by_invoice_code(invoice_code, &vcr)
+        All.model(All.data(invoice_code: invoice_code, &vcr)).first
+      end
     end
   end
 end

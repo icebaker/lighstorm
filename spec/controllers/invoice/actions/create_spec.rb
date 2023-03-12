@@ -71,7 +71,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               code: 'lnbc1pjqeu6fpp5xnklcw455edksex46xe0mtfdgx23vzlvjh6chr5afu6vwk5yh4xsdqdg3hkuct5d9hkucqzpgxqyz5vqsp5hf535cnvephhue006zt925eem6d7sl065ku4ve494626gzqh2pls9q8pqqqssqkeq9njfd235nq2wy8zrzph8x2agmy9429wdug3mx6f9zrwxedf8y2jk55jgd8aruvue3emzxfmskvm9c7mlppaf9m8vyhmqtcaefkrcph2jpse',
               payable: 'indefinitely',
               description: { memo: 'Donation', hash: nil },
-              address: '9fca2b43cdb2f7782ffa353890057418ba8c862bb92a086f748b61a10242a778',
+              address: '43611f6d7740ace3db80a67e64f4216f0748af38be793306faff347e5d5fea80',
               secret: { preimage: nil,
                         hash: '34edfc3ab4a65b6864d5d1b2fdad2d4195160bec95f58b8e9d4f34c75a84bd4d' },
               _source: :lookup_invoice,

@@ -1410,5 +1410,227 @@ RSpec.describe Lighstorm::Models::Payment do
         end
       end
     end
+
+    context 'find by invoice_code' do
+      let(:invoice_code) do
+        'lnbc490n1pjqma6vpp58kkl5n6h8wtw9wq22v86ddvj8p5lnv3xvmffeda708h5heldq28sdqyv93qcqzysxqr23ssp57jq9y6t4fsplxz6lgr3ryqtnf7y4xjc6hr90nasg44y23cc5xkgq9qyyssqfw6p66h7cdy93zh8fs4xd9s4a3fyy6pwj6t3t9t8d36w49vyrpzqdxrc9kwq9uqzg2eluaxet75px70dsltm0cg9qye967f09stcefsq92nuxh'
+      end
+
+      let(:data) do
+        Lighstorm::Controllers::Payment::All.data(invoice_code: invoice_code) do |fetch|
+          VCR.tape.replay("Controllers::Payment.all/invoice_code/#{invoice_code}") do
+            fetch.call
+          end
+        end
+      end
+
+      let(:from) do
+        { channel: '850099509773795329', target: 'Boltz', exit: 'Boltz' }
+      end
+
+      let(:to) do
+        { channel: '816834884962287617', target: 'yalls.org yalls-tor', entry: nil }
+      end
+
+      let(:amount) do
+        Lighstorm::Models::Satoshis.new(millisatoshis: 49_000)
+      end
+
+      let(:to_h_contract) { '55fe21826433d1d9a1e0ae636456c31bed4a21b08f97ee69d5fb9639d7d4020e' }
+
+      it 'models' do
+        expect(payment._key.size).to eq(64)
+        expect(payment.at).to be_a(Time)
+        expect(payment.at.utc.to_s).to eq('2023-03-12 16:01:54 UTC')
+        expect(payment.state).to eq('succeeded')
+        expect(payment.amount.millisatoshis).to eq(49_000)
+        expect(payment.amount.satoshis).to eq(49.0)
+        expect(payment.fee.millisatoshis).to eq(0)
+        expect(payment.fee.satoshis).to eq(0.0)
+        expect(payment.purpose).to eq('payment')
+        expect(payment.secret.preimage.class).to eq(String)
+        expect(payment.secret.preimage.size).to eq(64)
+        expect(payment.secret.hash).to eq('3dadfa4f573b96e2b80a530fa6b5923869f9b22666d29cb7be79ef4be7ed028f')
+
+        expect(payment.invoice._key.size).to eq(64)
+        expect(payment.invoice.created_at).to be_a(Time)
+        expect(payment.invoice.created_at.utc.to_s).to eq('2023-03-12 16:01:16 UTC')
+        expect(payment.invoice.settled_at).to be_a(Time)
+        expect(payment.invoice.settled_at.utc.to_s).to eq('2023-03-12 16:01:56 UTC')
+        expect(payment.invoice.state).to be_nil
+        expect(payment.invoice.code).to eq(invoice_code)
+        expect(payment.invoice.amount.millisatoshis).to eq(amount.millisatoshis)
+        expect(payment.invoice.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.invoice.secret.preimage.class).to eq(String)
+        expect(payment.invoice.secret.preimage.size).to eq(64)
+        expect(payment.invoice.secret.hash).to eq('3dadfa4f573b96e2b80a530fa6b5923869f9b22666d29cb7be79ef4be7ed028f')
+        expect(payment.invoice.description.memo).to eq('ab')
+        expect(payment.invoice.description.hash).to be_nil
+
+        expect(payment.hops.size).to eq(2)
+
+        expect(payment.from.first?).to be(true)
+        expect(payment.from.last?).to be(false)
+        expect(payment.from.hop).to eq(1)
+        expect(payment.from.amount.millisatoshis).to eq(amount.millisatoshis)
+        expect(payment.from.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.from.fee.millisatoshis).to eq(0)
+        expect(payment.from.fee.satoshis).to eq(0)
+        expect(payment.from.channel._key.size).to eq(64)
+        expect(payment.from.channel.id).to eq(from[:channel])
+        expect(payment.from.channel.target.alias).to eq(from[:target])
+        expect(payment.from.channel.target.public_key.size).to eq(66)
+        expect(payment.from.channel.target._key.size).to eq(64)
+
+        expect(payment.hops[0].channel.id).to eq(from[:channel])
+
+        expect(payment.from.channel.exit.alias).to eq(from[:exit])
+        expect(payment.from.channel.exit.public_key.size).to eq(66)
+        expect(payment.from.channel.exit._key.size).to eq(64)
+        expect(payment.from.channel.entry).to be_nil
+
+        expect(payment.to.first?).to be(false)
+        expect(payment.to.last?).to be(true)
+        expect(payment.to.hop).to eq(2)
+        expect(payment.to.amount.millisatoshis).to eq(amount.millisatoshis)
+        expect(payment.to.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.to.fee.millisatoshis).to eq(0)
+        expect(payment.to.fee.satoshis).to eq(0)
+        expect(payment.to.channel._key.size).to eq(64)
+        expect(payment.to.channel.id).to eq(to[:channel])
+        expect(payment.to.channel.target.alias).to eq(to[:target])
+        expect(payment.to.channel.target.public_key.size).to eq(66)
+        expect(payment.to.channel.target._key.size).to eq(64)
+
+        expect(payment.hops[1].channel.id).to eq(to[:channel])
+
+        expect(payment.to.channel.entry).to be_nil
+        expect(payment.to.channel.exit).to be_nil
+
+        expect(payment.invoice.payable).to eq('once')
+        expect(payment.invoice.amount.millisatoshis).to eq(49_000)
+        expect(payment.message).to eq('yalls test')
+        expect(payment.through).to eq('non-amp')
+        expect(payment.how).to eq('with-invoice')
+
+        Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
+          expect(actual.hash).to eq(expected.hash)
+          expect(actual.contract).to eq(expected.contract)
+        end
+      end
+    end
+
+    context 'find by secret_hash' do
+      let(:invoice_code) do
+        'lnbc490n1pjqma6vpp58kkl5n6h8wtw9wq22v86ddvj8p5lnv3xvmffeda708h5heldq28sdqyv93qcqzysxqr23ssp57jq9y6t4fsplxz6lgr3ryqtnf7y4xjc6hr90nasg44y23cc5xkgq9qyyssqfw6p66h7cdy93zh8fs4xd9s4a3fyy6pwj6t3t9t8d36w49vyrpzqdxrc9kwq9uqzg2eluaxet75px70dsltm0cg9qye967f09stcefsq92nuxh'
+      end
+
+      let(:secret_hash) do
+        '3dadfa4f573b96e2b80a530fa6b5923869f9b22666d29cb7be79ef4be7ed028f'
+      end
+
+      let(:data) do
+        Lighstorm::Controllers::Payment::All.data(secret_hash: secret_hash) do |fetch|
+          VCR.tape.replay("Controllers::Payment.all/secret_hash/#{secret_hash}") do
+            fetch.call
+          end
+        end
+      end
+
+      let(:from) do
+        { channel: '850099509773795329', target: 'Boltz', exit: 'Boltz' }
+      end
+
+      let(:to) do
+        { channel: '816834884962287617', target: 'yalls.org yalls-tor', entry: nil }
+      end
+
+      let(:amount) do
+        Lighstorm::Models::Satoshis.new(millisatoshis: 49_000)
+      end
+
+      let(:to_h_contract) { '55fe21826433d1d9a1e0ae636456c31bed4a21b08f97ee69d5fb9639d7d4020e' }
+
+      it 'models' do
+        expect(payment._key.size).to eq(64)
+        expect(payment.at).to be_a(Time)
+        expect(payment.at.utc.to_s).to eq('2023-03-12 16:01:54 UTC')
+        expect(payment.state).to eq('succeeded')
+        expect(payment.amount.millisatoshis).to eq(49_000)
+        expect(payment.amount.satoshis).to eq(49.0)
+        expect(payment.fee.millisatoshis).to eq(0)
+        expect(payment.fee.satoshis).to eq(0.0)
+        expect(payment.purpose).to eq('payment')
+        expect(payment.secret.preimage.class).to eq(String)
+        expect(payment.secret.preimage.size).to eq(64)
+        expect(payment.secret.hash).to eq('3dadfa4f573b96e2b80a530fa6b5923869f9b22666d29cb7be79ef4be7ed028f')
+
+        expect(payment.invoice._key.size).to eq(64)
+        expect(payment.invoice.created_at).to be_a(Time)
+        expect(payment.invoice.created_at.utc.to_s).to eq('2023-03-12 16:01:16 UTC')
+        expect(payment.invoice.settled_at).to be_a(Time)
+        expect(payment.invoice.settled_at.utc.to_s).to eq('2023-03-12 16:01:56 UTC')
+        expect(payment.invoice.state).to be_nil
+        expect(payment.invoice.code).to eq(invoice_code)
+        expect(payment.invoice.amount.millisatoshis).to eq(amount.millisatoshis)
+        expect(payment.invoice.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.invoice.secret.preimage.class).to eq(String)
+        expect(payment.invoice.secret.preimage.size).to eq(64)
+        expect(payment.invoice.secret.hash).to eq('3dadfa4f573b96e2b80a530fa6b5923869f9b22666d29cb7be79ef4be7ed028f')
+        expect(payment.invoice.description.memo).to eq('ab')
+        expect(payment.invoice.description.hash).to be_nil
+
+        expect(payment.hops.size).to eq(2)
+
+        expect(payment.from.first?).to be(true)
+        expect(payment.from.last?).to be(false)
+        expect(payment.from.hop).to eq(1)
+        expect(payment.from.amount.millisatoshis).to eq(amount.millisatoshis)
+        expect(payment.from.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.from.fee.millisatoshis).to eq(0)
+        expect(payment.from.fee.satoshis).to eq(0)
+        expect(payment.from.channel._key.size).to eq(64)
+        expect(payment.from.channel.id).to eq(from[:channel])
+        expect(payment.from.channel.target.alias).to eq(from[:target])
+        expect(payment.from.channel.target.public_key.size).to eq(66)
+        expect(payment.from.channel.target._key.size).to eq(64)
+
+        expect(payment.hops[0].channel.id).to eq(from[:channel])
+
+        expect(payment.from.channel.exit.alias).to eq(from[:exit])
+        expect(payment.from.channel.exit.public_key.size).to eq(66)
+        expect(payment.from.channel.exit._key.size).to eq(64)
+        expect(payment.from.channel.entry).to be_nil
+
+        expect(payment.to.first?).to be(false)
+        expect(payment.to.last?).to be(true)
+        expect(payment.to.hop).to eq(2)
+        expect(payment.to.amount.millisatoshis).to eq(amount.millisatoshis)
+        expect(payment.to.amount.satoshis).to eq(amount.satoshis)
+        expect(payment.to.fee.millisatoshis).to eq(0)
+        expect(payment.to.fee.satoshis).to eq(0)
+        expect(payment.to.channel._key.size).to eq(64)
+        expect(payment.to.channel.id).to eq(to[:channel])
+        expect(payment.to.channel.target.alias).to eq(to[:target])
+        expect(payment.to.channel.target.public_key.size).to eq(66)
+        expect(payment.to.channel.target._key.size).to eq(64)
+
+        expect(payment.hops[1].channel.id).to eq(to[:channel])
+
+        expect(payment.to.channel.entry).to be_nil
+        expect(payment.to.channel.exit).to be_nil
+
+        expect(payment.invoice.payable).to eq('once')
+        expect(payment.invoice.amount.millisatoshis).to eq(49_000)
+        expect(payment.message).to eq('yalls test')
+        expect(payment.through).to eq('non-amp')
+        expect(payment.how).to eq('with-invoice')
+
+        Contract.expect(payment.to_h, to_h_contract) do |actual, expected|
+          expect(actual.hash).to eq(expected.hash)
+          expect(actual.contract).to eq(expected.contract)
+        end
+      end
+    end
   end
 end
