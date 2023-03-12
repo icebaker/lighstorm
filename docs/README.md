@@ -462,6 +462,12 @@ Lighstorm::Invoice.find_by_secret_hash(
   '1d438b8100518c9fba0a607e3317d6b36f74ceef3a6591836eb2f679c6853501'
 )
 
+invoice = Lighstorm::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
+
+invoice.secret.valid_proof?(
+  'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
+) # => true
+
 # _key is helpful for reactive javascript frameworks.
 # Please don't consider it as a unique identifier
 # for the item. Instead, use it as a volatile key for
@@ -526,6 +532,19 @@ action.response
 invoice = action.result
 ```
 
+### Proof of Payment
+
+[Making Payments](https://docs.lightning.engineering/the-lightning-network/multihop-payments)
+
+
+```ruby
+invoice = Lighstorm::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
+
+invoice.secret.valid_proof?(
+  'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
+) # => true
+```
+
 ### Pay
 
 [Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
@@ -546,6 +565,8 @@ payment = action.result
 
 payment.at
 payment.state
+
+payment.secret.proof
 
 payment.amount.millisatoshis
 payment.fee.millisatoshis
@@ -622,6 +643,7 @@ rescue PaymentError => error
   error.result
 end
 ```
+
 ## Payment
 
 [![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
@@ -641,6 +663,12 @@ Lighstorm::Payment.all(limit: 10, purpose: 'rebalance')
 # Possible Purposes:
 # 'self-payment', 'peer-to-peer',
 # 'rebalance', 'payment'
+
+Lighstorm::Payment.find_by_invoice_code('lnbc20n1pj...0eqps7h0k9')
+
+Lighstorm::Payment.find_by_secret_hash(
+  '1d438b8100518c9fba0a607e3317d6b36f74ceef3a6591836eb2f679c6853501'
+)
 
 # _key is helpful for reactive javascript frameworks.
 # Please don't consider it as a unique identifier
@@ -671,6 +699,7 @@ payment.purpose
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
 payment.secret.preimage
 payment.secret.hash
+payment.secret.proof
 
 payment.invoice.created_at
 payment.invoice.expires_at
@@ -747,6 +776,18 @@ payment.hops[0].channel.entry.public_key
 payment.hops[0].channel.entry.alias
 payment.hops[0].channel.entry.color
 ```
+
+### Proof of Payment
+
+[Making Payments](https://docs.lightning.engineering/the-lightning-network/multihop-payments)
+
+```ruby
+payment = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay.result
+
+payment.secret.proof
+# => 'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
+```
+
 ### Performance
 Avoid fetching data that you don't need:
 ```ruby
