@@ -27,7 +27,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
       context 'gradual' do
         it 'flows' do
           request = described_class.prepare(
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             description: params[:description],
             payable: params[:payable],
             expires_in: { hours: 24 }
@@ -172,19 +172,26 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+', r_hash: 'String:31..40' },
-                  result: { _key: 'String:50+',
-                            amount: 'Nil',
-                            code: 'String:50+',
-                            created_at: 'Time',
-                            description: { hash: 'Nil', memo: 'String:0..10' },
-                            expires_at: 'Time',
-                            payable: 'String:11..20',
-                            payments: 'Nil',
-                            received: 'Nil',
-                            secret: { hash: 'String:50+', preimage: 'Nil' },
-                            settled_at: 'Nil',
-                            state: 'String:0..10' } }
+                { response: {
+                    add_index: 'Integer:0..10',
+                    payment_addr: 'String:31..40',
+                    payment_request: 'String:50+',
+                    r_hash: 'String:31..40'
+                  },
+                  result: {
+                    _key: 'String:50+',
+                    amount: 'Nil',
+                    code: 'String:50+',
+                    created_at: 'Time',
+                    description: { hash: 'Nil', memo: 'String:0..10' },
+                    expires_at: 'Time',
+                    payable: 'String:11..20',
+                    payments: 'Nil',
+                    received: 'Nil',
+                    secret: { hash: 'String:50+', preimage: 'Nil' },
+                    settled_at: 'Nil',
+                    state: 'String:0..10'
+                  } }
               )
             end
           end
@@ -196,12 +203,12 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
   context 'invoice' do
     describe 'create invoice' do
       let(:vcr_key) { 'Controllers::Invoice::Create' }
-      let(:params) { { millisatoshis: 1_000, description: 'Coffee', payable: 'once' } }
+      let(:params) { { amount: { millisatoshis: 1_000 }, description: 'Coffee', payable: 'once' } }
 
       context 'gradual' do
         it 'flows' do
           request = described_class.prepare(
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             description: params[:description],
             payable: params[:payable],
             expires_in: { hours: 24 }
@@ -213,7 +220,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               params: {
                 memo: params[:description],
                 expiry: 86_400,
-                value_msat: params[:millisatoshis]
+                value_msat: params[:amount][:millisatoshis]
               } }
           )
 
@@ -223,12 +230,20 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
 
           adapted = described_class.adapt(response)
 
-          expect(adapted).to eq(
-            { _source: :add_invoice,
-              code: 'lnbc10n1pjqeapxpp5afdddcrmgah7elxfedzvww5nhj9vcxrwlj8qcevw87u9g8te2y0qdq2gdhkven9v5cqzpgxqyz5vqsp52q0mzygtulszvtutzpj9s7x6ucga35d05wr6ayp5vl8zx638g3ys9qyyssqwed572dyu89j80kjvss36lwg4efq3he5lqsp365l2e579ve2kap3v05hmputgkhp2tv5g6v6vfsvf3fr2lfxx7jh0jr4pns6nntn6kgqxcvx9k',
-              address: 'ca569b4e7219cdde539b81e60ab1be57036310fd784ab044f43681bbeb2fda7d',
-              secret: { hash: 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e' } }
-          )
+          Contract.expect(
+            adapted, '6e8210660ee373ed333b96351bce88107e6810211a2e36e2eb9a966acaf0537a'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+
+            expect(actual.contract).to eq(
+              {
+                _source: 'Symbol:11..20',
+                address: 'String:50+',
+                code: 'String:50+',
+                secret: { hash: 'String:50+' }
+              }
+            )
+          end
 
           data = described_class.fetch(adapted) do |fetch|
             VCR.reel.replay("#{vcr_key}/fetch", params) { fetch.call }
@@ -240,40 +255,50 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           expect(data[:expires_at].class).to eq(Time)
           data[:expires_at] = data[:expires_at].utc.to_s
 
-          expect(data).to eq(
-            { _key: '1da09b0a9a7a8c06bfd6e9dca4f39f070073f34a70424a864c402d5003e11d29',
-              created_at: '2023-03-11 21:35:34 UTC',
-              expires_at: '2023-03-12 21:35:34 UTC',
-              settled_at: nil,
-              state: 'open',
-              code: 'lnbc10n1pjqeapxpp5afdddcrmgah7elxfedzvww5nhj9vcxrwlj8qcevw87u9g8te2y0qdq2gdhkven9v5cqzpgxqyz5vqsp52q0mzygtulszvtutzpj9s7x6ucga35d05wr6ayp5vl8zx638g3ys9qyyssqwed572dyu89j80kjvss36lwg4efq3he5lqsp365l2e579ve2kap3v05hmputgkhp2tv5g6v6vfsvf3fr2lfxx7jh0jr4pns6nntn6kgqxcvx9k',
-              payable: 'once',
-              description: { memo: 'Coffee', hash: nil },
-              address: '515769edeed8105b5a8cc510464db5e7551a1e6e2eebdb71b3dba059f43b3b79',
-              secret: { preimage: 'ff0de17c07ff648c66fc6574f1da7724f4c5664c2573e9ff14b34bb1c278e2d4',
-                        hash: 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e' },
-              amount: { millisatoshis: 1000 },
-              _source: :lookup_invoice,
-              known: true }
-          )
+          Contract.expect(
+            data, '897e6d358eae2adf6d2fca88e7cc1c550dfb6fe4fd98114d352ce4cdee59a831'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+
+            expect(actual.contract).to eq(
+              { _key: 'String:50+',
+                _source: 'Symbol:11..20',
+                address: 'String:50+',
+                amount: { millisatoshis: 'Integer:0..10' },
+                code: 'String:50+',
+                created_at: 'String:21..30',
+                description: { hash: 'Nil', memo: 'String:0..10' },
+                expires_at: 'String:21..30',
+                known: 'Boolean',
+                payable: 'String:0..10',
+                secret: { hash: 'String:50+', preimage: 'String:50+' },
+                settled_at: 'Nil',
+                state: 'String:0..10' }
+            )
+          end
 
           model = described_class.model(data)
 
-          expect(model.to_h).to eq(
-            { _key: '1da09b0a9a7a8c06bfd6e9dca4f39f070073f34a70424a864c402d5003e11d29',
-              created_at: '2023-03-11 21:35:34 UTC',
-              expires_at: '2023-03-12 21:35:34 UTC',
-              settled_at: nil,
-              payable: 'once',
-              state: 'open',
-              code: 'lnbc10n1pjqeapxpp5afdddcrmgah7elxfedzvww5nhj9vcxrwlj8qcevw87u9g8te2y0qdq2gdhkven9v5cqzpgxqyz5vqsp52q0mzygtulszvtutzpj9s7x6ucga35d05wr6ayp5vl8zx638g3ys9qyyssqwed572dyu89j80kjvss36lwg4efq3he5lqsp365l2e579ve2kap3v05hmputgkhp2tv5g6v6vfsvf3fr2lfxx7jh0jr4pns6nntn6kgqxcvx9k',
-              amount: { millisatoshis: 1000 },
-              received: nil,
-              description: { memo: 'Coffee', hash: nil },
-              secret: { preimage: 'ff0de17c07ff648c66fc6574f1da7724f4c5664c2573e9ff14b34bb1c278e2d4',
-                        hash: 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e' },
-              payments: nil }
-          )
+          Contract.expect(
+            model.to_h, '0cc11f5cd2e9cfd54ab3789f155d9661f288ce3dbadf28f7fb8877a6f38e36d2'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+
+            expect(actual.contract).to eq(
+              { _key: 'String:50+',
+                amount: { millisatoshis: 'Integer:0..10' },
+                code: 'String:50+',
+                created_at: 'String:21..30',
+                description: { hash: 'Nil', memo: 'String:0..10' },
+                expires_at: 'String:21..30',
+                payable: 'String:0..10',
+                payments: 'Nil',
+                received: 'Nil',
+                secret: { hash: 'String:50+', preimage: 'String:50+' },
+                settled_at: 'Nil',
+                state: 'String:0..10' }
+            )
+          end
         end
       end
 
@@ -281,7 +306,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'preview' do
           it 'previews' do
             request = described_class.perform(
-              millisatoshis: params[:millisatoshis], description: params[:description],
+              amount: params[:amount], description: params[:description],
               payable: params[:payable],
               expires_in: { hours: 24 },
               preview: true
@@ -293,7 +318,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
                 params: {
                   memo: params[:description],
                   expiry: 86_400,
-                  value_msat: params[:millisatoshis]
+                  value_msat: params[:amount][:millisatoshis]
                 } }
             )
           end
@@ -302,7 +327,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'perform' do
           it 'performs' do
             action = described_class.perform(
-              millisatoshis: params[:millisatoshis],
+              amount: params[:amount],
               description: params[:description],
               expires_in: { hours: 24 },
               payable: params[:payable]
@@ -312,63 +337,32 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
 
             expect(action.result.class).to eq(Lighstorm::Models::Invoice)
 
-            result_to_h = action.result.to_h
-
-            expect(result_to_h[:created_at].class).to eq(Time)
-            result_to_h[:created_at] = result_to_h[:created_at].utc.to_s
-
-            expect(result_to_h[:expires_at].class).to eq(Time)
-            result_to_h[:expires_at] = result_to_h[:expires_at].utc.to_s
-
-            expect(result_to_h).to eq(
-              { _key: '1da09b0a9a7a8c06bfd6e9dca4f39f070073f34a70424a864c402d5003e11d29',
-                created_at: '2023-03-11 21:35:34 UTC',
-                expires_at: '2023-03-12 21:35:34 UTC',
-                settled_at: nil,
-                payable: 'once',
-                state: 'open',
-                code: 'lnbc10n1pjqeapxpp5afdddcrmgah7elxfedzvww5nhj9vcxrwlj8qcevw87u9g8te2y0qdq2gdhkven9v5cqzpgxqyz5vqsp52q0mzygtulszvtutzpj9s7x6ucga35d05wr6ayp5vl8zx638g3ys9qyyssqwed572dyu89j80kjvss36lwg4efq3he5lqsp365l2e579ve2kap3v05hmputgkhp2tv5g6v6vfsvf3fr2lfxx7jh0jr4pns6nntn6kgqxcvx9k',
-                amount: { millisatoshis: 1000 },
-                received: nil,
-                description: { memo: 'Coffee', hash: nil },
-                secret: { preimage: 'ff0de17c07ff648c66fc6574f1da7724f4c5664c2573e9ff14b34bb1c278e2d4',
-                          hash: 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e' },
-                payments: nil }
-            )
-
-            Contract.expect(
-              action.response.to_h, '30b582f05da8835a47b0cdb08e80bade781a09d760f00f3a790ac4b107d1788e'
-            ) do |actual, expected|
-              expect(actual.hash).to eq(expected.hash)
-              expect(actual.contract).to eq(
-                {
-                  add_index: 'Integer:0..10',
-                  payment_addr: 'String:31..40',
-                  payment_request: 'String:50+',
-                  r_hash: 'String:31..40'
-                }
-              )
-            end
-
             Contract.expect(
               action.to_h, 'ea450f2ebd9f6657f974b90f6dc1079c016243bbf88a5445f878ca8f862545a6'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+', r_hash: 'String:31..40' },
-                  result: { _key: 'String:50+',
-                            amount: { millisatoshis: 'Integer:0..10' },
-                            code: 'String:50+',
-                            created_at: 'Time',
-                            description: { hash: 'Nil', memo: 'String:0..10' },
-                            expires_at: 'Time',
-                            payable: 'String:0..10',
-                            payments: 'Nil',
-                            received: 'Nil',
-                            secret: { hash: 'String:50+', preimage: 'String:50+' },
-                            settled_at: 'Nil',
-                            state: 'String:0..10' } }
+                { response: {
+                    add_index: 'Integer:0..10',
+                    payment_addr: 'String:31..40',
+                    payment_request: 'String:50+',
+                    r_hash: 'String:31..40'
+                  },
+                  result: {
+                    _key: 'String:50+',
+                    amount: { millisatoshis: 'Integer:0..10' },
+                    code: 'String:50+',
+                    created_at: 'Time',
+                    description: { hash: 'Nil', memo: 'String:0..10' },
+                    expires_at: 'Time',
+                    payable: 'String:0..10',
+                    payments: 'Nil',
+                    received: 'Nil',
+                    secret: { hash: 'String:50+', preimage: 'String:50+' },
+                    settled_at: 'Nil',
+                    state: 'String:0..10'
+                  } }
               )
             end
           end

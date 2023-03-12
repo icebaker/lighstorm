@@ -142,13 +142,13 @@ RSpec.describe Lighstorm::Models::Invoice do
   end
 
   describe 'decode' do
-    let(:request_code) do
+    let(:code) do
       'lnbc20n1pjq2ywjpp5qy4mms9xqe7h3uhgtct7gt4qxmx56630xwdgenup9x73ggcsk7lsdqggaexzur9cqzpgxqyz5vqsp5je8mp8d49gvq0hj37jkp6y7vapvsgc6nflehhwpqw0yznclzuuqq9qyyssqt38umwt9wdd09dgejd68v88jnwezr9j2y87pv3yr5yglw77kqk6hn3jv6ue573m003n06r2yfa8yzzyh8zr3rgkkwqg9sf4arv490eqps7h0k9'
     end
 
     it 'models' do
-      data = Lighstorm::Controllers::Invoice::Decode.data(request_code) do |fetch|
-        VCR.tape.replay("Controllers::Invoice.decode/#{request_code}") { fetch.call }
+      data = Lighstorm::Controllers::Invoice::Decode.data(code) do |fetch|
+        VCR.tape.replay("Controllers::Invoice.decode/#{code}") { fetch.call }
       end
 
       invoice = described_class.new(data)
@@ -162,7 +162,7 @@ RSpec.describe Lighstorm::Models::Invoice do
 
       expect(invoice.state).to be_nil
 
-      expect(invoice.code).to eq(request_code)
+      expect(invoice.code).to eq(code)
       expect(invoice.amount.millisatoshis).to eq(2000)
       expect(invoice.amount.satoshis).to eq(2)
       expect(invoice.received).to be_nil

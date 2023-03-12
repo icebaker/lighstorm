@@ -16,7 +16,7 @@ module Lighstorm
           ).to_h
         end
 
-        def self.prepare(payable:, expires_in:, description: nil, millisatoshis: nil)
+        def self.prepare(payable:, expires_in:, description: nil, amount: nil)
           request = {
             service: :lightning,
             method: :add_invoice,
@@ -28,7 +28,7 @@ module Lighstorm
             }
           }
 
-          request[:params][:value_msat] = millisatoshis unless millisatoshis.nil?
+          request[:params][:value_msat] = amount[:millisatoshis] unless amount.nil?
 
           if payable.to_sym == :indefinitely
             request[:params][:is_amp] = true
@@ -55,10 +55,10 @@ module Lighstorm
           FindBySecretHash.model(data)
         end
 
-        def self.perform(payable:, expires_in:, description: nil, millisatoshis: nil, preview: false, &vcr)
+        def self.perform(payable:, expires_in:, description: nil, amount: nil, preview: false, &vcr)
           grpc_request = prepare(
             description: description,
-            millisatoshis: millisatoshis,
+            amount: amount,
             expires_in: expires_in,
             payable: payable
           )

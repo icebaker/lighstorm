@@ -84,7 +84,8 @@ module Lighstorm
       end
 
       def pay(
-        millisatoshis: nil, message: nil, route: nil,
+        amount: nil, message: nil, route: nil,
+        fee: nil,
         times_out_in: { seconds: 5 },
         preview: false
       )
@@ -92,8 +93,9 @@ module Lighstorm
           Controllers::Invoice::PayThroughRoute.perform(self, route: route, preview: preview)
         else
           Controllers::Invoice::Pay.perform(
-            request_code: code,
-            millisatoshis: millisatoshis,
+            code: code,
+            amount: amount,
+            fee: fee,
             message: message,
             times_out_in: times_out_in,
             preview: preview

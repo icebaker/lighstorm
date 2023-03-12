@@ -24,13 +24,13 @@ module Lighstorm
         FindBySecretHash.model(FindBySecretHash.data(secret_hash))
       end
 
-      def self.decode(request_code, &vcr)
-        Decode.model(Decode.data(request_code, &vcr))
+      def self.decode(code, &vcr)
+        Decode.model(Decode.data(code, &vcr))
       end
 
       def self.create(
         payable:,
-        description: nil, millisatoshis: nil,
+        description: nil, amount: nil,
         # Lightning Invoice Expiration: UX Considerations
         # https://d.elor.me/2022/01/lightning-invoice-expiration-ux-considerations/
         expires_in: { hours: 24 },
@@ -39,7 +39,7 @@ module Lighstorm
         Create.perform(
           payable: payable,
           description: description,
-          millisatoshis: millisatoshis,
+          amount: amount,
           expires_in: expires_in,
           preview: preview,
           &vcr

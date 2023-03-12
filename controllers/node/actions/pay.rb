@@ -34,7 +34,7 @@ module Lighstorm
           Payment::Pay.model(data)
         end
 
-        def self.prepare(public_key:, millisatoshis:, times_out_in:, secret:, through:, message: nil)
+        def self.prepare(public_key:, amount:, times_out_in:, secret:, through:, message: nil)
           # Appreciation note for people that suffered in the past and shared
           # their knowledge, so we don't have to struggle the same:
           # - https://github.com/lightningnetwork/lnd/discussions/6357
@@ -46,7 +46,7 @@ module Lighstorm
             method: :send_payment_v2,
             params: {
               dest: [public_key].pack('H*'),
-              amt_msat: millisatoshis,
+              amt_msat: amount[:millisatoshis],
               timeout_seconds: Helpers::TimeExpression.seconds(times_out_in),
               allow_self_payment: true,
               dest_custom_records: {}
@@ -71,7 +71,7 @@ module Lighstorm
         end
 
         def self.perform(
-          public_key:, millisatoshis:, through:,
+          public_key:, amount:, through:,
           times_out_in:,
           message: nil, secret: nil,
           preview: false, &vcr
@@ -80,7 +80,7 @@ module Lighstorm
 
           grpc_request = prepare(
             public_key: public_key,
-            millisatoshis: millisatoshis,
+            amount: amount,
             through: through,
             times_out_in: times_out_in,
             secret: secret,

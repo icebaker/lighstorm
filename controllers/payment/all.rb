@@ -108,9 +108,13 @@ module Lighstorm
 
                 next if fetch[:get_node_info] == false || data[:get_node_info][hop[:pub_key]]
 
-                data[:get_node_info][hop[:pub_key]] = grpc.lightning.get_node_info(
-                  pub_key: hop[:pub_key]
-                ).to_h
+                begin
+                  data[:get_node_info][hop[:pub_key]] = grpc.lightning.get_node_info(
+                    pub_key: hop[:pub_key]
+                  ).to_h
+                rescue StandardError => e
+                  data[:get_node_info][hop[:pub_key]] = { _error: e }
+                end
               end
             end
           end
@@ -151,24 +155,36 @@ module Lighstorm
             end
 
             unless fetch[:get_node_info] == false || data[:get_node_info][channel[:node1_pub]]
-              data[:get_node_info][channel[:node1_pub]] = grpc.lightning.get_node_info(
-                pub_key: channel[:node1_pub]
-              ).to_h
+              begin
+                data[:get_node_info][channel[:node1_pub]] = grpc.lightning.get_node_info(
+                  pub_key: channel[:node1_pub]
+                ).to_h
+              rescue StandardError => e
+                data[:get_node_info][channel[:node1_pub]] = { _error: e }
+              end
             end
 
             next if fetch[:get_node_info] == false || data[:get_node_info][channel[:node2_pub]]
 
-            data[:get_node_info][channel[:node2_pub]] = grpc.lightning.get_node_info(
-              pub_key: channel[:node2_pub]
-            ).to_h
+            begin
+              data[:get_node_info][channel[:node2_pub]] = grpc.lightning.get_node_info(
+                pub_key: channel[:node2_pub]
+              ).to_h
+            rescue StandardError => e
+              data[:get_node_info][channel[:node2_pub]] = { _error: e }
+            end
           end
 
           data[:list_channels].each_value do |channel|
             next if fetch[:get_node_info] == false || data[:get_node_info][channel[:remote_pubkey]]
 
-            data[:get_node_info][channel[:remote_pubkey]] = grpc.lightning.get_node_info(
-              pub_key: channel[:remote_pubkey]
-            ).to_h
+            begin
+              data[:get_node_info][channel[:remote_pubkey]] = grpc.lightning.get_node_info(
+                pub_key: channel[:remote_pubkey]
+              ).to_h
+            rescue StandardError => e
+              data[:get_node_info][channel[:remote_pubkey]] = { _error: e }
+            end
           end
 
           data[:@meta] = { calls: grpc.calls }
@@ -223,6 +239,8 @@ module Lighstorm
           end
 
           raw[:get_node_info].each_key do |key|
+            next if raw[:get_node_info][key][:_error]
+
             adapted[:get_node_info][key] = Lighstorm::Adapter::Node.get_node_info(
               raw[:get_node_info][key]
             )

@@ -2,6 +2,7 @@
 
 module Sanitizer
   UNSAFE = {
+    'preimage' => true,
     'root_share <= amp' => true,
     'address <= invoice_decode' => true,
     'preimage <= amp' => true,

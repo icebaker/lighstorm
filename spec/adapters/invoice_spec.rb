@@ -7,13 +7,13 @@ RSpec.describe Lighstorm::Adapter::Invoice do
   let(:at) { Time.new(2023, 3, 11, 21, 23, 6, 'UTC') }
 
   context 'decode_pay_req' do
-    let(:request_code) do
+    let(:code) do
       'lnbc20n1pjq2ywjpp5qy4mms9xqe7h3uhgtct7gt4qxmx56630xwdgenup9x73ggcsk7lsdqggaexzur9cqzpgxqyz5vqsp5je8mp8d49gvq0hj37jkp6y7vapvsgc6nflehhwpqw0yznclzuuqq9qyyssqt38umwt9wdd09dgejd68v88jnwezr9j2y87pv3yr5yglw77kqk6hn3jv6ue573m003n06r2yfa8yzzyh8zr3rgkkwqg9sf4arv490eqps7h0k9'
     end
 
     it 'adapts' do
-      raw = VCR.tape.replay('lightning.decode_pay_req', pay_req: request_code) do
-        Lighstorm::Ports::GRPC.lightning.decode_pay_req(pay_req: request_code).to_h
+      raw = VCR.tape.replay('lightning.decode_pay_req', pay_req: code) do
+        Lighstorm::Ports::GRPC.lightning.decode_pay_req(pay_req: code).to_h
       end
 
       Contract.expect(
@@ -44,7 +44,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         )
       end
 
-      adapted = described_class.decode_pay_req(raw, request_code)
+      adapted = described_class.decode_pay_req(raw, code)
 
       Contract.expect(
         adapted, '13e111e67a75fe4ef14e09e6af0b06e732b2aa8597ff7ecd1cb03f0ff24ba41e'
