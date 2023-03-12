@@ -2,10 +2,30 @@
 
 module Sanitizer
   SAFE = {
+    'hash' => true,
     '_source <= invoice_decode' => true,
     '_key <= invoice_decode' => true,
     'payable <= invoice_decode' => true,
     'created_at <= invoice_decode' => true,
+    'expires_at <= invoice_decode' => true,
+
+    'code <= failure' => true,
+    'channel_update <= failure' => true,
+    'htlc_msat <= failure' => true,
+    'onion_sha_256 <= failure' => true,
+    'cltv_expiry <= failure' => true,
+    'flags <= failure' => true,
+    'failure_source_index <= failure' => true,
+    'height <= failure' => true,
+
+    'invoice_decode' => true,
+
+    '_error <= get_node_info' => true,
+    'node_id <= hop_hints' => true,
+    'chan_id <= hop_hints' => true,
+    'fee_base_msat <= hop_hints' => true,
+    'fee_proportional_millionths <= hop_hints' => true,
+    'cltv_expiry_delta <= hop_hints' => true,
 
     'code <= invoice_decode' => true,
     '_source <= node_myself' => true,
@@ -80,7 +100,7 @@ module Sanitizer
     'payment_error' => true,
     'payment_route' => true,
     '_error' => true,
-    '_request_code' => true,
+    '_code' => true,
     'accept_time <= htlcs' => true,
     'active <= list_channels' => true,
     'active' => true,

@@ -30,15 +30,15 @@ module Lighstorm
           vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
         end
 
-        def self.fetch_all(request_code)
+        def self.fetch_all(code)
           {
-            invoice_decode: request_code.nil? ? nil : Invoice::Decode.data(request_code),
+            invoice_decode: code.nil? ? nil : Invoice::Decode.data(code),
             node_myself: Node::Myself.data
           }
         end
 
-        def self.fetch(request_code = nil, &vcr)
-          raw = vcr.nil? ? fetch_all(request_code) : vcr.call(-> { fetch_all(request_code) })
+        def self.fetch(code = nil, &vcr)
+          raw = vcr.nil? ? fetch_all(code) : vcr.call(-> { fetch_all(code) })
         end
 
         def self.adapt(grpc_data, fetch_data)

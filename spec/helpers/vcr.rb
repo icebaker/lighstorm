@@ -22,11 +22,23 @@ module VCR
 
   RECORDER = Struct.new(:kind) do
     def replay(key, *params, &block)
-      VCR.replay(key, *params, kind: kind, &block)
+      VCR.replay(key, *params, unsafe: nil, kind: kind, &block)
     end
 
     def replay!(key, *params, &block)
-      VCR.replay!(key, *params, kind: kind, &block)
+      VCR.replay!(key, *params, unsafe: nil, kind: kind, &block)
+    end
+
+    def unsafe(acknowledge)
+      Struct.new(:kind, :acknowledge) do
+        def replay(key, *params, &block)
+          VCR.replay(key, *params, unsafe: acknowledge, kind: kind, &block)
+        end
+
+        def replay!(key, *params, &block)
+          VCR.replay!(key, *params, unsafe: acknowledge, kind: kind, &block)
+        end
+      end.new(kind, acknowledge)
     end
   end
 
@@ -41,7 +53,7 @@ module VCR
     REEL
   end
 
-  def self.replay(key, params = {}, kind:, &block)
+  def self.replay(key, params = {}, kind:, unsafe: nil, &block)
     path = build_path_for(key, params, kind: kind)
 
     if File.exist?(path)
@@ -53,20 +65,28 @@ module VCR
 
     FileUtils.mkdir_p(File.dirname(path))
 
-    protected_response = Sanitizer.protect(response)
+    protected_response = if unsafe == 'I_KNOW_WHAT_I_AM_DOING'
+                           response
+                         else
+                           Sanitizer.protect(response)
+                         end
 
     Monitor.instance.register_access!(path)
     File.write(path, Marshal.dump(protected_response))
 
+    if unsafe == 'I_KNOW_WHAT_I_AM_DOING'
+      raise "I_KNOW_WHAT_I_AM_DOING: You unsafely stored data without Sanitizer #{path}"
+    end
+
     protected_response
   end
 
-  def self.replay!(key, params = {}, kind:, &block)
+  def self.replay!(key, params = {}, kind:, unsafe: nil, &block)
     path = build_path_for(key, params, kind: kind)
 
     FileUtils.rm_f(path)
 
-    replay(key, params, kind: kind, &block)
+    replay(key, params, unsafe: unsafe, kind: kind, &block)
   end
 
   def self.build_path_for(key, params, kind: :tapes, partial: false)

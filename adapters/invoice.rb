@@ -18,7 +18,7 @@ module Lighstorm
         }
       end
 
-      def self.decode_pay_req(grpc, request_code = nil)
+      def self.decode_pay_req(grpc, code = nil)
         adapted = {
           _source: :decode_pay_req,
           _key: Digest::SHA256.hexdigest(
@@ -43,7 +43,7 @@ module Lighstorm
           }
         }
 
-        adapted[:code] = request_code unless request_code.nil?
+        adapted[:code] = code unless code.nil?
 
         if grpc[:features].key?(30) && grpc[:features][30][:is_required]
           raise "unexpected feature[30] name #{grpc[:features][30][:name]}" if grpc[:features][30][:name] != 'amp'

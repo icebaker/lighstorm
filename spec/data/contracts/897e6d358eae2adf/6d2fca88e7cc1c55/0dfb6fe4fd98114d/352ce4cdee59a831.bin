@@ -1,0 +1,3 @@
+{:	_keyI"String:50+:ET:_sourceI"Symbol:11..20;T:addressI"String:50+;T:amount{:millisatoshisI"Integer:0..10;T:	codeI"String:50+;T:created_atI"String:21..30;T:description{:	hashI"Nil;F:	memoI"String:0..10;T:expires_atI"String:21..30;T:
+knownI"Boolean;T:payableI"String:0..10;T:secret{;I"String:50+;T:preimageI"String:50+;T:settled_atI"Nil;F:
+stateI"String:0..10;T

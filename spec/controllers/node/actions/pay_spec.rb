@@ -2,30 +2,38 @@
 
 require_relative '../../../../controllers/node/actions/pay'
 require_relative '../../../../models/satoshis'
+require_relative '../../../../models/secret'
 require_relative '../../../../ports/dsl/lighstorm/errors'
 
 RSpec.describe Lighstorm::Controllers::Node::Pay do
   describe 'send through keysend' do
     let(:vcr_key) { 'Controllers::Node::Pay' }
-    let(:params) do
+
+    let(:payment_params) do
       {
         through: 'keysend',
         public_key: '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
-        millisatoshis: 1_000,
-        message: 'hello',
-        secret: {
-          preimage: '03005c92d5d5b0ee2aa22f2be2f0e86a89f316b9fa63b3d1ed57277e021f9d50',
-          hash: 'dffa98e079d9c4d478a40570d689e3213c0ee6fc3b9256a759f7bc3be6278ef1'
-        }
+        amount: { millisatoshis: 1_000 },
+        message: 'hello'
       }
     end
+
+    let(:secret) do
+      Lighstorm::Models::Secret.create do |generator|
+        VCR.reel.unsafe('I_KNOW_WHAT_I_AM_DOING').replay("#{vcr_key}/secret", payment_params) do
+          generator.call
+        end
+      end.to_h
+    end
+
+    let(:params) { payment_params.merge({ secret: secret }) }
 
     context 'gradual' do
       it 'flows' do
         request = described_class.prepare(
           through: params[:through],
           public_key: params[:public_key],
-          millisatoshis: params[:millisatoshis],
+          amount: params[:amount],
           secret: params[:secret],
           message: params[:message],
           times_out_in: { seconds: 5 }
@@ -82,7 +90,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         expect(model.secret.preimage.size).to eq(64)
         expect(model.secret.hash).to eq(params[:secret][:hash])
         expect(model.hops.size).to eq(2)
-        expect(model.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
+        expect(model.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
         Contract.expect(
           model.to_h, 'f38aa6e599f457c927e2da164e250a7ae199976d9e4d67f6c4313e168e5a23d6'
@@ -99,7 +107,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           request = described_class.perform(
             through: params[:through],
             public_key: params[:public_key],
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             secret: params[:secret],
             message: params[:message],
             times_out_in: { seconds: 5 },
@@ -137,7 +145,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           action = described_class.perform(
             through: params[:through],
             public_key: params[:public_key],
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             secret: params[:secret],
             message: params[:message],
             times_out_in: { seconds: 5 }
@@ -153,7 +161,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(action.result.purpose).to eq('self-payment')
           expect(action.result.through).to eq('keysend')
           expect(action.result.hops.size).to eq(2)
-          expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
+          expect(action.result.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
           Contract.expect(
             action.to_h, '289de73c4047eb1efdd981efa8dbe07c6856d002ef398c481118e20192320ed8'
@@ -172,7 +180,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
       {
         through: 'amp',
         public_key: '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
-        millisatoshis: 1_350,
+        amount: { millisatoshis: 1_350 },
         message: 'hello',
         secret: {
           preimage: 'ad6cd0a63e741f4ad433fa67132d5dda3d317fb761e6352580046a7c333980f0',
@@ -186,7 +194,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         request = described_class.prepare(
           through: params[:through],
           public_key: params[:public_key],
-          millisatoshis: params[:millisatoshis],
+          amount: params[:amount],
           secret: params[:secret],
           message: params[:message],
           times_out_in: { seconds: 5 }
@@ -240,7 +248,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         expect(model.secret.preimage.size).to eq(64)
         expect(model.secret.hash.size).to eq(64)
         expect(model.hops.size).to eq(2)
-        expect(model.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
+        expect(model.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
         Contract.expect(
           model.to_h, 'f38aa6e599f457c927e2da164e250a7ae199976d9e4d67f6c4313e168e5a23d6'
@@ -257,7 +265,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           request = described_class.perform(
             through: params[:through],
             public_key: params[:public_key],
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             secret: params[:secret],
             message: params[:message],
             times_out_in: { seconds: 3 },
@@ -295,7 +303,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           action = described_class.perform(
             through: params[:through],
             public_key: params[:public_key],
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             secret: params[:secret],
             message: params[:message],
             times_out_in: { seconds: 5 }
@@ -310,13 +318,70 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(action.result.fee.millisatoshis).to eq(0)
           expect(action.result.purpose).to eq('self-payment')
           expect(action.result.hops.size).to eq(2)
-          expect(action.result.hops.last.amount.millisatoshis).to eq(params[:millisatoshis])
+          expect(action.result.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
           Contract.expect(
             action.to_h, 'f7c2b49e6e5a8369e178b1fc974a2a74e6d8f7a044dbeb051e6d6d9f51219f64'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
+          end
+        end
+      end
+    end
+  end
+
+  describe 'fee' do
+    let(:vcr_key) { 'Controllers::Node::Pay' }
+    let(:params) do
+      {
+        through: 'amp',
+        public_key: '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
+        amount: { millisatoshis: 1_350 },
+        fee: { maximum: { millisatoshis: 50 } },
+        message: 'hello',
+        secret: {
+          preimage: 'ad6cd0a63e741f4ad433fa67132d5dda3d317fb761e6352580046a7c333980f0',
+          hash: '5be29554bc6feb305b42b11fb0cefb100ef2ba2d87792dd84ec8bf015b3bdcab'
+        }
+      }
+    end
+
+    context 'straightforward' do
+      context 'preview' do
+        it 'previews' do
+          request = described_class.perform(
+            through: params[:through],
+            public_key: params[:public_key],
+            amount: params[:amount],
+            fee: params[:fee],
+            secret: params[:secret],
+            message: params[:message],
+            times_out_in: { seconds: 3 },
+            preview: true
+          )
+
+          expect(request[:service]).to eq(:router)
+          expect(request[:method]).to eq(:send_payment_v2)
+          expect(request[:params][:timeout_seconds]).to eq(3)
+          expect(request[:params][:fee_limit_msat]).to eq(50)
+
+          Contract.expect(
+            request, 'cad3e85e05bd20d1debfa53700c18020066f7aaa2e448dd120102f8b7315ba09'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+
+            expect(actual.contract).to eq(
+              { method: 'Symbol:11..20',
+                params: { allow_self_payment: 'Boolean',
+                          amp: 'Boolean',
+                          amt_msat: 'Integer:0..10',
+                          dest: 'String:31..40',
+                          dest_custom_records: { 34_349_334 => 'String:0..10' },
+                          fee_limit_msat: 'Integer:0..10',
+                          timeout_seconds: 'Integer:0..10' },
+                service: 'Symbol:0..10' }
+            )
           end
         end
       end
@@ -330,7 +395,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         {
           through: 'amp',
           public_key: '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
-          millisatoshis: 1,
+          amount: { millisatoshis: 1 },
           message: 'Hello from Lighstorm!',
           secret: {
             preimage: '0c484d9821d1c6bebb0903965db1f437138f39cddcfe6dc2e42c6b5f70502191',
@@ -344,7 +409,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           request = described_class.prepare(
             through: params[:through],
             public_key: params[:public_key],
-            millisatoshis: params[:millisatoshis],
+            amount: params[:amount],
             secret: params[:secret],
             message: params[:message],
             times_out_in: { seconds: 5 }
@@ -412,7 +477,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             request = described_class.perform(
               through: params[:through],
               public_key: params[:public_key],
-              millisatoshis: params[:millisatoshis],
+              amount: params[:amount],
               secret: params[:secret],
               message: params[:message],
               times_out_in: { seconds: 3 },
@@ -446,7 +511,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             described_class.perform(
               through: params[:through],
               public_key: params[:public_key],
-              millisatoshis: params[:millisatoshis],
+              amount: params[:amount],
               secret: params[:secret],
               message: params[:message],
               times_out_in: { seconds: 5 }

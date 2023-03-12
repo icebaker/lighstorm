@@ -100,13 +100,14 @@ module Lighstorm
       end
 
       def send_message(
-        message, millisatoshis:, secret: nil,
+        message, amount:, fee: nil, secret: nil,
         times_out_in: { seconds: 5 }, through: 'amp',
         preview: false
       )
         pay(
           message: message,
-          millisatoshis: millisatoshis,
+          amount: amount,
+          fee: fee,
           secret: secret,
           times_out_in: times_out_in,
           through: through,
@@ -115,13 +116,15 @@ module Lighstorm
       end
 
       def pay(
-        millisatoshis:, message: nil, secret: nil,
+        amount:, message: nil, secret: nil,
+        fee: nil,
         times_out_in: { seconds: 5 }, through: 'amp',
         preview: false
       )
         Controllers::Node::Pay.perform(
           public_key: public_key,
-          millisatoshis: millisatoshis,
+          amount: amount,
+          fee: fee,
           through: through,
           secret: secret,
           message: message,

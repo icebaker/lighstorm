@@ -63,20 +63,22 @@ require 'lighstorm'
 puts Lighstorm.version # => 0.0.9
 
 Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000, payable: 'once'
+  description: 'Coffee', amount: { millisatoshis: 1000 }, payable: 'once'
 )
 
-Lighstorm::Invoice.decode(
-  'lnbc20m1pv...qqdhhwkj'
-).pay
+Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
+
+Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
+  fee: { maximum: { millisatoshis: 1000 } }
+)
 
 Lighstorm::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
-).pay(millisatoshis: 1000)
+).pay(amount: { millisatoshis: 1000 })
 
 Lighstorm::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
-).send_message('Hello from Lighstorm!', millisatoshis: 1000)
+).send_message('Hello from Lighstorm!', amount: { millisatoshis: 1000 })
 
 Lighstorm::Node.myself.alias # => icebaker/old-stone
 Lighstorm::Node.myself.public_key # => 02d3...e997
@@ -264,23 +266,25 @@ destination = Lighstorm::Node.find_by_public_key(
 
 destination.alias # => 'icebaker/old-stone'
 
-destination.pay(millisatoshis: 1000)
+destination.pay(amount: { millisatoshis: 1000 })
 
 destination.pay(
-  millisatoshis: 1500,
+  amount: { millisatoshis: 1500 },
+  fee: { maximum: { millisatoshis: 1000 } },
   message: 'Hello from Lighstorm!',
   through: 'amp',
   times_out_in: { seconds: 5 }
 )
 
 destination.pay(
-  millisatoshis: 1200,
+  amount: { millisatoshis: 1200 },
+  fee: { maximum: { millisatoshis: 1000 } },
   message: 'Hello from Lighstorm!',
   through: 'keysend',
   times_out_in: { seconds: 5 }
 )
 
-action = destination.pay(millisatoshis: 1000)
+action = destination.pay(amount: { millisatoshis: 1000 })
 action.result.fee.millisatoshis
 ```
 
@@ -295,23 +299,31 @@ destination = Lighstorm::Node.find_by_public_key(
 
 destination.alias # => 'icebaker/old-stone'
 
-destination.send_message('Hello from Lighstorm!', millisatoshis: 1000)
+destination.send_message(
+  'Hello from Lighstorm!',
+  amount: { millisatoshis: 1000 }
+)
 
 destination.send_message(
   'Hello from Lighstorm!',
-  millisatoshis: 1000,
+  amount: { millisatoshis: 1000 },
+  fee: { maximum: { millisatoshis: 1000 } },
   through: 'amp',
   times_out_in: { seconds: 5 }
 )
 
 destination.send_message(
   'Hello from Lighstorm!',
-  millisatoshis: 1000,
+  amount: { millisatoshis: 1000 },
+  fee: { maximum: { millisatoshis: 1000 } },
   through: 'keysend',
   times_out_in: { seconds: 5 }
 )
 
-action = destination.send_message('Hello from Lighstorm!', millisatoshis: 1000)
+action = destination.send_message(
+  'Hello from Lighstorm!',
+  amount: { millisatoshis: 1000 }
+)
 action.result.fee.millisatoshis
 ```
 
@@ -485,12 +497,12 @@ invoice.secret.hash
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
 preview = Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000,
+  description: 'Coffee', amount: { millisatoshis: 1000 },
   payable: 'once', preview: true
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000,
+  description: 'Coffee', amount: { millisatoshis: 1000 },
   payable: 'once', expires_in: { minutes: 5 }
 )
 
@@ -504,7 +516,7 @@ action = Lighstorm::Invoice.create(
 )
 
 action = Lighstorm::Invoice.create(
-  description: 'Concert Ticket', millisatoshis: 500000000,
+  description: 'Concert Ticket', amount: { millisatoshis: 500000000 },
   payable: 'indefinitely', expires_in: { days: 5 }
 )
 
@@ -547,7 +559,8 @@ payment.hops.size
 
 ```ruby
 invoice.pay(
-  millisatoshis: 1500,
+  amount: { millisatoshis: 1500 },
+  fee: { maximum: { millisatoshis: 1000 } },
   message: 'here we go',
   times_out_in: { seconds: 5 }
 )
@@ -568,7 +581,7 @@ end
 
 ```ruby
 begin
-  invoice.pay(millisatoshis: 1000)
+  invoice.pay(amount: { millisatoshis: 1000 })
 rescue AmountForNonZeroError => error
   error.message # 'Millisatoshis must not be specified...'
   error.grpc.class # GRPC::Unknown
@@ -1050,13 +1063,15 @@ The downside is that we can't [lazy-load](https://en.wikipedia.org/wiki/Lazy_loa
 To perform an _action_, like creating an Invoice, you:
 ```ruby
 Lighstorm::Invoice.create(
-  description: 'Coffee', millisatoshis: 1000
+  description: 'Coffee', amount: { millisatoshis: 1000 }
 )
 ```
 
 Internally, what's happening:
 ```ruby
-action = Lighstorm::Invoice.create(description: 'Coffee', millisatoshis: 1000)
+action = Lighstorm::Invoice.create(
+  description: 'Coffee', amount: { millisatoshis: 1000 }
+)
 
    request = Controllers::Invoice::Create.prepare(params) # pure
   response = Controllers::Invoice::Create.dispatch(request) # side effect
