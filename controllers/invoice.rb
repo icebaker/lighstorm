@@ -3,6 +3,7 @@
 require_relative './invoice/all'
 require_relative './invoice/decode'
 require_relative './invoice/find_by_secret_hash'
+require_relative './invoice/find_by_code'
 require_relative './invoice/actions/create'
 
 module Lighstorm
@@ -20,8 +21,12 @@ module Lighstorm
         All.model(All.data).last
       end
 
-      def self.find_by_secret_hash(secret_hash)
-        FindBySecretHash.model(FindBySecretHash.data(secret_hash))
+      def self.find_by_secret_hash(secret_hash, &vcr)
+        FindBySecretHash.model(FindBySecretHash.data(secret_hash, &vcr))
+      end
+
+      def self.find_by_code(code, &vcr)
+        FindByCode.model(FindByCode.data(code, &vcr))
       end
 
       def self.decode(code, &vcr)

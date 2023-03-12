@@ -2,7 +2,21 @@
 
 module Lighstorm
   module Errors
-    class LighstormError < StandardError; end
+    class LighstormError < StandardError
+      attr_reader :grpc
+
+      def initialize(message = nil, grpc: nil)
+        super(message)
+        @grpc = grpc
+      end
+
+      def to_h
+        output = { class: self.class, message: message }
+        output[:grpc] = grpc.message unless grpc.nil?
+
+        output
+      end
+    end
 
     class ToDoError < LighstormError; end
 
@@ -19,6 +33,7 @@ module Lighstorm
     class OperationNotAllowedError < LighstormError; end
     class UnexpectedNumberOfHTLCsError < LighstormError; end
     class UnknownChannelError < LighstormError; end
+    class NoInvoiceFoundError < LighstormError; end
 
     class InvoiceMayHaveMultiplePaymentsError < LighstormError; end
 

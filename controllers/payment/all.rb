@@ -12,7 +12,7 @@ module Lighstorm
   module Controllers
     module Payment
       module All
-        def self.fetch(purpose: nil, limit: nil, fetch: {})
+        def self.fetch(purpose: nil, invoice_code: nil, secret_hash: nil, limit: nil, fetch: {})
           at = Time.now
 
           grpc = Ports::GRPC.session
@@ -30,6 +30,10 @@ module Lighstorm
 
             response.payments.each do |payment|
               payment = payment.to_h
+
+              next unless invoice_code.nil? || payment[:payment_request] == invoice_code
+
+              next unless secret_hash.nil? || payment[:payment_hash] == secret_hash
 
               payment_purpose = Adapter::Purpose.list_payments(payment, get_info)
 
@@ -391,11 +395,22 @@ module Lighstorm
           list_payments
         end
 
-        def self.data(purpose: nil, limit: nil, fetch: {}, &vcr)
+        def self.data(
+          purpose: nil, invoice_code: nil, secret_hash: nil, limit: nil,
+          fetch: {}, &vcr
+        )
           raw = if vcr.nil?
-                  self.fetch(purpose: purpose, limit: limit, fetch: fetch)
+                  self.fetch(
+                    purpose: purpose, invoice_code: invoice_code, secret_hash: secret_hash,
+                    limit: limit, fetch: fetch
+                  )
                 else
-                  vcr.call(-> { self.fetch(purpose: purpose, limit: limit, fetch: fetch) })
+                  vcr.call(lambda {
+                             self.fetch(
+                               purpose: purpose, invoice_code: invoice_code, secret_hash: secret_hash,
+                               limit: limit, fetch: fetch
+                             )
+                           })
                 end
 
           adapted = adapt(raw)
