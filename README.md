@@ -56,6 +56,12 @@ Lighstorm::Invoice.create(
   payable: 'once'
 )
 
+Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
+
+Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
+  fee: { maximum: { millisatoshis: 1000 } }
+)
+
 Lighstorm::Satoshis.new(
   millisatoshis: 75_621_650
 ).satoshis # => 75_621

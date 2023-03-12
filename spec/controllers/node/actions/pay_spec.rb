@@ -331,6 +331,63 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
     end
   end
 
+  describe 'fee' do
+    let(:vcr_key) { 'Controllers::Node::Pay' }
+    let(:params) do
+      {
+        through: 'amp',
+        public_key: '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997',
+        amount: { millisatoshis: 1_350 },
+        fee: { maximum: { millisatoshis: 50 } },
+        message: 'hello',
+        secret: {
+          preimage: 'ad6cd0a63e741f4ad433fa67132d5dda3d317fb761e6352580046a7c333980f0',
+          hash: '5be29554bc6feb305b42b11fb0cefb100ef2ba2d87792dd84ec8bf015b3bdcab'
+        }
+      }
+    end
+
+    context 'straightforward' do
+      context 'preview' do
+        it 'previews' do
+          request = described_class.perform(
+            through: params[:through],
+            public_key: params[:public_key],
+            amount: params[:amount],
+            fee: params[:fee],
+            secret: params[:secret],
+            message: params[:message],
+            times_out_in: { seconds: 3 },
+            preview: true
+          )
+
+          expect(request[:service]).to eq(:router)
+          expect(request[:method]).to eq(:send_payment_v2)
+          expect(request[:params][:timeout_seconds]).to eq(3)
+          expect(request[:params][:fee_limit_msat]).to eq(50)
+
+          Contract.expect(
+            request, 'cad3e85e05bd20d1debfa53700c18020066f7aaa2e448dd120102f8b7315ba09'
+          ) do |actual, expected|
+            expect(actual.hash).to eq(expected.hash)
+
+            expect(actual.contract).to eq(
+              { method: 'Symbol:11..20',
+                params: { allow_self_payment: 'Boolean',
+                          amp: 'Boolean',
+                          amt_msat: 'Integer:0..10',
+                          dest: 'String:31..40',
+                          dest_custom_records: { 34_349_334 => 'String:0..10' },
+                          fee_limit_msat: 'Integer:0..10',
+                          timeout_seconds: 'Integer:0..10' },
+                service: 'Symbol:0..10' }
+            )
+          end
+        end
+      end
+    end
+  end
+
   context 'errors' do
     describe 'send message through amp' do
       let(:vcr_key) { 'Controllers::Node::Pay' }

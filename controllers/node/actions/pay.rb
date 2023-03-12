@@ -34,7 +34,7 @@ module Lighstorm
           Payment::Pay.model(data)
         end
 
-        def self.prepare(public_key:, amount:, times_out_in:, secret:, through:, message: nil)
+        def self.prepare(public_key:, amount:, times_out_in:, secret:, through:, fee: nil, message: nil)
           # Appreciation note for people that suffered in the past and shared
           # their knowledge, so we don't have to struggle the same:
           # - https://github.com/lightningnetwork/lnd/discussions/6357
@@ -58,6 +58,10 @@ module Lighstorm
             request[:params][:dest_custom_records][34_349_334] = message
           end
 
+          unless fee.nil? || fee[:maximum].nil? || fee[:maximum][:millisatoshis].nil?
+            request[:params][:fee_limit_msat] = fee[:maximum][:millisatoshis]
+          end
+
           if through.to_sym == :keysend
             request[:params][:payment_hash] = [secret[:hash]].pack('H*')
             request[:params][:dest_custom_records][5_482_373_484] = [secret[:preimage]].pack('H*')
@@ -72,7 +76,7 @@ module Lighstorm
 
         def self.perform(
           public_key:, amount:, through:,
-          times_out_in:,
+          times_out_in:, fee: nil,
           message: nil, secret: nil,
           preview: false, &vcr
         )
@@ -81,6 +85,7 @@ module Lighstorm
           grpc_request = prepare(
             public_key: public_key,
             amount: amount,
+            fee: fee,
             through: through,
             times_out_in: times_out_in,
             secret: secret,

@@ -287,7 +287,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       it 'previews millisatoshis' do
         preview = described_class.perform(
           code: params[:code],
-          fee: { maximum: { millisatoshis: 1000 } },
+          fee: { maximum: { millisatoshis: 1358 } },
           times_out_in: { seconds: 5 },
           preview: true
         )
@@ -300,7 +300,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
               payment_request: 'lnbc30u1pjq6g2xpp5sr46w8c9dddq9uqgc4mt2t3v3cnf4hzn5p2c9jlvlj6h7s422dysdqqcqzpgxqrrssrzjqvgptfurj3528snx6e3dtwepafxw5fpzdymw9pj20jj09sunnqmwqqqqqyqqqqqqqqqqqqlgqqqqqqgqjqnp4q2k4f66f04u08mwnkpx4ttpkm28z9ztxa364rr97w2tqvm7tqkmf7sp5pk7znhtnjk6msfscjufkeypg2hp64s9q9qkrantxmedq7r0r3xns9qyyssqhuneqh6y49xct5n6t6q57u4fahj7jsu997kwkauemqx5d47l7879aau7d2yx7cf2lxpq0zc4qw96cw5e4u5nzja3arkypyqyc7sy4qgqx3je87',
               timeout_seconds: 5,
               allow_self_payment: true,
-              fee_limit_msat: 1000
+              fee_limit_msat: 1358
             }
           }
         )

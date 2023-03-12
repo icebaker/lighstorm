@@ -66,9 +66,11 @@ Lighstorm::Invoice.create(
   description: 'Coffee', amount: { millisatoshis: 1000 }, payable: 'once'
 )
 
-Lighstorm::Invoice.decode(
-  'lnbc20m1pv...qqdhhwkj'
-).pay
+Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
+
+Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
+  fee: { maximum: { millisatoshis: 1000 } }
+)
 
 Lighstorm::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
@@ -268,6 +270,7 @@ destination.pay(amount: { millisatoshis: 1000 })
 
 destination.pay(
   amount: { millisatoshis: 1500 },
+  fee: { maximum: { millisatoshis: 1000 } },
   message: 'Hello from Lighstorm!',
   through: 'amp',
   times_out_in: { seconds: 5 }
@@ -275,6 +278,7 @@ destination.pay(
 
 destination.pay(
   amount: { millisatoshis: 1200 },
+  fee: { maximum: { millisatoshis: 1000 } },
   message: 'Hello from Lighstorm!',
   through: 'keysend',
   times_out_in: { seconds: 5 }
@@ -295,11 +299,15 @@ destination = Lighstorm::Node.find_by_public_key(
 
 destination.alias # => 'icebaker/old-stone'
 
-destination.send_message('Hello from Lighstorm!', amount: { millisatoshis: 1000 })
+destination.send_message(
+  'Hello from Lighstorm!',
+  amount: { millisatoshis: 1000 }
+)
 
 destination.send_message(
   'Hello from Lighstorm!',
   amount: { millisatoshis: 1000 },
+  fee: { maximum: { millisatoshis: 1000 } },
   through: 'amp',
   times_out_in: { seconds: 5 }
 )
@@ -307,11 +315,15 @@ destination.send_message(
 destination.send_message(
   'Hello from Lighstorm!',
   amount: { millisatoshis: 1000 },
+  fee: { maximum: { millisatoshis: 1000 } },
   through: 'keysend',
   times_out_in: { seconds: 5 }
 )
 
-action = destination.send_message('Hello from Lighstorm!', amount: { millisatoshis: 1000 })
+action = destination.send_message(
+  'Hello from Lighstorm!',
+  amount: { millisatoshis: 1000 }
+)
 action.result.fee.millisatoshis
 ```
 
@@ -548,6 +560,7 @@ payment.hops.size
 ```ruby
 invoice.pay(
   amount: { millisatoshis: 1500 },
+  fee: { maximum: { millisatoshis: 1000 } },
   message: 'here we go',
   times_out_in: { seconds: 5 }
 )
@@ -1056,7 +1069,9 @@ Lighstorm::Invoice.create(
 
 Internally, what's happening:
 ```ruby
-action = Lighstorm::Invoice.create(description: 'Coffee', amount: { millisatoshis: 1000 })
+action = Lighstorm::Invoice.create(
+  description: 'Coffee', amount: { millisatoshis: 1000 }
+)
 
    request = Controllers::Invoice::Create.prepare(params) # pure
   response = Controllers::Invoice::Create.dispatch(request) # side effect
