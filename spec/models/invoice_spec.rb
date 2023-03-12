@@ -93,8 +93,8 @@ RSpec.describe Lighstorm::Models::Invoice do
         expect(invoice.secret.hash).to eq('7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba')
 
         puts invoice.secret.proof
-        expect(invoice.secret.valid_proof?(invoice.secret.proof)).to eq(true)
-        expect(invoice.secret.valid_proof?('123')).to eq(false)
+        expect(invoice.secret.valid_proof?(invoice.secret.proof)).to be(true)
+        expect(invoice.secret.valid_proof?('123')).to be(false)
 
         Contract.expect(
           invoice.to_h, '8360b42081b5e7716668e8028d8d334a62d4a44064ffe16a1d5779e51e1c2f2d'
