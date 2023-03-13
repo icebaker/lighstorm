@@ -4,7 +4,7 @@ require_relative 'invoice'
 
 module Lighstorm
   module Models
-    class Transaction
+    class Activity
       attr_reader :direction, :at, :message, :how, :_key
 
       def initialize(data)

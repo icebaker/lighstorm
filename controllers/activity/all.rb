@@ -3,30 +3,30 @@
 require_relative '../invoice/all'
 require_relative '../payment/all'
 require_relative '../forward/all'
-require_relative '../../models/transaction'
+require_relative '../../models/activity'
 
 module Lighstorm
   module Controllers
-    module Transaction
+    module Activity
       module All
         def self.fetch(direction: nil, how: nil, limit: nil)
-          transactions = []
+          activities = []
 
           if direction.nil? || direction == 'in'
             Invoice::All.data(spontaneous: true).filter do |invoice|
               !invoice[:payments].nil? && invoice[:payments].size.positive?
             end.each do |invoice|
-              transaction_how = invoice[:code].nil? ? 'spontaneously' : 'with-invoice'
+              activity_how = invoice[:code].nil? ? 'spontaneously' : 'with-invoice'
 
-              next if !how.nil? && how != transaction_how
+              next if !how.nil? && how != activity_how
 
               # TODO: Improve performance by reducing invoice fields and removing payments?
               invoice[:payments].each do |payment|
-                transactions << {
+                activities << {
                   direction: 'in',
                   at: payment[:at],
                   amount: payment[:amount],
-                  how: transaction_how,
+                  how: activity_how,
                   message: payment[:message],
                   data: { invoice: invoice }
                 }
@@ -36,7 +36,7 @@ module Lighstorm
             Forward::All.data.each do |forward|
               next if !how.nil? && how != 'forwarding'
 
-              transactions << {
+              activities << {
                 direction: 'in',
                 at: forward[:at],
                 amount: forward[:fee],
@@ -56,33 +56,33 @@ module Lighstorm
                 get_chan_info: false
               }
             )[:data].each do |payment|
-              transaction_how = payment[:invoice][:code].nil? ? 'spontaneously' : 'with-invoice'
+              activity_how = payment[:invoice][:code].nil? ? 'spontaneously' : 'with-invoice'
 
-              next if !how.nil? && how != transaction_how
+              next if !how.nil? && how != activity_how
 
               # TODO: Improve performance by reducing invoice fields?
-              transactions << {
+              activities << {
                 direction: 'out',
                 at: payment[:at],
                 amount: payment[:amount],
-                how: transaction_how,
+                how: activity_how,
                 message: payment[:message],
                 data: { invoice: payment[:invoice] }
               }
             end
           end
 
-          transactions = transactions.sort_by { |transaction| -transaction[:at].to_i }
+          activities = activities.sort_by { |activity| -activity[:at].to_i }
 
-          transactions = transactions[0..limit - 1] unless limit.nil?
+          activities = activities[0..limit - 1] unless limit.nil?
 
-          { transactions: transactions }
+          { activities: activities }
         end
 
         def self.transform(raw)
-          raw[:transactions].map do |transaction|
-            transaction[:_key] = SecureRandom.hex
-            transaction
+          raw[:activities].map do |activity|
+            activity[:_key] = SecureRandom.hex
+            activity
           end
         end
 
@@ -97,7 +97,7 @@ module Lighstorm
         end
 
         def self.model(data)
-          data.map { |data| Models::Transaction.new(data) }
+          data.map { |data| Models::Activity.new(data) }
         end
       end
     end

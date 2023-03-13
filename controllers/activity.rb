@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative './transaction/all'
+require_relative './activity/all'
 
 module Lighstorm
   module Controllers
-    module Transaction
+    module Activity
       def self.all(direction: nil, how: nil, limit: nil)
         All.model(All.data(
                     direction: direction,
