@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../controllers/secret/valid_proof'
+
 require 'digest'
 
 module Lighstorm
@@ -30,8 +32,10 @@ module Lighstorm
         @preimage
       end
 
-      def valid_proof?(candidate_preimage)
-        candidate_preimage == preimage
+      def valid_proof?(candidate_preimage, &vcr)
+        return true if candidate_preimage == preimage
+
+        Controllers::Secret::ValidProof.data(@hash, candidate_preimage, &vcr)
       end
 
       def to_h
