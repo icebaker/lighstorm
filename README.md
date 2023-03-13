@@ -15,6 +15,7 @@ Lighstorm::Channel.mine.first.myself.node.alias
 - [About](#about)
 - [Usage](#usage)
   - [Documentation](https://icebaker.github.io/lighstorm)
+  - [Tutorials and Articles](#tutorials-and-articles)
 - [Development](https://icebaker.github.io/lighstorm/#/README?id=development)
 
 ## About
@@ -68,6 +69,10 @@ Lighstorm::Satoshis.new(
 ```
 
 Check the [full documentation](https://icebaker.github.io/lighstorm).
+
+## Tutorials and Articles
+
+- [Getting Started with Lightning Payments in Ruby](https://mirror.xyz/icebaker.eth/4RUF8umW_KRfVWHHvC2jz0c7YJqzv3RUUvLN-Mln5IU)
 
 ## Development
 

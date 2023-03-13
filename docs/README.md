@@ -112,6 +112,10 @@ Lighstorm::Satoshis.new(
 ).satoshis # => 75621.65
 ```
 
+## Tutorials and Articles
+
+- [Getting Started with Lightning Payments in Ruby](https://mirror.xyz/icebaker.eth/4RUF8umW_KRfVWHHvC2jz0c7YJqzv3RUUvLN-Mln5IU)
+
 # Data Modeling
 
 ## Graph Theory
