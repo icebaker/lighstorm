@@ -9,8 +9,6 @@ module Lighstorm
     module Secret
       module ValidProof
         def self.fetch(invoice_main_secret_hash)
-          require 'pry'
-          binding.pry
           { response: {
             at: Time.now,
             lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: invoice_main_secret_hash).to_h
