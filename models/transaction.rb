@@ -5,7 +5,7 @@ require_relative 'invoice'
 module Lighstorm
   module Models
     class Transaction
-      attr_reader :direction, :at, :message, :_key
+      attr_reader :direction, :at, :message, :how, :_key
 
       def initialize(data)
         @data = data
@@ -13,6 +13,7 @@ module Lighstorm
         @_key = @data[:_key]
         @at = @data[:at]
         @direction = @data[:direction]
+        @how = @data[:how]
         @message = @data[:message]
       end
 
@@ -21,7 +22,7 @@ module Lighstorm
       end
 
       def invoice
-        @invoice ||= @data[:kind] == 'invoice' ? Invoice.new(@data[:data]) : nil
+        @invoice ||= @data[:data][:invoice].nil? ? nil : Invoice.new(@data[:data][:invoice])
       end
 
       def to_h
@@ -30,6 +31,7 @@ module Lighstorm
           at: at,
           direction: direction,
           amount: amount.to_h,
+          how: how,
           message: message
         }
 

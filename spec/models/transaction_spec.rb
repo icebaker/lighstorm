@@ -20,10 +20,11 @@ RSpec.describe Lighstorm::Models::Transaction do
 
         transaction = described_class.new(data[0])
 
-        expect(transaction.at.utc.to_s).to eq('2023-03-10 22:41:09 UTC')
+        expect(transaction.at.utc.to_s).to eq('2023-03-13 09:45:09 UTC')
         expect(transaction.direction).to eq('in')
+        expect(transaction.how).to eq('forwarding')
+        expect(transaction.invoice).to be_nil
         expect(transaction.message).to be_nil
-        expect(transaction.invoice.amount.millisatoshis).to eq(1000)
       end
     end
   end
