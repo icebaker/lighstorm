@@ -2,6 +2,9 @@
 
 module Sanitizer
   SAFE = {
+    'how <= transactions' => true,
+    'expires_at <= data' => true,
+    'millisatoshis <= received' => true,
     'at <= response' => true,
     'hash' => true,
     '_source <= invoice_decode' => true,
