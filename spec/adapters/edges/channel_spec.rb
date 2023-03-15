@@ -8,6 +8,11 @@ require_relative '../../../ports/grpc'
 RSpec.describe Lighstorm::Adapter::Channel do
   context 'list_channels' do
     it 'adapts' do
+      channel = Lighstorm::Ports::GRPC.lightning.list_channels.channels.first.to_h
+      node = Lighstorm::Ports::GRPC.lightning.get_node_info(
+        pub_key: channel[:remote_pubkey]
+      ).to_h
+
       raw = VCR.tape.replay('lightning.list_channels.channels.first') do
         Lighstorm::Ports::GRPC.lightning.list_channels.channels.first.to_h
       end

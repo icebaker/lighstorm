@@ -3,6 +3,7 @@
 require_relative '../invoice/all'
 require_relative '../payment/all'
 require_relative '../forward/all'
+require_relative '../transaction/all'
 require_relative '../../models/activity'
 
 module Lighstorm
@@ -11,6 +12,26 @@ module Lighstorm
       module All
         def self.fetch(direction: nil, how: nil, limit: nil)
           activities = []
+
+          Transaction::All.data.each do |transaction|
+            next if !how.nil? && how != 'on-chain'
+
+            activities << {
+              direction: (transaction[:amount][:millisatoshis]).positive? ? 'in' : 'out',
+              layer: 'on-chain',
+              at: transaction[:at],
+              amount: {
+                millisatoshis: if (transaction[:amount][:millisatoshis]).positive?
+                                 transaction[:amount][:millisatoshis]
+                               else
+                                 -transaction[:amount][:millisatoshis]
+                               end
+              },
+              how: 'on-chain',
+              message: nil,
+              data: { transaction: transaction }
+            }
+          end
 
           if direction.nil? || direction == 'in'
             Invoice::All.data(spontaneous: true).filter do |invoice|
@@ -24,6 +45,7 @@ module Lighstorm
               invoice[:payments].each do |payment|
                 activities << {
                   direction: 'in',
+                  layer: 'off-chain',
                   at: payment[:at],
                   amount: payment[:amount],
                   how: activity_how,
@@ -38,6 +60,7 @@ module Lighstorm
 
               activities << {
                 direction: 'in',
+                layer: 'off-chain',
                 at: forward[:at],
                 amount: forward[:fee],
                 how: 'forwarding',
@@ -63,6 +86,7 @@ module Lighstorm
               # TODO: Improve performance by reducing invoice fields?
               activities << {
                 direction: 'out',
+                layer: 'off-chain',
                 at: payment[:at],
                 amount: payment[:amount],
                 how: activity_how,

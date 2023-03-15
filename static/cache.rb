@@ -3,6 +3,7 @@
 module Lighstorm
   module Static
     CACHE = {
+      lightning_get_transactions: false,
       lightning_update_channel_policy: false,
       lightning_add_invoice: false,
       router_send_payment_v2: false,

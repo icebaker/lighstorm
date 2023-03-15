@@ -2,6 +2,18 @@
 
 module Sanitizer
   UNSAFE = {
+    'num_confirmations <= get_transactions' => true,
+    'block_hash <= get_transactions' => true,
+    'block_height <= get_transactions' => true,
+    'dest_addresses <= get_transactions' => true,
+    'output_type <= output_details' => true,
+    'address <= output_details' => true,
+    'pk_script <= output_details' => true,
+    'output_index <= output_details' => true,
+    'amount <= output_details' => true,
+    'raw_tx_hex <= get_transactions' => true,
+    'outpoint <= previous_outpoints' => true,
+
     'preimage' => true,
     'root_share <= amp' => true,
     'address <= invoice_decode' => true,
