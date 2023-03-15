@@ -1,43 +1,38 @@
 # frozen_string_literal: true
 
-require_relative 'invoice'
+require_relative './satoshis'
 
 module Lighstorm
   module Models
     class Transaction
-      attr_reader :direction, :at, :message, :how, :_key
+      attr_reader :_key, :at, :hash, :label
 
       def initialize(data)
         @data = data
 
         @_key = @data[:_key]
         @at = @data[:at]
-        @direction = @data[:direction]
-        @how = @data[:how]
-        @message = @data[:message]
+        @hash = @data[:hash]
+        @label = @data[:label]
       end
 
       def amount
         @amount ||= Satoshis.new(millisatoshis: @data[:amount][:millisatoshis])
       end
 
-      def invoice
-        @invoice ||= @data[:data][:invoice].nil? ? nil : Invoice.new(@data[:data][:invoice])
+      def fee
+        @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
       end
 
       def to_h
-        output = {
+        {
           _key: _key,
           at: at,
-          direction: direction,
+          hash: hash,
           amount: amount.to_h,
-          how: how,
-          message: message
+          fee: fee.to_h,
+          label: label
         }
-
-        output[:invoice] = invoice.to_h unless invoice.nil?
-
-        output
       end
     end
   end

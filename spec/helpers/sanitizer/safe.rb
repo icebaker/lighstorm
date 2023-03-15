@@ -2,7 +2,16 @@
 
 module Sanitizer
   SAFE = {
-    'how <= transactions' => true,
+    'is_our_output <= previous_outpoints' => true,
+    'is_our_address <= output_details' => true,
+    'label <= get_transactions' => true,
+
+    'tx_hash <= get_transactions' => true,
+    'amount <= get_transactions' => true,
+    'time_stamp <= get_transactions' => true,
+    'total_fees <= get_transactions' => true,
+
+    'how <= activities' => true,
     'expires_at <= data' => true,
     'millisatoshis <= received' => true,
     'at <= response' => true,
@@ -57,10 +66,10 @@ module Sanitizer
     'payable <= data' => true,
     '_source <= data' => true,
     'known <= data' => true,
-    'message <= transactions' => true,
-    'direction <= transactions' => true,
-    'at <= transactions' => true,
-    'kind <= transactions' => true,
+    'message <= activities' => true,
+    'direction <= activities' => true,
+    'at <= activities' => true,
+    'kind <= activities' => true,
     'millisatoshis <= amount' => true,
     'id <= channel' => true,
     'at <= payment' => true,
