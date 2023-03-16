@@ -41,10 +41,16 @@ gem 'lighstorm', '~> 0.0.12'
 ```ruby
 require 'lighstorm'
 
-Lighstorm.config!(
-  lnd_address: '127.0.0.1:10009',
+# lndconnect
+Lighstorm.connect!(
+  'lndconnect://127.0.0.1:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4'
+)
+
+# File Path
+Lighstorm.connect!(
+  address: '127.0.0.1:10009',
   certificate_path: '/lnd/tls.cert',
-  macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon',
+  macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
 )
 
 puts Lighstorm.version # => 0.0.12
