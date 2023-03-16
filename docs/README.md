@@ -32,30 +32,6 @@ gem 'lighstorm', '~> 0.0.12'
 
 Run `bundle install`.
 
-## Credentials
-
-Set the following _Environment Variables_ or create a `.env` file:
-```bash
-LIGHSTORM_LND_ADDRESS=127.0.0.1:10009
-LIGHSTORM_CERTIFICATE_PATH=/lnd/tls.cert
-LIGHSTORM_MACAROON_PATH=/lnd/data/chain/bitcoin/mainnet/admin.macaroon
-```
-
-It will automatically load your credentials.
-
-Alternatively, you can set the credentials at runtime:
-
-```ruby
-require 'lighstorm'
-
-Lighstorm.config!(
-  lnd_address: '127.0.0.1:10009',
-  certificate_path: '/lnd/tls.cert',
-  macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon',
-)
-
-```
-
 ## Examples
 ```ruby
 require 'lighstorm'
@@ -115,6 +91,140 @@ Lighstorm::Satoshis.new(
 ## Tutorials and Articles
 
 - [Getting Started with Lightning Payments in Ruby](https://mirror.xyz/icebaker.eth/4RUF8umW_KRfVWHHvC2jz0c7YJqzv3RUUvLN-Mln5IU)
+
+# Connecting
+
+## Environment Variables
+
+Choose a method and set the following _Environment Variables_, or create a `.env` file. This will automatically load your credentials.
+
+### lndconnect
+
+Read more about [lnd connect URL](https://github.com/LN-Zap/lndconnect/blob/master/lnd_connect_uri.md).
+
+```bash
+LIGHSTORM_LND_CONNECT=lndconnect://127.0.0.1:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4
+```
+
+### File Path
+
+```bash
+LIGHSTORM_LND_ADDRESS=127.0.0.1:10009
+LIGHSTORM_LND_CERTIFICATE_PATH=/lnd/tls.cert
+LIGHSTORM_LND_MACAROON_PATH=/lnd/data/chain/bitcoin/mainnet/admin.macaroon
+```
+
+### Base64
+
+```bash
+LIGHSTORM_LND_ADDRESS=127.0.0.1:10009
+LIGHSTORM_LND_CERTIFICATE=LS0tLS1CRU...UtLS0tLQo=
+LIGHSTORM_LND_MACAROON=AgEDbG5kAv...inv45ukJ4=
+```
+
+### Hex
+
+```bash
+LIGHSTORM_LND_ADDRESS=127.0.0.1:10009
+LIGHSTORM_LND_CERTIFICATE=2d2d2d2d2d...2d2d2d2d0a
+LIGHSTORM_LND_MACAROON=0201036c6e...bf8e6e909e
+```
+
+## Runtime
+Alternatively, you can set the credentials at runtime:
+
+### lndconnect
+
+Read more about [lnd connect URL](https://github.com/LN-Zap/lndconnect/blob/master/lnd_connect_uri.md).
+
+```ruby
+require 'lighstorm'
+
+Lighstorm.connect!(
+  'lndconnect://127.0.0.1:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4'
+)
+```
+
+### File Path
+
+```ruby
+require 'lighstorm'
+
+Lighstorm.connect!(
+  address: '127.0.0.1:10009',
+  certificate_path: '/lnd/tls.cert',
+  macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
+)
+```
+
+### Base64
+
+```ruby
+require 'lighstorm'
+
+Lighstorm.connect!(
+  address: '127.0.0.1:10009',
+  certificate: 'LS0tLS1CRU...UtLS0tLQo=',
+  macaroon: 'AgEDbG5kAv...inv45ukJ4='
+)
+```
+
+### Hex
+
+```ruby
+require 'lighstorm'
+
+Lighstorm.connect!(
+  address: '127.0.0.1:10009',
+  certificate: '2d2d2d2d2d...2d2d2d2d0a',
+  macaroon: '0201036c6e...bf8e6e909e'
+)
+```
+
+### Raw
+
+```ruby
+require 'lighstorm'
+
+Lighstorm.connect!(
+  address: '127.0.0.1:10009',
+  certificate: File.read('/lnd/tls.cert'),
+  macaroon: File.read('/lnd/data/chain/bitcoin/mainnet/admin.macaroon')
+)
+```
+
+## Docker and Remote Access
+
+To connect to an LND node through a Docker container or remote host, you may need to adjust your certificate settings. Follow these steps:
+
+1. Stop your LND node.
+
+2. Remove or backup existing certificate files (`tls.cert` and `tls.key`) in the LND directory.
+
+3. Modify `lnd.conf` to include the relevant `tlsextraip` and/or `tlsextradomain` settings:
+
+Option A: Accept any IP or domain (Warning: high security risk):
+
+```conf
+tlsextraip=0.0.0.0
+```
+
+Option B: Accept only your Docker host (172.17.0.1):
+```conf
+tlsextraip=172.17.0.1
+```
+
+Option C: Accept a specific remote domain and host:
+```config
+tlsextraip=<your_remote_host_ip>
+tlsextradomain=<your_domain_name>
+```
+
+4. Save and restart your LND node. New tls.cert and tls.key files will be generated.
+
+5. Update your LND client configuration with the new certificate.
+
+Choose the option that best suits your needs and environment while considering security implications.
 
 # Data Modeling
 

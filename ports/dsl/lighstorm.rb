@@ -23,8 +23,8 @@ module Lighstorm
 
   Satoshis = Models::Satoshis
 
-  def self.config!(config)
-    LND.instance.config = config
+  def self.connect!(config)
+    LND.instance.connect!(config)
   end
 
   def self.inject_middleware!(middleware_lambda)
