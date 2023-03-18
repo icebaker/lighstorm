@@ -3,21 +3,14 @@
 require_relative './node/myself'
 require_relative './node/all'
 require_relative './node/find_by_public_key'
+require_relative './impersonatable'
 
 module Lighstorm
   module Controllers
     module Node
-      def self.as(id)
-        DSL.new({ grpc: Ports::GRPC::Impersonatable.new(id) })
-      end
+      extend Impersonatable
 
-      class DSL
-        attr_reader :components
-
-        def initialize(components = nil)
-          @components = components.nil? ? { grpc: Ports::GRPC } : components
-        end
-
+      class DSL < Impersonatable::DSL
         def myself
           Myself.model(Myself.data(components))
         end
@@ -33,18 +26,6 @@ module Lighstorm
         def adapt(dump: nil, gossip: nil)
           Models::Node.adapt(dump: dump, gossip: gossip)
         end
-      end
-
-      def self.method_missing(method_name, *args, &block)
-        if args.size == 1 && args.first.is_a?(Hash)
-          DSL.new.send(method_name, **args.first, &block)
-        else
-          DSL.new.send(method_name, *args, &block)
-        end
-      end
-
-      def self.respond_to_missing?(method_name, include_private = false)
-        DSL.method_defined?(method_name) || super
       end
     end
   end
