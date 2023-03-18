@@ -193,6 +193,35 @@ Lighstorm.connect!(
 )
 ```
 
+## Multiclient
+
+Multiclient allows you to establish connections with multiple nodes and effortlessly switch between them.
+
+```ruby
+require 'lighstorm'
+
+Lighstorm.add_connection!(
+  'alice',
+  'lndconnect://127.0.0.1:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4'
+)
+
+Lighstorm.add_connection!(
+  'bob',
+  address: '127.0.0.1:10009',
+  certificate: 'LS0tLS1CRU...UtLS0tLQo=',
+  macaroon: 'AgEDbG5kAv...inv45ukJ4='
+)
+
+Lighstorm::Node.as('alice').myself.alias # => alice
+Lighstorm::Node.as('bob').myself.alias # => bob
+
+Lighstorm.connections # => ['alice', 'bob']
+
+Lighstorm.remove_connection!('bob')
+
+Lighstorm.connections # => ['alice']
+```
+
 ## Docker and Remote Access
 
 To connect to an LND node through a Docker container or remote host, you may need to adjust your certificate settings. Follow these steps:
