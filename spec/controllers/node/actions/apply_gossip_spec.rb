@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../../../controllers/node'
 require_relative '../../../../controllers/node/find_by_public_key'
 
 require_relative '../../../../models/nodes/node'
@@ -11,7 +12,10 @@ require_relative '../../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Models::Node do
   describe '.apply!' do
     let(:node) do
-      data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
+      data = Lighstorm::Controllers::Node::FindByPublicKey.data(
+        Lighstorm::Controllers::Node.components,
+        public_key
+      ) do |fetch|
         VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
       end
 

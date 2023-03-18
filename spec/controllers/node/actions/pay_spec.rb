@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../../../../controllers/node'
 require_relative '../../../../controllers/node/actions/pay'
 require_relative '../../../../models/satoshis'
 require_relative '../../../../models/secret'
@@ -63,11 +64,16 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           )
         end
 
-        response = described_class.dispatch(request) do |grpc|
+        response = described_class.dispatch(
+          Lighstorm::Controllers::Node.components,
+          request
+        ) do |grpc|
           VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
         end
 
-        data = described_class.fetch do |fetch|
+        data = described_class.fetch(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay("#{vcr_key}/fetch", params) { fetch.call }
         end
 
@@ -105,6 +111,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
+            Lighstorm::Controllers::Node.components,
             through: params[:through],
             public_key: params[:public_key],
             amount: params[:amount],
@@ -143,6 +150,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
       context 'perform' do
         it 'performs' do
           action = described_class.perform(
+            Lighstorm::Controllers::Node.components,
             through: params[:through],
             public_key: params[:public_key],
             amount: params[:amount],
@@ -221,11 +229,16 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           )
         end
 
-        response = described_class.dispatch(request) do |grpc|
+        response = described_class.dispatch(
+          Lighstorm::Controllers::Node.components,
+          request
+        ) do |grpc|
           VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
         end
 
-        data = described_class.fetch do |fetch|
+        data = described_class.fetch(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay("#{vcr_key}/fetch", params) { fetch.call }
         end
 
@@ -263,6 +276,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
+            Lighstorm::Controllers::Node.components,
             through: params[:through],
             public_key: params[:public_key],
             amount: params[:amount],
@@ -301,6 +315,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
       context 'perform' do
         it 'performs' do
           action = described_class.perform(
+            Lighstorm::Controllers::Node.components,
             through: params[:through],
             public_key: params[:public_key],
             amount: params[:amount],
@@ -351,6 +366,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
+            Lighstorm::Controllers::Node.components,
             through: params[:through],
             public_key: params[:public_key],
             amount: params[:amount],
@@ -434,11 +450,16 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             )
           end
 
-          response = described_class.dispatch(request) do |grpc|
+          response = described_class.dispatch(
+            Lighstorm::Controllers::Node.components,
+            request
+          ) do |grpc|
             VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
           end
 
-          data = described_class.fetch do |fetch|
+          data = described_class.fetch(
+            Lighstorm::Controllers::Node.components
+          ) do |fetch|
             VCR.tape.replay("#{vcr_key}/fetch", params) { fetch.call }
           end
 
@@ -475,6 +496,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         context 'preview' do
           it 'previews' do
             request = described_class.perform(
+              Lighstorm::Controllers::Node.components,
               through: params[:through],
               public_key: params[:public_key],
               amount: params[:amount],
@@ -509,6 +531,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
         context 'perform' do
           it 'performs' do
             described_class.perform(
+              Lighstorm::Controllers::Node.components,
               through: params[:through],
               public_key: params[:public_key],
               amount: params[:amount],

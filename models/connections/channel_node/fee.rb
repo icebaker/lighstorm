@@ -46,8 +46,13 @@ module Lighstorm
         Marshal.load(Marshal.dump(@data))
       end
 
+      def components
+        { grpc: Ports::GRPC }
+      end
+
       def update(params, preview: false, &vcr)
         Controllers::Channel::UpdateFee.perform(
+          components,
           @policy, @policy.transaction, params,
           preview: preview, &vcr
         )

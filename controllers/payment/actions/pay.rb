@@ -14,9 +14,9 @@ module Lighstorm
   module Controllers
     module Payment
       module Pay
-        def self.call(grpc_request)
+        def self.call(components, grpc_request)
           result = []
-          Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
+          components[:grpc].send(grpc_request[:service]).send(
             grpc_request[:method], grpc_request[:params]
           ) do |response|
             result << response.to_h
@@ -26,19 +26,23 @@ module Lighstorm
           { exception: e }
         end
 
-        def self.dispatch(grpc_request, &vcr)
-          vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
+        def self.dispatch(components, grpc_request, &vcr)
+          if vcr.nil?
+            call(components, grpc_request)
+          else
+            vcr.call(-> { call(components, grpc_request) }, :dispatch)
+          end
         end
 
-        def self.fetch_all(code)
+        def self.fetch_all(components, code)
           {
-            invoice_decode: code.nil? ? nil : Invoice::Decode.data(code),
-            node_myself: Node::Myself.data
+            invoice_decode: code.nil? ? nil : Invoice::Decode.data(components, code),
+            node_myself: Node::Myself.data(components)
           }
         end
 
-        def self.fetch(code = nil, &vcr)
-          raw = vcr.nil? ? fetch_all(code) : vcr.call(-> { fetch_all(code) })
+        def self.fetch(components, code = nil, &vcr)
+          raw = vcr.nil? ? fetch_all(components, code) : vcr.call(-> { fetch_all(components, code) })
         end
 
         def self.adapt(grpc_data, fetch_data)

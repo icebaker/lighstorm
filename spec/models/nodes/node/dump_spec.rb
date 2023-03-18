@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../../../controllers/node'
 require_relative '../../../../controllers/node/myself'
 require_relative '../../../../controllers/node/find_by_public_key'
 require_relative '../../../../controllers/node/all'
@@ -14,11 +15,15 @@ RSpec.describe Lighstorm::Models::Node do
   describe '.dump' do
     context 'samples' do
       let(:data) do
-        myself = Lighstorm::Controllers::Node::Myself.data do |fetch|
+        myself = Lighstorm::Controllers::Node::Myself.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.myself') { fetch.call }
         end
 
-        data = Lighstorm::Controllers::Node::All.data do |fetch|
+        data = Lighstorm::Controllers::Node::All.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.all/samples') do
             data = fetch.call
 

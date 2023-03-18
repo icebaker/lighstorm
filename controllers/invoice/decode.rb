@@ -8,10 +8,10 @@ module Lighstorm
   module Controllers
     module Invoice
       module Decode
-        def self.fetch(code)
+        def self.fetch(components, code)
           {
             _code: code,
-            decode_pay_req: Ports::GRPC.lightning.decode_pay_req(pay_req: code).to_h
+            decode_pay_req: components[:grpc].lightning.decode_pay_req(pay_req: code).to_h
           }
         end
 
@@ -27,8 +27,8 @@ module Lighstorm
           adapted[:decode_pay_req]
         end
 
-        def self.data(code, &vcr)
-          raw = vcr.nil? ? fetch(code) : vcr.call(-> { fetch(code) })
+        def self.data(components, code, &vcr)
+          raw = vcr.nil? ? fetch(components, code) : vcr.call(-> { fetch(components, code) })
 
           adapted = adapt(raw)
 

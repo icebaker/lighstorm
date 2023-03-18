@@ -2,6 +2,7 @@
 
 module Sanitizer
   SAFE = {
+    '' => true,
     'is_our_output <= previous_outpoints' => true,
     'is_our_address <= output_details' => true,
     'label <= get_transactions' => true,

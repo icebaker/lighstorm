@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../controllers/transaction'
 require_relative '../../controllers/transaction/all'
 
 require_relative '../../models/transaction'
@@ -12,7 +13,10 @@ RSpec.describe Lighstorm::Models::Transaction do
   describe 'all' do
     context 'all' do
       it 'models' do
-        data = Lighstorm::Controllers::Transaction::All.data(limit: 2) do |fetch|
+        data = Lighstorm::Controllers::Transaction::All.data(
+          Lighstorm::Controllers::Transaction.components,
+          limit: 2
+        ) do |fetch|
           VCR.tape.unsafe('I_KNOW_WHAT_I_AM_DOING').replay('Controllers::Transaction.all', limit: 2) do
             fetch.call
           end

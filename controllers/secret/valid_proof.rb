@@ -8,10 +8,10 @@ module Lighstorm
   module Controllers
     module Secret
       module ValidProof
-        def self.fetch(invoice_main_secret_hash)
+        def self.fetch(components, invoice_main_secret_hash)
           { response: {
             at: Time.now,
-            lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: invoice_main_secret_hash).to_h
+            lookup_invoice: components[:grpc].lightning.lookup_invoice(r_hash_str: invoice_main_secret_hash).to_h
           }, exception: nil }
         rescue StandardError => e
           { exception: e }
@@ -39,13 +39,13 @@ module Lighstorm
           end.nil?
         end
 
-        def self.data(invoice_main_secret_hash, proof, &vcr)
+        def self.data(components, invoice_main_secret_hash, proof, &vcr)
           raise 'Invalid proof' if proof.size != 64
 
           raw = if vcr.nil?
-                  fetch(invoice_main_secret_hash)
+                  fetch(components, invoice_main_secret_hash)
                 else
-                  vcr.call(-> { fetch(invoice_main_secret_hash) })
+                  vcr.call(-> { fetch(components, invoice_main_secret_hash) })
                 end
 
           adapted = adapt(raw[:response])

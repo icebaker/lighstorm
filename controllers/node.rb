@@ -7,20 +7,44 @@ require_relative './node/find_by_public_key'
 module Lighstorm
   module Controllers
     module Node
-      def self.myself
-        Myself.model(Myself.data)
+      def self.as(id)
+        DSL.new({ grpc: Ports::GRPC::Impersonatable.new(id) })
       end
 
-      def self.all(limit: nil)
-        All.model(All.data(limit: limit))
+      class DSL
+        attr_reader :components
+
+        def initialize(components = nil)
+          @components = components.nil? ? { grpc: Ports::GRPC } : components
+        end
+
+        def myself
+          Myself.model(Myself.data(components))
+        end
+
+        def all(limit: nil)
+          All.model(All.data(components, limit: limit))
+        end
+
+        def find_by_public_key(public_key)
+          FindByPublicKey.model(FindByPublicKey.data(components, public_key))
+        end
+
+        def adapt(dump: nil, gossip: nil)
+          Models::Node.adapt(dump: dump, gossip: gossip)
+        end
       end
 
-      def self.find_by_public_key(public_key)
-        FindByPublicKey.model(FindByPublicKey.data(public_key))
+      def self.method_missing(method_name, *args, &block)
+        if args.size == 1 && args.first.is_a?(Hash)
+          DSL.new.send(method_name, **args.first, &block)
+        else
+          DSL.new.send(method_name, *args, &block)
+        end
       end
 
-      def self.adapt(dump: nil, gossip: nil)
-        Models::Node.adapt(dump: dump, gossip: gossip)
+      def self.respond_to_missing?(method_name, include_private = false)
+        DSL.method_defined?(method_name) || super
       end
     end
   end

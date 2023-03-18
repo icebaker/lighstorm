@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../controllers/invoice'
 require_relative '../../controllers/invoice/all'
 require_relative '../../controllers/invoice/find_by_secret_hash'
 require_relative '../../controllers/invoice/find_by_code'
@@ -15,7 +16,9 @@ RSpec.describe Lighstorm::Models::Invoice do
   describe 'all' do
     context 'settled' do
       it 'models' do
-        data = Lighstorm::Controllers::Invoice::All.data do |fetch|
+        data = Lighstorm::Controllers::Invoice::All.data(
+          Lighstorm::Controllers::Invoice.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Invoice.all.last/memo/settled') do
             data = fetch.call
 
@@ -66,7 +69,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = '7dc0a651f241c5c940ae303338e96af942b7559009728e2ab046d8f6583419ba'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -107,7 +113,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -150,7 +159,10 @@ RSpec.describe Lighstorm::Models::Invoice do
     end
 
     it 'models' do
-      data = Lighstorm::Controllers::Invoice::Decode.data(code) do |fetch|
+      data = Lighstorm::Controllers::Invoice::Decode.data(
+        Lighstorm::Controllers::Invoice.components,
+        code
+      ) do |fetch|
         VCR.tape.replay("Controllers::Invoice.decode/#{code}") { fetch.call }
       end
 
@@ -189,7 +201,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = '95178ac5940c2db18da40992f78fcb45bc60d93980a66bbb2756e5d0488467fa'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -232,7 +247,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = '08ac2953c03578fee7684918398087479b6301ac9384fb67f369184b4e528274'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -273,7 +291,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = '62e4d7f9e3add7b4d28e48d80413f1c600e59ec757f01577902824cdf68dcdb5'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -318,7 +339,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = 'e8bcaeacc407ff1192407cda123ff02768f89f9278a885dbd2e6687c271a89b6'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -358,7 +382,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = '15cf219e3db2b721d1eff89ef64111a7bf4ff2f70ab86bdd2c359248b1f91c0e'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
@@ -397,7 +424,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         invoice_code = 'lnbc1pjqeakgpp54n5rsd6x48ku26h6dutr2tvmljjmr85t6apsud8p9ka4pxjd4edsdq4facx2m3qg3hkuct5d9hkucqzpgxqyz5vqsp5kp4klrul4kh8jq7259uenz3gdppmqajcqp54tx9yp6j4p5q4ntks9q8pqqqssq2zn0emqa3emqcaylvst0xxvh9h9qrgdmzwz2vrwhr08fyf7f2qlke3elnsehhyncwd4j5t07k6ln94lrgd49602dj27c3jvpg36ruzqpwktt3h'
 
-        data = Lighstorm::Controllers::Invoice::FindByCode.data(invoice_code) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindByCode.data(
+          Lighstorm::Controllers::Invoice.components,
+          invoice_code
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_code/#{invoice_code}") { fetch.call }
         end
 
@@ -459,7 +489,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         invoice_code = 'lnbc10n1pjqeaagpp547hctzgurgxt5gswku6yujyztf5c0mkr4zr7ts5d39vgkmpc0wzsdq6g3hkuct5v5srzgznv96x7umgdycqzpgxqyz5vqsp5zrhkyds6ggxqf5pcwqv6tj74nxwdtesdhfmjaavvp5kjzwn9qyps9q8pqqqssqnp765vtvlkphr8z0842t33xyejfex5eyf7umnsuxew9s2dswx64809rls45lcnpex2vnte50hrm3m4dsvr07603jsgv7tkj2n6r70gcpemuu5p'
 
-        data = Lighstorm::Controllers::Invoice::FindByCode.data(invoice_code) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindByCode.data(
+          Lighstorm::Controllers::Invoice.components,
+          invoice_code
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_code/#{invoice_code}") { fetch.call }
         end
 
@@ -512,7 +545,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       let(:secret_hash) { '93ea9358cf63c4edb7bf88a451e6ac57d327dbd355c6814d2644053b8c190faf' }
 
       it 'models' do
-        data = Lighstorm::Controllers::Invoice::All.data(spontaneous: true) do |fetch|
+        data = Lighstorm::Controllers::Invoice::All.data(
+          Lighstorm::Controllers::Invoice.components,
+          spontaneous: true
+        ) do |fetch|
           VCR.tape.replay('Controllers::Invoice.all.first/expired-indefinitely') do
             data = fetch.call
             data[:list_invoices] = [data[:list_invoices].find do |invoice|
@@ -575,7 +611,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       end
 
       it 'models' do
-        data = Lighstorm::Controllers::Invoice::FindByCode.data(code) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindByCode.data(
+          Lighstorm::Controllers::Invoice.components,
+          code
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_code/#{code}") { fetch.call }
         end
 
@@ -614,7 +653,10 @@ RSpec.describe Lighstorm::Models::Invoice do
       it 'models' do
         secret_hash = 'ea5ad6e07b476fecfcc9cb44c73a93bc8acc186efc8e0c658e3fb8541d79511e'
 
-        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(secret_hash) do |fetch|
+        data = Lighstorm::Controllers::Invoice::FindBySecretHash.data(
+          Lighstorm::Controllers::Invoice.components,
+          secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 

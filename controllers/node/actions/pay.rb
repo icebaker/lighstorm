@@ -18,12 +18,12 @@ module Lighstorm
   module Controllers
     module Node
       module Pay
-        def self.dispatch(grpc_request, &vcr)
-          Payment::Pay.dispatch(grpc_request, &vcr)
+        def self.dispatch(components, grpc_request, &vcr)
+          Payment::Pay.dispatch(components, grpc_request, &vcr)
         end
 
-        def self.fetch(&vcr)
-          Payment::Pay.fetch(&vcr)
+        def self.fetch(components, &vcr)
+          Payment::Pay.fetch(components, &vcr)
         end
 
         def self.adapt(data, node_get_info)
@@ -75,6 +75,7 @@ module Lighstorm
         end
 
         def self.perform(
+          components,
           public_key:, amount:, through:,
           times_out_in:, fee: nil,
           message: nil, secret: nil,
@@ -94,11 +95,11 @@ module Lighstorm
 
           return grpc_request if preview
 
-          response = dispatch(grpc_request, &vcr)
+          response = dispatch(components, grpc_request, &vcr)
 
           Payment::Pay.raise_error_if_exists!(response)
 
-          data = fetch(&vcr)
+          data = fetch(components, &vcr)
 
           adapted = adapt(response, data)
 

@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../../controllers/payment'
 require_relative '../../../controllers/payment/all'
 
 require_relative '../../../models/edges/payment'
@@ -12,7 +13,9 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Models::Payment do
   describe 'all' do
     let(:data) do
-      Lighstorm::Controllers::Payment::All.data do |fetch|
+      Lighstorm::Controllers::Payment::All.data(
+        Lighstorm::Controllers::Payment.components
+      ) do |fetch|
         VCR.tape.replay("Controllers::Payment.all/#{secret_hash}") do
           data = fetch.call
           data[:list_payments] = [
@@ -36,7 +39,10 @@ RSpec.describe Lighstorm::Models::Payment do
       end
 
       let(:data) do
-        Lighstorm::Controllers::Payment::All.data(fetch: fetch_options) do |fetch|
+        Lighstorm::Controllers::Payment::All.data(
+          Lighstorm::Controllers::Payment.components,
+          fetch: fetch_options
+        ) do |fetch|
           VCR.tape.replay("Controllers::Payment.all/#{secret_hash}", fetch: fetch_options) do
             data = fetch.call
             data[:list_payments] = [
@@ -1417,7 +1423,10 @@ RSpec.describe Lighstorm::Models::Payment do
       end
 
       let(:data) do
-        Lighstorm::Controllers::Payment::All.data(invoice_code: invoice_code) do |fetch|
+        Lighstorm::Controllers::Payment::All.data(
+          Lighstorm::Controllers::Payment.components,
+          invoice_code: invoice_code
+        ) do |fetch|
           VCR.tape.replay("Controllers::Payment.all/invoice_code/#{invoice_code}") do
             fetch.call
           end
@@ -1530,7 +1539,10 @@ RSpec.describe Lighstorm::Models::Payment do
       end
 
       let(:data) do
-        Lighstorm::Controllers::Payment::All.data(secret_hash: secret_hash) do |fetch|
+        Lighstorm::Controllers::Payment::All.data(
+          Lighstorm::Controllers::Payment.components,
+          secret_hash: secret_hash
+        ) do |fetch|
           VCR.tape.replay("Controllers::Payment.all/secret_hash/#{secret_hash}") do
             fetch.call
           end

@@ -39,7 +39,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               params: { memo: params[:description], expiry: 86_400, is_amp: true } }
           )
 
-          response = described_class.dispatch(request) do |grpc|
+          response = described_class.dispatch(
+            Lighstorm::Controllers::Invoice.components,
+            request
+          ) do |grpc|
             VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
           end
 
@@ -52,7 +55,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               secret: { hash: '34edfc3ab4a65b6864d5d1b2fdad2d4195160bec95f58b8e9d4f34c75a84bd4d' } }
           )
 
-          data = described_class.fetch(adapted) do |fetch|
+          data = described_class.fetch(
+            Lighstorm::Controllers::Invoice.components,
+            adapted
+          ) do |fetch|
             VCR.reel.replay("#{vcr_key}/fetch", params) { fetch.call }
           end
 
@@ -104,6 +110,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'preview' do
           it 'previews' do
             request = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               description: params[:description], payable: params[:payable],
               expires_in: { hours: 24 },
               preview: true
@@ -120,6 +127,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'perform' do
           it 'performs' do
             action = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               payable: params[:payable], description: params[:description],
               expires_in: { hours: 24 }
             ) do |fn, from = :fetch|
@@ -224,7 +232,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               } }
           )
 
-          response = described_class.dispatch(request) do |grpc|
+          response = described_class.dispatch(
+            Lighstorm::Controllers::Invoice.components,
+            request
+          ) do |grpc|
             VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
           end
 
@@ -245,7 +256,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             )
           end
 
-          data = described_class.fetch(adapted) do |fetch|
+          data = described_class.fetch(
+            Lighstorm::Controllers::Invoice.components,
+            adapted
+          ) do |fetch|
             VCR.reel.replay("#{vcr_key}/fetch", params) { fetch.call }
           end
 
@@ -306,6 +320,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'preview' do
           it 'previews' do
             request = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               amount: params[:amount], description: params[:description],
               payable: params[:payable],
               expires_in: { hours: 24 },
@@ -327,6 +342,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'perform' do
           it 'performs' do
             action = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               amount: params[:amount],
               description: params[:description],
               expires_in: { hours: 24 },

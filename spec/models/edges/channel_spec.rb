@@ -2,6 +2,9 @@
 
 require 'json'
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../models/edges/channel/hop'
 require_relative '../../../controllers/channel/mine'
 require_relative '../../../controllers/channel/all'
 require_relative '../../../controllers/channel/find_by_id'
@@ -13,7 +16,9 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Models::Channel do
   describe '.mine' do
     it 'models' do
-      data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
+      data = Lighstorm::Controllers::Channel::Mine.data(
+        Lighstorm::Controllers::Channel.components
+      ) do |fetch|
         VCR.tape.replay('Controllers::Channel.mine') do
           data = fetch.call
           data[:list_channels] = [data[:list_channels][0].to_h]
@@ -167,7 +172,10 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'models' do
         channel_id = '850111604344029185'
 
-        data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
+        data = Lighstorm::Controllers::Channel::FindById.data(
+          Lighstorm::Controllers::Channel.components,
+          channel_id
+        ) do |fetch|
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
@@ -310,7 +318,10 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'models' do
         channel_id = '553951550347608065'
 
-        data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
+        data = Lighstorm::Controllers::Channel::FindById.data(
+          Lighstorm::Controllers::Channel.components,
+          channel_id
+        ) do |fetch|
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
@@ -390,7 +401,10 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'models' do
         channel_id = '853996178921881601'
 
-        data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
+        data = Lighstorm::Controllers::Channel::FindById.data(
+          Lighstorm::Controllers::Channel.components,
+          channel_id
+        ) do |fetch|
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
@@ -483,7 +497,9 @@ RSpec.describe Lighstorm::Models::Channel do
 
   describe 'all' do
     let :data do
-      Lighstorm::Controllers::Channel::All.data do |fetch|
+      Lighstorm::Controllers::Channel::All.data(
+        Lighstorm::Controllers::Channel.components
+      ) do |fetch|
         VCR.tape.replay('Controllers::Channel.all') do
           data = fetch.call
 

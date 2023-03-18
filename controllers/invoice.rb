@@ -9,28 +9,32 @@ require_relative './invoice/actions/create'
 module Lighstorm
   module Controllers
     module Invoice
+      def self.components
+        { grpc: Ports::GRPC }
+      end
+
       def self.all(limit: nil, spontaneous: false)
-        All.model(All.data(limit: limit, spontaneous: spontaneous))
+        All.model(All.data(components, limit: limit, spontaneous: spontaneous))
       end
 
       def self.first
-        All.model(All.data).first
+        All.model(All.data(components)).first
       end
 
       def self.last
-        All.model(All.data).last
+        All.model(All.data(components)).last
       end
 
       def self.find_by_secret_hash(secret_hash, &vcr)
-        FindBySecretHash.model(FindBySecretHash.data(secret_hash, &vcr))
+        FindBySecretHash.model(FindBySecretHash.data(components, secret_hash, &vcr))
       end
 
       def self.find_by_code(code, &vcr)
-        FindByCode.model(FindByCode.data(code, &vcr))
+        FindByCode.model(FindByCode.data(components, code, &vcr))
       end
 
       def self.decode(code, &vcr)
-        Decode.model(Decode.data(code, &vcr))
+        Decode.model(Decode.data(components, code, &vcr))
       end
 
       def self.create(
@@ -42,6 +46,7 @@ module Lighstorm
         preview: false, &vcr
       )
         Create.perform(
+          components,
           payable: payable,
           description: description,
           amount: amount,

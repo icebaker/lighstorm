@@ -9,27 +9,27 @@ module Lighstorm
   module Controllers
     module Channel
       module Mine
-        def self.fetch
+        def self.fetch(components)
           data = {
             at: Time.now,
-            get_info: Ports::GRPC.lightning.get_info.to_h,
+            get_info: components[:grpc].lightning.get_info.to_h,
             # Ensure that we are getting fresh up-date data about our own fees.
-            fee_report: Ports::GRPC.lightning.fee_report.to_h,
-            list_channels: Ports::GRPC.lightning.list_channels.channels.map(&:to_h),
+            fee_report: components[:grpc].lightning.fee_report.to_h,
+            list_channels: components[:grpc].lightning.list_channels.channels.map(&:to_h),
             get_chan_info: {},
             get_node_info: {}
           }
 
           data[:list_channels].each do |channel|
             unless data[:get_chan_info][channel[:chan_id]]
-              data[:get_chan_info][channel[:chan_id]] = Ports::GRPC.lightning.get_chan_info(
+              data[:get_chan_info][channel[:chan_id]] = components[:grpc].lightning.get_chan_info(
                 chan_id: channel[:chan_id]
               ).to_h
             end
 
             next if data[:get_node_info][channel[:remote_pubkey]]
 
-            data[:get_node_info][channel[:remote_pubkey]] = Ports::GRPC.lightning.get_node_info(
+            data[:get_node_info][channel[:remote_pubkey]] = components[:grpc].lightning.get_node_info(
               pub_key: channel[:remote_pubkey]
             ).to_h
           end
@@ -95,8 +95,8 @@ module Lighstorm
           data
         end
 
-        def self.data(&vcr)
-          raw = vcr.nil? ? fetch : vcr.call(-> { fetch })
+        def self.data(components, &vcr)
+          raw = vcr.nil? ? fetch(components) : vcr.call(-> { fetch(components) })
 
           adapted = adapt(raw)
 

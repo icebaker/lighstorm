@@ -11,11 +11,11 @@ module Lighstorm
   module Controllers
     module Channel
       module All
-        def self.fetch(limit: nil)
+        def self.fetch(components, limit: nil)
           data = {
             at: Time.now,
             mine: Mine.fetch,
-            describe_graph: Ports::GRPC.lightning.describe_graph.edges
+            describe_graph: components[:grpc].lightning.describe_graph.edges
           }
 
           data[:describe_graph] = data[:describe_graph][0..limit - 1] unless limit.nil?
@@ -60,8 +60,12 @@ module Lighstorm
           data
         end
 
-        def self.data(limit: nil, &vcr)
-          raw = vcr.nil? ? fetch(limit: limit) : vcr.call(-> { fetch(limit: limit) })
+        def self.data(components, limit: nil, &vcr)
+          raw = if vcr.nil?
+                  fetch(components, limit: limit)
+                else
+                  vcr.call(-> { fetch(components, limit: limit) })
+                end
 
           adapted = adapt(raw)
 

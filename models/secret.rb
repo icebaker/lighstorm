@@ -32,10 +32,17 @@ module Lighstorm
         @preimage
       end
 
+      def components
+        { grpc: Ports::GRPC }
+      end
+
       def valid_proof?(candidate_preimage, &vcr)
         return true if candidate_preimage == preimage
 
-        Controllers::Secret::ValidProof.data(@hash, candidate_preimage, &vcr)
+        Controllers::Secret::ValidProof.data(
+          components,
+          @hash, candidate_preimage, &vcr
+        )
       end
 
       def to_h

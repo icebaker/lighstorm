@@ -46,22 +46,26 @@ module Lighstorm
           grpc_request
         end
 
-        def self.call(grpc_request)
-          Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
+        def self.call(components, grpc_request)
+          components[:grpc].send(grpc_request[:service]).send(
             grpc_request[:method], grpc_request[:params]
           ).to_h
         end
 
-        def self.dispatch(grpc_request, &vcr)
-          vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
+        def self.dispatch(components, grpc_request, &vcr)
+          if vcr.nil?
+            call(components, grpc_request)
+          else
+            vcr.call(-> { call(components, grpc_request) }, :dispatch)
+          end
         end
 
-        def self.perform(policy, transaction, params, preview: false, &vcr)
+        def self.perform(components, policy, transaction, params, preview: false, &vcr)
           grpc_request = prepare(policy.to_h, transaction.to_h, params)
 
           return grpc_request if preview
 
-          response = dispatch(grpc_request, &vcr)
+          response = dispatch(components, grpc_request, &vcr)
 
           raise UpdateChannelPolicyError.new(nil, response) unless response[:failed_updates].empty?
 

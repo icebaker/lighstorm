@@ -12,7 +12,9 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
   describe 'all' do
     context 'no filters' do
       let(:data) do
-        data = Lighstorm::Controllers::Forward::GroupByChannel.data do |fetch|
+        data = Lighstorm::Controllers::Forward::GroupByChannel.data(
+          Lighstorm::Controllers::Forward.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Forward.group_by_channel') { fetch.call }
         end
       end
@@ -172,7 +174,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
     context 'hours-ago filter' do
       let(:data) do
-        data = Lighstorm::Controllers::Forward::GroupByChannel.data(hours_ago: 24) do |fetch|
+        data = Lighstorm::Controllers::Forward::GroupByChannel.data(
+          Lighstorm::Controllers::Forward.components,
+          hours_ago: 24
+        ) do |fetch|
           VCR.tape.replay('Controllers::Forward.group_by_channel', hours_ago: 24) { fetch.call }
         end
       end

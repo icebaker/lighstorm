@@ -8,10 +8,10 @@ module Lighstorm
   module Controllers
     module Invoice
       module FindBySecretHash
-        def self.fetch(secret_hash)
+        def self.fetch(components, secret_hash)
           { response: {
             at: Time.now,
-            lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: secret_hash).to_h
+            lookup_invoice: components[:grpc].lightning.lookup_invoice(r_hash_str: secret_hash).to_h
           }, exception: nil }
         rescue StandardError => e
           { exception: e }
@@ -33,8 +33,12 @@ module Lighstorm
           adapted[:lookup_invoice]
         end
 
-        def self.data(secret_hash, &vcr)
-          raw = vcr.nil? ? fetch(secret_hash) : vcr.call(-> { fetch(secret_hash) })
+        def self.data(components, secret_hash, &vcr)
+          raw = if vcr.nil?
+                  fetch(components, secret_hash)
+                else
+                  vcr.call(-> { fetch(components, secret_hash) })
+                end
 
           adapted = adapt(raw[:response])
 

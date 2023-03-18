@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../../controllers/node'
 require_relative '../../../controllers/node/myself'
 require_relative '../../../controllers/node/find_by_public_key'
 require_relative '../../../controllers/node/all'
@@ -13,7 +14,9 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Models::Node do
   describe '.myself' do
     it 'models' do
-      data = Lighstorm::Controllers::Node::Myself.data do |fetch|
+      data = Lighstorm::Controllers::Node::Myself.data(
+        Lighstorm::Controllers::Node.components
+      ) do |fetch|
         VCR.tape.replay('Controllers::Node.myself') { fetch.call }
       end
 
@@ -43,7 +46,10 @@ RSpec.describe Lighstorm::Models::Node do
       it 'models' do
         public_key = '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 
-        data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
+        data = Lighstorm::Controllers::Node::FindByPublicKey.data(
+          Lighstorm::Controllers::Node.components,
+          public_key
+        ) do |fetch|
           VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
         end
 
@@ -72,7 +78,10 @@ RSpec.describe Lighstorm::Models::Node do
       it 'models' do
         public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78877928'
 
-        data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
+        data = Lighstorm::Controllers::Node::FindByPublicKey.data(
+          Lighstorm::Controllers::Node.components,
+          public_key
+        ) do |fetch|
           VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
         end
 
@@ -103,11 +112,15 @@ RSpec.describe Lighstorm::Models::Node do
   describe '.all' do
     context 'samples' do
       it 'models' do
-        myself = Lighstorm::Controllers::Node::Myself.data do |fetch|
+        myself = Lighstorm::Controllers::Node::Myself.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.myself') { fetch.call }
         end
 
-        data = Lighstorm::Controllers::Node::All.data do |fetch|
+        data = Lighstorm::Controllers::Node::All.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.all/samples') do
             data = fetch.call
 

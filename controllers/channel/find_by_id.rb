@@ -11,22 +11,22 @@ module Lighstorm
   module Controllers
     module Channel
       module FindById
-        def self.fetch(id)
+        def self.fetch(components, id)
           data = {
             at: Time.now,
-            get_info: Ports::GRPC.lightning.get_info.to_h,
+            get_info: components[:grpc].lightning.get_info.to_h,
             # Ensure that we are getting fresh up-date data about our own fees.
-            fee_report: Ports::GRPC.lightning.fee_report.to_h,
-            get_chan_info: Ports::GRPC.lightning.get_chan_info(chan_id: id.to_i).to_h,
+            fee_report: components[:grpc].lightning.fee_report.to_h,
+            get_chan_info: components[:grpc].lightning.get_chan_info(chan_id: id.to_i).to_h,
             get_node_info: {},
             list_channels: []
           }
 
-          data[:get_node_info][data[:get_chan_info][:node1_pub]] = Ports::GRPC.lightning.get_node_info(
+          data[:get_node_info][data[:get_chan_info][:node1_pub]] = components[:grpc].lightning.get_node_info(
             pub_key: data[:get_chan_info][:node1_pub]
           ).to_h
 
-          data[:get_node_info][data[:get_chan_info][:node2_pub]] = Ports::GRPC.lightning.get_node_info(
+          data[:get_node_info][data[:get_chan_info][:node2_pub]] = components[:grpc].lightning.get_node_info(
             pub_key: data[:get_chan_info][:node2_pub]
           ).to_h
 
@@ -40,7 +40,7 @@ module Lighstorm
           if is_mine
             partner = partners.find { |p| p != data[:get_info][:identity_pubkey] }
 
-            data[:list_channels] = Ports::GRPC.lightning.list_channels(
+            data[:list_channels] = components[:grpc].lightning.list_channels(
               peer: [partner].pack('H*')
             ).channels.map(&:to_h)
           end
@@ -136,8 +136,8 @@ module Lighstorm
           data
         end
 
-        def self.data(id, &vcr)
-          raw = vcr.nil? ? fetch(id) : vcr.call(-> { fetch(id) })
+        def self.data(components, id, &vcr)
+          raw = vcr.nil? ? fetch(components, id) : vcr.call(-> { fetch(components, id) })
 
           adapted = adapt(raw)
 

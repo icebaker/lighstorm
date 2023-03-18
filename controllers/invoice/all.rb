@@ -8,7 +8,7 @@ module Lighstorm
   module Controllers
     module Invoice
       module All
-        def self.fetch(limit: nil, spontaneous: false)
+        def self.fetch(components, limit: nil, spontaneous: false)
           at = Time.now
 
           last_offset = 0
@@ -16,7 +16,7 @@ module Lighstorm
           invoices = []
 
           loop do
-            response = Ports::GRPC.lightning.list_invoices(
+            response = components[:grpc].lightning.list_invoices(
               index_offset: last_offset,
               num_max_invoices: 10
             )
@@ -57,11 +57,11 @@ module Lighstorm
           end
         end
 
-        def self.data(limit: nil, spontaneous: false, &vcr)
+        def self.data(components, limit: nil, spontaneous: false, &vcr)
           raw = if vcr.nil?
-                  fetch(limit: limit, spontaneous: spontaneous)
+                  fetch(components, limit: limit, spontaneous: spontaneous)
                 else
-                  vcr.call(-> { fetch(limit: limit, spontaneous: spontaneous) })
+                  vcr.call(-> { fetch(components, limit: limit, spontaneous: spontaneous) })
                 end
 
           adapted = adapt(raw)

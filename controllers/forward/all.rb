@@ -14,7 +14,7 @@ module Lighstorm
   module Controllers
     module Forward
       module All
-        def self.fetch(limit: nil)
+        def self.fetch(components, limit: nil)
           at = Time.now
 
           last_offset = 0
@@ -22,7 +22,7 @@ module Lighstorm
           forwards = []
 
           loop do
-            response = Ports::GRPC.lightning.forwarding_history(index_offset: last_offset)
+            response = components[:grpc].lightning.forwarding_history(index_offset: last_offset)
 
             response.forwarding_events.each { |forward| forwards << forward.to_h }
 
@@ -40,8 +40,8 @@ module Lighstorm
 
           data = {
             at: at,
-            get_info: Ports::GRPC.lightning.get_info.to_h,
-            fee_report: Ports::GRPC.lightning.fee_report.to_h,
+            get_info: components[:grpc].lightning.get_info.to_h,
+            fee_report: components[:grpc].lightning.fee_report.to_h,
             forwarding_history: forwards,
             list_channels: {},
             get_chan_info: {},
@@ -51,7 +51,7 @@ module Lighstorm
           forwards.each do |forward|
             unless data[:get_chan_info][forward[:chan_id_in]]
               begin
-                data[:get_chan_info][forward[:chan_id_in]] = Ports::GRPC.lightning.get_chan_info(
+                data[:get_chan_info][forward[:chan_id_in]] = components[:grpc].lightning.get_chan_info(
                   chan_id: forward[:chan_id_in]
                 ).to_h
               rescue GRPC::Unknown => e
@@ -62,7 +62,7 @@ module Lighstorm
             next if data[:get_chan_info][forward[:chan_id_out]]
 
             begin
-              data[:get_chan_info][forward[:chan_id_out]] = Ports::GRPC.lightning.get_chan_info(
+              data[:get_chan_info][forward[:chan_id_out]] = components[:grpc].lightning.get_chan_info(
                 chan_id: forward[:chan_id_out]
               ).to_h
             rescue GRPC::Unknown => e
@@ -83,7 +83,7 @@ module Lighstorm
               partner = partners.find { |p| p != data[:get_info][:identity_pubkey] }
 
               unless list_channels_done[partner]
-                Ports::GRPC.lightning.list_channels(
+                components[:grpc].lightning.list_channels(
                   peer: [partner].pack('H*')
                 ).channels.map(&:to_h).each do |list_channels|
                   data[:list_channels][list_channels[:chan_id]] = list_channels
@@ -94,14 +94,14 @@ module Lighstorm
             end
 
             unless data[:get_node_info][channel[:node1_pub]]
-              data[:get_node_info][channel[:node1_pub]] = Ports::GRPC.lightning.get_node_info(
+              data[:get_node_info][channel[:node1_pub]] = components[:grpc].lightning.get_node_info(
                 pub_key: channel[:node1_pub]
               ).to_h
             end
 
             next if data[:get_node_info][channel[:node2_pub]]
 
-            data[:get_node_info][channel[:node2_pub]] = Ports::GRPC.lightning.get_node_info(
+            data[:get_node_info][channel[:node2_pub]] = components[:grpc].lightning.get_node_info(
               pub_key: channel[:node2_pub]
             ).to_h
           end
@@ -109,7 +109,7 @@ module Lighstorm
           data[:list_channels].each_value do |channel|
             next if data[:get_node_info][channel[:remote_pubkey]]
 
-            data[:get_node_info][channel[:remote_pubkey]] = Ports::GRPC.lightning.get_node_info(
+            data[:get_node_info][channel[:remote_pubkey]] = components[:grpc].lightning.get_node_info(
               pub_key: channel[:remote_pubkey]
             ).to_h
           end
@@ -221,8 +221,12 @@ module Lighstorm
           data
         end
 
-        def self.data(limit: nil, &vcr)
-          raw = vcr.nil? ? fetch(limit: limit) : vcr.call(-> { fetch(limit: limit) })
+        def self.data(components, limit: nil, &vcr)
+          raw = if vcr.nil?
+                  fetch(components, limit: limit)
+                else
+                  vcr.call(-> { fetch(components, limit: limit) })
+                end
 
           adapted = adapt(raw)
 
