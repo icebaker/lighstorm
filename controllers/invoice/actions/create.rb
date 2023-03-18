@@ -55,8 +55,8 @@ module Lighstorm
           FindBySecretHash.data(components, adapted[:secret][:hash], &vcr)
         end
 
-        def self.model(data)
-          FindBySecretHash.model(data)
+        def self.model(data, components)
+          FindBySecretHash.model(data, components)
         end
 
         def self.perform(
@@ -78,7 +78,7 @@ module Lighstorm
           adapted = adapt(response)
 
           data = fetch(components, adapted, &vcr)
-          model = self.model(data)
+          model = self.model(data, components)
 
           Action::Output.new({ response: response, result: model })
         end

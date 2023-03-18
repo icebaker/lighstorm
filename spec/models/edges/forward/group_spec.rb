@@ -2,6 +2,10 @@
 
 require 'json'
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../../models/edges/channel/hop'
+require_relative '../../../../controllers/forward'
 require_relative '../../../../controllers/forward/group_by_channel'
 
 require_relative '../../../../models/edges/groups/channel_forwards'
@@ -21,7 +25,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
       context 'known peer' do
         it 'models' do
-          group = described_class.new(data.find { |d| d[:channel][:known] })
+          group = described_class.new(
+            data.find { |d| d[:channel][:known] },
+            Lighstorm::Controllers::Forward.components
+          )
 
           expect(group._key.size).to eq(64)
 
@@ -126,7 +133,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
       context 'lost peer' do
         it 'models' do
-          group = described_class.new(data.find { |d| !d[:channel][:known] })
+          group = described_class.new(
+            data.find { |d| !d[:channel][:known] },
+            Lighstorm::Controllers::Forward.components
+          )
 
           expect(group._key.size).to eq(64)
 

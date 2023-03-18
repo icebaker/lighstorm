@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require_relative './concerns/impersonatable'
+
 require_relative './node/myself'
 require_relative './node/all'
 require_relative './node/find_by_public_key'
-require_relative './impersonatable'
 
 module Lighstorm
   module Controllers
@@ -12,7 +13,7 @@ module Lighstorm
 
       class DSL < Impersonatable::DSL
         def myself
-          Myself.model(Myself.data(components))
+          Myself.model(Myself.data(components), components)
         end
 
         def all(limit: nil)
@@ -20,7 +21,7 @@ module Lighstorm
         end
 
         def find_by_public_key(public_key)
-          FindByPublicKey.model(FindByPublicKey.data(components, public_key))
+          FindByPublicKey.model(FindByPublicKey.data(components, public_key), components)
         end
 
         def adapt(dump: nil, gossip: nil)

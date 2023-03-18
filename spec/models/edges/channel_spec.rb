@@ -26,7 +26,7 @@ RSpec.describe Lighstorm::Models::Channel do
         end
       end
 
-      channel = described_class.new(data[0])
+      channel = described_class.new(data[0], Lighstorm::Controllers::Channel.components)
 
       expect(channel._key.size).to eq(64)
       expect(channel.known?).to be(true)
@@ -179,7 +179,7 @@ RSpec.describe Lighstorm::Models::Channel do
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         as_hash = channel.to_h
 
@@ -325,7 +325,7 @@ RSpec.describe Lighstorm::Models::Channel do
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -408,7 +408,7 @@ RSpec.describe Lighstorm::Models::Channel do
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -517,7 +517,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'other' do
       it 'models' do
-        channel = described_class.new(data[0])
+        channel = described_class.new(data[0], Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -594,7 +594,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'mine' do
       it 'models' do
-        channel = described_class.new(data[1])
+        channel = described_class.new(data[1], Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)

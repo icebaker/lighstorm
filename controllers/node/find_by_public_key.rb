@@ -44,8 +44,8 @@ module Lighstorm
           end
         end
 
-        def self.model(data)
-          Lighstorm::Models::Node.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Node.new(data, components)
         end
       end
     end

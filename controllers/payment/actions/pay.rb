@@ -53,8 +53,8 @@ module Lighstorm
           )
         end
 
-        def self.model(data)
-          Models::Payment.new(data)
+        def self.model(data, components)
+          Models::Payment.new(data, components)
         end
 
         def self.raise_error_if_exists!(response)

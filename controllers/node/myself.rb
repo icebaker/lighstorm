@@ -25,8 +25,8 @@ module Lighstorm
           adapted[:get_info].merge(myself: true)
         end
 
-        def self.model(data)
-          Lighstorm::Models::Node.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Node.new(data, components)
         end
       end
     end

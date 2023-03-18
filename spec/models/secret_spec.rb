@@ -9,7 +9,7 @@ RSpec.describe Lighstorm::Models::Secret do
     let(:seed) { 'secret-a' }
 
     it 'generates' do
-      secret = described_class.create do |generator|
+      secret = described_class.create(Lighstorm::Controllers::Invoice.components) do |generator|
         VCR.reel.unsafe('I_KNOW_WHAT_I_AM_DOING').replay("#{vcr_key}/#{seed}") do
           generator.call
         end
@@ -29,7 +29,8 @@ RSpec.describe Lighstorm::Models::Secret do
 
     it 'generates' do
       secret = described_class.new(
-        { hash: secret_hash, preimage: valid_proof }
+        { hash: secret_hash, preimage: valid_proof },
+        Lighstorm::Controllers::Invoice.components
       )
 
       expect(secret.hash).to eq(secret_hash)
@@ -56,7 +57,8 @@ RSpec.describe Lighstorm::Models::Secret do
 
     it 'generates' do
       secret = described_class.new(
-        { hash: secret_hash, preimage: nil }
+        { hash: secret_hash, preimage: nil },
+        Lighstorm::Controllers::Invoice.components
       )
 
       expect(secret.hash).to eq(secret_hash)

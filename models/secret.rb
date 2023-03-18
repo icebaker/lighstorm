@@ -15,14 +15,15 @@ module Lighstorm
         data
       end
 
-      def self.create(&vcr)
+      def self.create(components, &vcr)
         data = vcr.nil? ? generate : vcr.call(-> { generate })
 
-        Secret.new(data)
+        Secret.new(data, components)
       end
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @preimage = data[:preimage]
         @hash = data[:hash]
@@ -32,15 +33,13 @@ module Lighstorm
         @preimage
       end
 
-      def components
-        { grpc: Ports::GRPC }
-      end
-
       def valid_proof?(candidate_preimage, &vcr)
+        raise MissingComponentsError if @components.nil?
+
         return true if candidate_preimage == preimage
 
         Controllers::Secret::ValidProof.data(
-          components,
+          @components,
           @hash, candidate_preimage, &vcr
         )
       end

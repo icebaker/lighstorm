@@ -20,6 +20,7 @@ module Lighstorm
 
     class ToDoError < LighstormError; end
 
+    class MissingComponentsError < LighstormError; end
     class ArgumentError < LighstormError; end
     class TooManyArgumentsError < LighstormError; end
     class IncoherentGossipError < LighstormError; end

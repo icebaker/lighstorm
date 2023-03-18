@@ -5,9 +5,6 @@ require 'time'
 require_relative '../../ports/grpc'
 require_relative '../../adapters/edges/channel'
 
-require_relative '../../components/lnd'
-require_relative '../../components/cache'
-
 require_relative '../nodes/node'
 require_relative './channel/accounting'
 
@@ -22,8 +19,9 @@ module Lighstorm
     class Channel
       attr_reader :data, :_key, :id
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @_key = data[:_key]
         @id = data[:id]
@@ -78,7 +76,7 @@ module Lighstorm
       def partners
         @partners ||= if @data[:partners]
                         @data[:partners].map do |data|
-                          ChannelNode.new(data, known? ? mine? : nil, transaction)
+                          ChannelNode.new(data, @components, known? ? mine? : nil, transaction)
                         end
                       else
                         []
@@ -170,9 +168,9 @@ module Lighstorm
         raise ArgumentError, 'missing gossip: or dump:' if gossip.nil? && dump.nil?
 
         if !gossip.nil?
-          new(Adapter::Channel.subscribe_channel_graph(gossip))
+          new(Adapter::Channel.subscribe_channel_graph(gossip), nil)
         elsif !dump.nil?
-          new(dump)
+          new(dump, nil)
         end
       end
 

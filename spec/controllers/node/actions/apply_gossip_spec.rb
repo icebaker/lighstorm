@@ -19,7 +19,7 @@ RSpec.describe Lighstorm::Models::Node do
         VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
       end
 
-      described_class.new(data)
+      described_class.new(data, Lighstorm::Controllers::Node.components)
     end
 
     context 'complete with changes' do

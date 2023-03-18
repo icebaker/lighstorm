@@ -84,7 +84,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               known: true }
           )
 
-          model = described_class.model(data)
+          model = described_class.model(data, Lighstorm::Controllers::Invoice.components)
 
           expect(model.payable).to be('indefinitely')
 
@@ -291,7 +291,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             )
           end
 
-          model = described_class.model(data)
+          model = described_class.model(data, Lighstorm::Controllers::Invoice.components)
 
           Contract.expect(
             model.to_h, '0cc11f5cd2e9cfd54ab3789f155d9661f288ce3dbadf28f7fb8877a6f38e36d2'

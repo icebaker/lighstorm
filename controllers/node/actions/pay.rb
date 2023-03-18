@@ -30,8 +30,8 @@ module Lighstorm
           Payment::Pay.adapt(data, node_get_info)
         end
 
-        def self.model(data)
-          Payment::Pay.model(data)
+        def self.model(data, components)
+          Payment::Pay.model(data, components)
         end
 
         def self.prepare(public_key:, amount:, times_out_in:, secret:, through:, fee: nil, message: nil)
@@ -103,7 +103,7 @@ module Lighstorm
 
           adapted = adapt(response, data)
 
-          model = self.model(adapted)
+          model = self.model(adapted, components)
 
           Payment::Pay.raise_failure_if_exists!(model, response)
 

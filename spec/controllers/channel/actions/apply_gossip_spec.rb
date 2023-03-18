@@ -19,7 +19,7 @@ RSpec.describe Lighstorm::Models::Channel do
         VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
       end
 
-      described_class.new(data)
+      described_class.new(data, nil)
     end
 
     context 'complete without changes A' do

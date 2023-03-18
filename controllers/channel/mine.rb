@@ -103,9 +103,9 @@ module Lighstorm
           adapted[:list_channels].map { |data| transform(data, adapted) }
         end
 
-        def self.model(data)
+        def self.model(data, components)
           data.map do |node_data|
-            Lighstorm::Models::Channel.new(node_data)
+            Lighstorm::Models::Channel.new(node_data, components)
           end
         end
       end

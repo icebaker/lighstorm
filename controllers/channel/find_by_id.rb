@@ -144,8 +144,8 @@ module Lighstorm
           transform(adapted[:get_chan_info], adapted)
         end
 
-        def self.model(data)
-          Lighstorm::Models::Channel.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Channel.new(data, components)
         end
       end
     end

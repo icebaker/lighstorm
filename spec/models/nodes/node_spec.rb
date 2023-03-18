@@ -20,7 +20,7 @@ RSpec.describe Lighstorm::Models::Node do
         VCR.tape.replay('Controllers::Node.myself') { fetch.call }
       end
 
-      node = described_class.new(data)
+      node = described_class.new(data, Lighstorm::Controllers::Node.components)
 
       expect(node._key.size).to eq(64)
       expect(node.myself?).to be(true)
@@ -53,7 +53,7 @@ RSpec.describe Lighstorm::Models::Node do
           VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
         end
 
-        node = described_class.new(data)
+        node = described_class.new(data, Lighstorm::Controllers::Node.components)
 
         expect(node._key.size).to eq(64)
         expect(node.myself?).to be(true)
@@ -85,7 +85,7 @@ RSpec.describe Lighstorm::Models::Node do
           VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
         end
 
-        node = described_class.new(data)
+        node = described_class.new(data, Lighstorm::Controllers::Node.components)
 
         expect(node._key.size).to eq(64)
         expect(node.myself?).to be(false)
@@ -134,9 +134,9 @@ RSpec.describe Lighstorm::Models::Node do
           end
         end
 
-        node_alias = described_class.new(data[0])
-        node_no_alias = described_class.new(data[1])
-        node_myself = described_class.new(data[2])
+        node_alias = described_class.new(data[0], Lighstorm::Controllers::Node.components)
+        node_no_alias = described_class.new(data[1], Lighstorm::Controllers::Node.components)
+        node_myself = described_class.new(data[2], Lighstorm::Controllers::Node.components)
 
         expect(node_alias._key.size).to eq(64)
         expect(node_alias.myself?).to be(false)

@@ -13,8 +13,9 @@ module Lighstorm
 
       attr_reader :state
 
-      def initialize(data, is_mine, transaction)
+      def initialize(data, components, is_mine, transaction)
         @data = data
+        @components = components
         @state = data[:state]
         @is_mine = is_mine
         @transaction = transaction
@@ -25,11 +26,11 @@ module Lighstorm
       end
 
       def node
-        @node ||= Node.new(@data[:node])
+        @node ||= Node.new(@data[:node], @components)
       end
 
       def policy
-        @policy ||= Policy.new(@data[:policy], @transaction)
+        @policy ||= Policy.new(@data[:policy], @components, @transaction)
       end
 
       def accounting

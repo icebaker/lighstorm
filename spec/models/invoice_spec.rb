@@ -32,7 +32,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           end
         end
 
-        invoice = described_class.new(data[0])
+        invoice = described_class.new(data[0], Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -76,7 +76,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -120,7 +120,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -166,7 +166,7 @@ RSpec.describe Lighstorm::Models::Invoice do
         VCR.tape.replay("Controllers::Invoice.decode/#{code}") { fetch.call }
       end
 
-      invoice = described_class.new(data)
+      invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
       expect(invoice._key.size).to eq(64)
 
@@ -208,7 +208,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -254,7 +254,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -298,7 +298,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -346,7 +346,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -389,7 +389,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -431,7 +431,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_code/#{invoice_code}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -496,7 +496,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_code/#{invoice_code}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -558,7 +558,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           end
         end
 
-        invoice = described_class.new(data[0])
+        invoice = described_class.new(data[0], Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -618,7 +618,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_code/#{code}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 
@@ -660,7 +660,7 @@ RSpec.describe Lighstorm::Models::Invoice do
           VCR.tape.replay("Controllers::Invoice.find_by_secret_hash/#{secret_hash}") { fetch.call }
         end
 
-        invoice = described_class.new(data)
+        invoice = described_class.new(data, Lighstorm::Controllers::Invoice.components)
 
         expect(invoice._key.size).to eq(64)
 

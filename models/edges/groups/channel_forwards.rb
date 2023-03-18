@@ -8,8 +8,9 @@ module Lighstorm
     class ChannelForwardsGroup
       attr_reader :_key, :last_at
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @_key = data[:_key]
         @last_at = data[:last_at]
@@ -20,7 +21,7 @@ module Lighstorm
       end
 
       def channel
-        @channel ||= Channel.new(@data[:channel])
+        @channel ||= Channel.new(@data[:channel], @components)
       end
 
       def to_h

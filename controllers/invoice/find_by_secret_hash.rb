@@ -45,8 +45,8 @@ module Lighstorm
           transform(adapted)
         end
 
-        def self.model(data)
-          Lighstorm::Models::Invoice.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Invoice.new(data, components)
         end
       end
     end

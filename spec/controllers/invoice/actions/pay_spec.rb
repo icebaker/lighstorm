@@ -115,7 +115,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(actual.contract).to eq(expected.contract)
         end
 
-        model = described_class.model(adapted)
+        model = described_class.model(adapted, Lighstorm::Controllers::Invoice.components)
 
         expect(model.at.utc.to_s.size).to eq(23)
         expect(model.state).to eq('succeeded')

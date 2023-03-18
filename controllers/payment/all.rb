@@ -426,9 +426,9 @@ module Lighstorm
           }
         end
 
-        def self.model(data)
+        def self.model(data, components)
           data[:data].map do |node_data|
-            Lighstorm::Models::Payment.new(node_data)
+            Lighstorm::Models::Payment.new(node_data, components)
           end
         end
       end

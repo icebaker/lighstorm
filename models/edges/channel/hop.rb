@@ -8,7 +8,7 @@ module Lighstorm
       def initialize(data, payment)
         @hop_data = data
         @payment = payment
-        super(data[:channel])
+        super(data[:channel], nil)
       end
 
       def target

@@ -24,7 +24,7 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       end
     end
 
-    Lighstorm::Models::Channel.new(data[0])
+    Lighstorm::Models::Channel.new(data[0], Lighstorm::Controllers::Channel.components)
   end
 
   let(:policy) { channel.myself.policy }

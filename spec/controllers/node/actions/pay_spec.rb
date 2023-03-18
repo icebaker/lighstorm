@@ -20,7 +20,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
     end
 
     let(:secret) do
-      Lighstorm::Models::Secret.create do |generator|
+      Lighstorm::Models::Secret.create({}) do |generator|
         VCR.reel.unsafe('I_KNOW_WHAT_I_AM_DOING').replay("#{vcr_key}/secret", payment_params) do
           generator.call
         end
@@ -86,7 +86,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(actual.contract).to eq(expected.contract)
         end
 
-        model = described_class.model(adapted)
+        model = described_class.model(adapted, Lighstorm::Controllers::Node.components)
 
         expect(model.state).to eq('succeeded')
         expect(model.amount.millisatoshis).to eq(1000)
@@ -251,7 +251,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
           expect(actual.contract).to eq(expected.contract)
         end
 
-        model = described_class.model(adapted)
+        model = described_class.model(adapted, Lighstorm::Controllers::Node.components)
 
         expect(model.state).to eq('succeeded')
         expect(model.amount.millisatoshis).to eq(1350)
@@ -472,7 +472,7 @@ RSpec.describe Lighstorm::Controllers::Node::Pay do
             expect(actual.contract).to eq(expected.contract)
           end
 
-          model = described_class.model(adapted)
+          model = described_class.model(adapted, Lighstorm::Controllers::Node.components)
 
           expect(model.state).to eq('failed')
           expect(model.amount.millisatoshis).to eq(1)

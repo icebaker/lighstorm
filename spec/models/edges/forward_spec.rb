@@ -36,7 +36,7 @@ RSpec.describe Lighstorm::Models::Forward do
           end
         end
 
-        forward = described_class.new(data[0])
+        forward = described_class.new(data[0], Lighstorm::Controllers::Forward.components)
 
         expect(forward._key.size).to eq(64)
 
@@ -237,7 +237,7 @@ RSpec.describe Lighstorm::Models::Forward do
           end
         end
 
-        forward = described_class.new(data[0])
+        forward = described_class.new(data[0], Lighstorm::Controllers::Forward.components)
 
         expect(forward._key.size).to eq(64)
 

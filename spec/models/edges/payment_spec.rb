@@ -26,7 +26,9 @@ RSpec.describe Lighstorm::Models::Payment do
       end
     end
 
-    let(:payment) { described_class.new(data[:data][0]) }
+    let(:payment) do
+      described_class.new(data[:data][0], Lighstorm::Controllers::Payment.components)
+    end
 
     context 'light mode' do
       let(:fetch_options) do

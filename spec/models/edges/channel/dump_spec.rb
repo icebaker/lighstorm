@@ -27,7 +27,7 @@ RSpec.describe Lighstorm::Models::Channel do
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         Contract.expect(
           channel.dump, '37500d995a8fae10335094e07898002e60a432be7ec879fe907704cc0a17a2ea'
@@ -98,8 +98,13 @@ RSpec.describe Lighstorm::Models::Channel do
           )
         end
 
-        expect(channel.dump).to eq(described_class.new(channel.dump).dump)
-        expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
+        expect(channel.dump).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).dump
+        )
+
+        expect(channel.to_h).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).to_h
+        )
       end
     end
 
@@ -115,7 +120,7 @@ RSpec.describe Lighstorm::Models::Channel do
           end
         end
 
-        channel = described_class.new(data[0])
+        channel = described_class.new(data[0], Lighstorm::Controllers::Channel.components)
 
         Contract.expect(
           channel.dump, 'a625dae9677bbb55775d943a9db73761d8d401a0283923b63b683e0d04a95dcd'
@@ -195,8 +200,13 @@ RSpec.describe Lighstorm::Models::Channel do
           )
         end
 
-        expect(channel.dump).to eq(described_class.new(channel.dump).dump)
-        expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
+        expect(channel.dump).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).dump
+        )
+
+        expect(channel.to_h).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).to_h
+        )
       end
     end
 
@@ -205,7 +215,8 @@ RSpec.describe Lighstorm::Models::Channel do
         gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-b.json'))
 
         channel = described_class.new(
-          Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip)
+          Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip),
+          Lighstorm::Controllers::Channel.components
         )
 
         Contract.expect(
@@ -238,8 +249,13 @@ RSpec.describe Lighstorm::Models::Channel do
           )
         end
 
-        expect(channel.dump).to eq(described_class.new(channel.dump).dump)
-        expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
+        expect(channel.dump).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).dump
+        )
+
+        expect(channel.to_h).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).to_h
+        )
       end
     end
 
@@ -248,7 +264,8 @@ RSpec.describe Lighstorm::Models::Channel do
         gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-a.json'))
 
         channel = described_class.new(
-          Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip)
+          Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip),
+          Lighstorm::Controllers::Channel.components
         )
 
         Contract.expect(
@@ -273,8 +290,13 @@ RSpec.describe Lighstorm::Models::Channel do
           )
         end
 
-        expect(channel.dump).to eq(described_class.new(channel.dump).dump)
-        expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
+        expect(channel.dump).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).dump
+        )
+
+        expect(channel.to_h).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).to_h
+        )
       end
     end
 
@@ -283,7 +305,8 @@ RSpec.describe Lighstorm::Models::Channel do
         gossip = JSON.parse(TestData.read('spec/data/gossip/channel/sample-c.json'))
 
         channel = described_class.new(
-          Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip)
+          Lighstorm::Adapter::Channel.subscribe_channel_graph(gossip),
+          Lighstorm::Controllers::Channel.components
         )
 
         Contract.expect(
@@ -302,8 +325,13 @@ RSpec.describe Lighstorm::Models::Channel do
           )
         end
 
-        expect(channel.dump).to eq(described_class.new(channel.dump).dump)
-        expect(channel.to_h).to eq(described_class.new(channel.dump).to_h)
+        expect(channel.dump).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).dump
+        )
+
+        expect(channel.to_h).to eq(
+          described_class.new(channel.dump, Lighstorm::Controllers::Channel.components).to_h
+        )
       end
     end
   end

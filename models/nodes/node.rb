@@ -16,8 +16,9 @@ module Lighstorm
 
       attr_reader :data, :_key, :alias, :public_key, :color
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @_key = @data[:_key]
         @alias = @data[:alias]
@@ -36,7 +37,9 @@ module Lighstorm
       def channels
         raise Errors::NotYourNodeError unless myself?
 
-        Controllers::Channel.mine
+        raise MissingComponentsError if @components.nil?
+
+        Controllers::Channel.mine(@components)
       end
 
       def to_h
@@ -87,9 +90,9 @@ module Lighstorm
         raise ArgumentError, 'missing gossip: or dump:' if gossip.nil? && dump.nil?
 
         if !gossip.nil?
-          new(Adapter::Node.subscribe_channel_graph(gossip))
+          new(Adapter::Node.subscribe_channel_graph(gossip), nil)
         elsif !dump.nil?
-          new(dump)
+          new(dump, nil)
         end
       end
 
@@ -121,7 +124,10 @@ module Lighstorm
         times_out_in: { seconds: 5 }, through: 'amp',
         preview: false
       )
+        raise MissingComponentsError if @components.nil?
+
         Controllers::Node::Pay.perform(
+          @components,
           public_key: public_key,
           amount: amount,
           fee: fee,
