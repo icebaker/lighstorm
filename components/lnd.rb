@@ -53,6 +53,14 @@ module Lighstorm
       @middleware.call(key, &block)
     end
 
+    def for(id)
+      as(id)&.connection
+    end
+
+    def default
+      client.connection.merge(id: @default_key)
+    end
+
     def client
       try_to_connect_from_environment_variables! unless LNDClient.connections.include?(@default_key)
       LNDClient.as(@default_key)

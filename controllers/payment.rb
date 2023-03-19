@@ -11,15 +11,15 @@ module Lighstorm
 
       class DSL < Impersonatable::DSL
         def all(purpose: nil, limit: nil, fetch: {})
-          All.model(All.data(components, purpose: purpose, limit: limit, fetch: fetch))
+          All.model(All.data(components, purpose: purpose, limit: limit, fetch: fetch), components)
         end
 
         def first(purpose: nil, fetch: {})
-          All.model(All.data(components, purpose: purpose, fetch: fetch)).first
+          All.model(All.data(components, purpose: purpose, fetch: fetch), components).first
         end
 
         def last(purpose: nil, fetch: {})
-          All.model(All.data(components, purpose: purpose, fetch: fetch)).last
+          All.model(All.data(components, purpose: purpose, fetch: fetch), components).last
         end
 
         def find_by_secret_hash(secret_hash, &vcr)

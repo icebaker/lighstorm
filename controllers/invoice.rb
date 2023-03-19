@@ -15,15 +15,15 @@ module Lighstorm
 
       class DSL < Impersonatable::DSL
         def all(limit: nil, spontaneous: false)
-          All.model(All.data(components, limit: limit, spontaneous: spontaneous))
+          All.model(All.data(components, limit: limit, spontaneous: spontaneous), components)
         end
 
         def first
-          All.model(All.data(components)).first
+          All.model(All.data(components), components).first
         end
 
         def last
-          All.model(All.data(components)).last
+          All.model(All.data(components), components).last
         end
 
         def find_by_secret_hash(secret_hash, &vcr)

@@ -200,26 +200,37 @@ Multiclient allows you to establish connections with multiple nodes and effortle
 ```ruby
 require 'lighstorm'
 
-Lighstorm.add_connection!(
-  'alice',
-  'lndconnect://127.0.0.1:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4'
+Lighstorm::Connection.connect!(
+  address: '127.0.0.1:10009',
+  certificate_path: '/lnd/tls.cert',
+  macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
 )
 
-Lighstorm.add_connection!(
+Lighstorm::Connection.add!(
+  'alice',
+  'lndconnect://127.0.0.2:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4'
+)
+
+Lighstorm::Connection.add!(
   'bob',
-  address: '127.0.0.1:10009',
+  address: '127.0.0.3:10009',
   certificate: 'LS0tLS1CRU...UtLS0tLQo=',
   macaroon: 'AgEDbG5kAv...inv45ukJ4='
 )
 
+Lighstorm::Connection.default[:address] # => '127.0.0.1:10009'
+Lighstorm::Connection.for('alice')[:address] # => '127.0.0.2:10009'
+Lighstorm::Connection.for('bob')[:address] # => '127.0.0.3:10009'
+
+Lighstorm::Node.myself.alias # => 'icebaker/old-stone'
 Lighstorm::Node.as('alice').myself.alias # => alice
 Lighstorm::Node.as('bob').myself.alias # => bob
 
-Lighstorm.connections # => ['alice', 'bob']
+Lighstorm::Connection.all # => ['alice', 'bob']
 
-Lighstorm.remove_connection!('bob')
+Lighstorm::Connection.remove!('bob')
 
-Lighstorm.connections # => ['alice']
+Lighstorm::Connection.all # => ['alice']
 ```
 
 ## Docker and Remote Access

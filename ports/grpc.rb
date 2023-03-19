@@ -12,6 +12,10 @@ module Lighstorm
           @id = id
         end
 
+        def session
+          GRPCSession.new(self)
+        end
+
         def method_missing(method_name, *_args, &block)
           service_key = method_name.to_sym
 

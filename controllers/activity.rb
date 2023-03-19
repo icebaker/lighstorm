@@ -12,6 +12,7 @@ module Lighstorm
       class DSL < Impersonatable::DSL
         def all(direction: nil, how: nil, limit: nil)
           All.model(All.data(
+                      components,
                       direction: direction,
                       how: how,
                       limit: limit

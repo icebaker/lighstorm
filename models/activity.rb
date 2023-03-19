@@ -24,7 +24,7 @@ module Lighstorm
       end
 
       def invoice
-        @invoice ||= @data[:data][:invoice].nil? ? nil : Invoice.new(@data[:data][:invoice])
+        @invoice ||= @data[:data][:invoice].nil? ? nil : Invoice.new(@data[:data][:invoice], nil)
       end
 
       def transaction

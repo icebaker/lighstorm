@@ -69,9 +69,9 @@ module Lighstorm
           transform(adapted)
         end
 
-        def self.model(data)
+        def self.model(data, components)
           data.map do |node_data|
-            Lighstorm::Models::Invoice.new(node_data)
+            Lighstorm::Models::Invoice.new(node_data, components)
           end
         end
       end

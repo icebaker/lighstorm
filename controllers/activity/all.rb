@@ -10,10 +10,10 @@ module Lighstorm
   module Controllers
     module Activity
       module All
-        def self.fetch(direction: nil, how: nil, limit: nil)
+        def self.fetch(components, direction: nil, how: nil, limit: nil)
           activities = []
 
-          Transaction::All.data.each do |transaction|
+          Transaction::All.data(components).each do |transaction|
             next if !how.nil? && how != 'on-chain'
 
             activities << {
@@ -34,7 +34,7 @@ module Lighstorm
           end
 
           if direction.nil? || direction == 'in'
-            Invoice::All.data(spontaneous: true).filter do |invoice|
+            Invoice::All.data(components, spontaneous: true).filter do |invoice|
               !invoice[:payments].nil? && invoice[:payments].size.positive?
             end.each do |invoice|
               activity_how = invoice[:code].nil? ? 'spontaneously' : 'with-invoice'
@@ -55,7 +55,7 @@ module Lighstorm
               end
             end
 
-            Forward::All.data.each do |forward|
+            Forward::All.data(components).each do |forward|
               next if !how.nil? && how != 'forwarding'
 
               activities << {
@@ -72,6 +72,7 @@ module Lighstorm
 
           if direction.nil? || direction == 'out'
             Payment::All.data(
+              components,
               fetch: {
                 get_node_info: false,
                 lookup_invoice: false,
@@ -110,11 +111,11 @@ module Lighstorm
           end
         end
 
-        def self.data(direction: nil, how: nil, limit: nil, &vcr)
+        def self.data(components, direction: nil, how: nil, limit: nil, &vcr)
           raw = if vcr.nil?
-                  fetch(direction: direction, how: how, limit: limit)
+                  fetch(components, direction: direction, how: how, limit: limit)
                 else
-                  vcr.call(-> { fetch(direction: direction, how: how, limit: limit) })
+                  vcr.call(-> { fetch(components, direction: direction, how: how, limit: limit) })
                 end
 
           transform(raw)
