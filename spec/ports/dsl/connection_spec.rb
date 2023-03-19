@@ -19,7 +19,10 @@ RSpec.describe Lighstorm::Connection do
       :address, :certificate, :macaroon, :certificate_path, :macaroon_path
     )
 
-    expect(described_class.default[:address]).to eq(
+    expect(
+      VCR.tape.replay('Lighstorm::Connection.default.address') do
+        described_class.default[:address]
+      end).to eq(
       '127.0.0.1:10009'
     )
 
