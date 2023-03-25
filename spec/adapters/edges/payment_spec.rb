@@ -126,12 +126,4 @@ RSpec.describe Lighstorm::Adapter::Payment do
       end
     end
   end
-
-  context 'list_payments unexpected' do
-    it 'raises error' do
-      expect { described_class.list_payments({ htlcs: %w[a b] }, nil) }.to raise_error(
-        UnexpectedNumberOfHTLCsError, 'htlcs: 2'
-      )
-    end
-  end
 end

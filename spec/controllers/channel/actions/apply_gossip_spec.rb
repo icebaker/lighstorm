@@ -113,46 +113,26 @@ RSpec.describe Lighstorm::Models::Channel do
           { _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
             accounting: { capacity: { millisatoshis: 5_000_000_000 } },
-            partners: [
-              { state: 'active',
-                node: {
-                  _key: 'de2939d174ddd01e051a5b05e3e2e40479d0dfd16ee5295c0b4985890a603ffc',
-                  public_key: '0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7',
-                  alias: 'SatoshiIsProudOfUs',
-                  color: '#fa770f',
-                  platform: { blockchain: 'bitcoin', network: 'mainnet' }
-                },
-                policy: {
-                  fee: {
-                    base: { millisatoshis: 0 },
-                    rate: { parts_per_million: 700 }
-                  },
-                  htlc: {
-                    minimum: { millisatoshis: 1000 },
-                    maximum: { millisatoshis: 4_950_000_000 },
-                    blocks: { delta: { minimum: 40 } }
-                  }
-                } },
-              { state: 'active',
-                node: {
-                  _key: '713519e5aca513a070deedc0520be905e0fc3e36f555c33f977b6c369b7d76fb',
-                  public_key: '037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba',
-                  alias: 'ln.nicehash.com [Nicehash]',
-                  color: '#cf1b99',
-                  platform: { blockchain: 'bitcoin', network: 'mainnet' }
-                },
-                policy: {
-                  fee: {
-                    base: { millisatoshis: 1000 },
-                    rate: { parts_per_million: 300 }
-                  },
-                  htlc: {
-                    minimum: { millisatoshis: 1000 },
-                    maximum: { millisatoshis: 4_950_000_000 },
-                    blocks: { delta: { minimum: 144 } }
-                  }
-                } }
-            ] }
+            partners: [{ state: 'active',
+                         initiator: nil,
+                         node: { _key: 'de2939d174ddd01e051a5b05e3e2e40479d0dfd16ee5295c0b4985890a603ffc',
+                                 public_key: '0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7',
+                                 alias: 'SatoshiIsProudOfUs',
+                                 color: '#fa770f',
+                                 platform: { blockchain: 'bitcoin', network: 'mainnet' } },
+                         policy: { fee: { base: { millisatoshis: 0 }, rate: { parts_per_million: 700 } },
+                                   htlc: { minimum: { millisatoshis: 1000 }, maximum: { millisatoshis: 4_950_000_000 },
+                                           blocks: { delta: { minimum: 40 } } } } },
+                       { state: 'active',
+                         initiator: nil,
+                         node: { _key: '713519e5aca513a070deedc0520be905e0fc3e36f555c33f977b6c369b7d76fb',
+                                 public_key: '037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba',
+                                 alias: 'ln.nicehash.com [Nicehash]',
+                                 color: '#cf1b99',
+                                 platform: { blockchain: 'bitcoin', network: 'mainnet' } },
+                         policy: { fee: { base: { millisatoshis: 1000 }, rate: { parts_per_million: 300 } },
+                                   htlc: { minimum: { millisatoshis: 1000 }, maximum: { millisatoshis: 4_950_000_000 },
+                                           blocks: { delta: { minimum: 144 } } } } }] }
         )
 
         expect(previous_dump).to eq(
@@ -267,6 +247,7 @@ RSpec.describe Lighstorm::Models::Channel do
             id: '837471618647916545',
             accounting: { capacity: { millisatoshis: 6_000_000_000 } },
             partners: [{ state: 'active',
+                         initiator: nil,
                          node: { _key: 'de2939d174ddd01e051a5b05e3e2e40479d0dfd16ee5295c0b4985890a603ffc',
                                  public_key: '0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7',
                                  alias: 'SatoshiIsProudOfUs',
@@ -276,6 +257,7 @@ RSpec.describe Lighstorm::Models::Channel do
                                    htlc: { minimum: { millisatoshis: 1000 }, maximum: { millisatoshis: 4_950_000_000 },
                                            blocks: { delta: { minimum: 40 } } } } },
                        { state: 'inactive',
+                         initiator: nil,
                          node: { _key: '713519e5aca513a070deedc0520be905e0fc3e36f555c33f977b6c369b7d76fb',
                                  public_key: '037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba',
                                  alias: 'ln.nicehash.com [Nicehash]',
@@ -331,25 +313,15 @@ RSpec.describe Lighstorm::Models::Channel do
         expect(channel.to_h).to eq(
           { _key: '36c34f134dd6b41c4bb9c8a84e90e6903d9fff663af6cfe2ea68acdca5660f46',
             id: '837471618647916545',
-            partners: [
-              { state: 'inactive',
-                node: { _key: nil,
-                        public_key: '037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba' },
-                policy: {
-                  fee: {
-                    base: { millisatoshis: 1700 },
-                    rate: { parts_per_million: 800 }
-                  },
-                  htlc: {
-                    minimum: { millisatoshis: 1400 },
-                    maximum: { millisatoshis: 5_950_000_000 },
-                    blocks: { delta: { minimum: 200 } }
-                  }
-                } },
-              { state: nil,
-                node: { _key: nil,
-                        public_key: '0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7' } }
-            ] }
+            partners: [{ state: 'inactive',
+                         initiator: nil,
+                         node: { _key: nil,
+                                 public_key: '037659a0ac8eb3b8d0a720114efc861d3a940382dcfa1403746b4f8f6b2e8810ba' },
+                         policy: { fee: { base: { millisatoshis: 1700 }, rate: { parts_per_million: 800 } },
+                                   htlc: { minimum: { millisatoshis: 1400 }, maximum: { millisatoshis: 5_950_000_000 },
+                                           blocks: { delta: { minimum: 200 } } } } },
+                       { state: nil, initiator: nil,
+                         node: { _key: nil, public_key: '0201af659a3986832bb5bf2493c537cee9f7d62a7bff5d0a68176c1d60df931cf7' } }] }
         )
 
         expect(channel.dump).to eq(

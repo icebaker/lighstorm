@@ -123,7 +123,7 @@ RSpec.describe Lighstorm::Models::Channel do
         channel = described_class.new(data[0], Lighstorm::Controllers::Channel.components)
 
         Contract.expect(
-          channel.dump, 'a625dae9677bbb55775d943a9db73761d8d401a0283923b63b683e0d04a95dcd'
+          channel.dump, 'd4fff89949b73f8bd56cae278eac2750b19002c715722e922293219e15f51cab'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -131,69 +131,44 @@ RSpec.describe Lighstorm::Models::Channel do
           expect(actual.contract).to eq(
             { _key: 'String:50+',
               _source: 'Symbol:11..20',
-              accounting: {
-                capacity: { millisatoshis: 'Integer:0..10' },
-                received: { millisatoshis: 'Integer:11..20' },
-                sent: { millisatoshis: 'Integer:11..20' },
-                unsettled: { millisatoshis: 'Integer:0..10' }
-              },
+              accounting: { capacity: { millisatoshis: 'Integer:0..10' },
+                            received: { millisatoshis: 'Integer:11..20' },
+                            sent: { millisatoshis: 'Integer:11..20' },
+                            unsettled: { millisatoshis: 'Integer:0..10' } },
               exposure: 'String:0..10',
               id: 'String:11..20',
               known: 'Boolean',
               mine: 'Boolean',
               opened_at: 'Time',
-              partners: [
-                { _source: 'Symbol:11..20',
-                  accounting: { balance: { millisatoshis: 'Integer:0..10' } },
-                  node: {
-                    _key: 'String:50+',
-                    _source: 'Symbol:0..10',
-                    alias: 'String:11..20',
-                    color: 'String:0..10',
-                    myself: 'Boolean',
-                    platform: {
-                      blockchain: 'String:0..10',
-                      lightning: { implementation: 'String:0..10', version: 'String:31..40' },
-                      network: 'String:0..10'
-                    },
-                    public_key: 'String:50+'
-                  },
-                  policy: {
-                    fee: {
-                      base: { millisatoshis: 'Integer:0..10' },
-                      rate: { parts_per_million: 'Integer:0..10' }
-                    },
-                    htlc: {
-                      blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { millisatoshis: 'Integer:0..10' },
-                      minimum: { millisatoshis: 'Integer:0..10' }
-                    }
-                  },
-                  state: 'String:0..10' },
-                { _source: 'Symbol:11..20',
-                  accounting: { balance: { millisatoshis: 'Integer:0..10' } },
-                  node: {
-                    _key: 'String:50+',
-                    _source: 'Symbol:11..20',
-                    alias: 'String:11..20',
-                    color: 'String:0..10',
-                    myself: 'Boolean',
-                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                    public_key: 'String:50+'
-                  },
-                  policy: {
-                    fee: {
-                      base: { millisatoshis: 'Integer:0..10' },
-                      rate: { parts_per_million: 'Integer:0..10' }
-                    },
-                    htlc: {
-                      blocks: { delta: { minimum: 'Integer:0..10' } },
-                      maximum: { millisatoshis: 'Integer:0..10' },
-                      minimum: { millisatoshis: 'Integer:0..10' }
-                    }
-                  },
-                  state: 'String:0..10' }
-              ],
+              partners: [{ _source: 'Symbol:11..20',
+                           accounting: { balance: { millisatoshis: 'Integer:0..10' } },
+                           initiator: 'Boolean',
+                           node: { _key: 'String:50+',
+                                   _source: 'Symbol:0..10',
+                                   alias: 'String:11..20',
+                                   color: 'String:0..10',
+                                   myself: 'Boolean',
+                                   platform: { blockchain: 'String:0..10',
+                                               lightning: { implementation: 'String:0..10', version: 'String:31..40' }, network: 'String:0..10' },
+                                   public_key: 'String:50+' },
+                           policy: { fee: { base: { millisatoshis: 'Integer:0..10' }, rate: { parts_per_million: 'Integer:0..10' } },
+                                     htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { millisatoshis: 'Integer:0..10' },
+                                             minimum: { millisatoshis: 'Integer:0..10' } } },
+                           state: 'String:0..10' },
+                         { _source: 'Symbol:11..20',
+                           accounting: { balance: { millisatoshis: 'Integer:0..10' } },
+                           initiator: 'Boolean',
+                           node: { _key: 'String:50+',
+                                   _source: 'Symbol:11..20',
+                                   alias: 'String:11..20',
+                                   color: 'String:0..10',
+                                   myself: 'Boolean',
+                                   platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                                   public_key: 'String:50+' },
+                           policy: { fee: { base: { millisatoshis: 'Integer:0..10' }, rate: { parts_per_million: 'Integer:0..10' } },
+                                     htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { millisatoshis: 'Integer:0..10' },
+                                             minimum: { millisatoshis: 'Integer:0..10' } } },
+                           state: 'String:0..10' }],
               state: 'String:0..10',
               transaction: { funding: { id: 'String:50+', index: 'Integer:0..10' } },
               up_at: 'Time' }

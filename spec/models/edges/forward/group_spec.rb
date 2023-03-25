@@ -123,7 +123,7 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           )
 
           Contract.expect(
-            group.to_h, 'af1334546a5b469569413f438b4470565174adc8a88a885e53c494577f767a63'
+            group.to_h, 'c0655bde7bc059f62eb26c37e19c3e6f3f9cd3b9380c82d516c291cbca5b3c54'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)

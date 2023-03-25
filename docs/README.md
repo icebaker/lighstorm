@@ -1167,19 +1167,24 @@ LighstormError
 
 ArgumentError
 IncoherentGossipError
+InvoiceMayHaveMultiplePaymentsError
+MissingComponentsError
 MissingCredentialsError
 MissingGossipHandlerError
 MissingPartsPerMillionError
+MissingTTLError
 NegativeNotAllowedError
 NotYourChannelError
 NotYourNodeError
 OperationNotAllowedError
 TooManyArgumentsError
-UnexpectedNumberOfHTLCsError
 UnknownChannelError
-UpdateChannelPolicyError
 
+RequestError
+
+NoInvoiceFoundError
 PaymentError
+UpdateChannelPolicyError
 
 AlreadyPaidError
 AmountForNonZeroError

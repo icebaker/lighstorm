@@ -17,7 +17,7 @@ module Lighstorm
         end
 
         def all(limit: nil)
-          All.model(All.data(components, limit: limit))
+          All.model(All.data(components, limit: limit), components)
         end
 
         def find_by_public_key(public_key)

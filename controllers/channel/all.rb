@@ -14,7 +14,7 @@ module Lighstorm
         def self.fetch(components, limit: nil)
           data = {
             at: Time.now,
-            mine: Mine.fetch,
+            mine: Mine.fetch(components),
             describe_graph: components[:grpc].lightning.describe_graph.edges
           }
 

@@ -19,7 +19,7 @@ module Lighstorm
         def method_missing(method_name, *_args, &block)
           service_key = method_name.to_sym
 
-          unless LND.instance.client.respond_to?(service_key)
+          unless LND.instance.as(@id).respond_to?(service_key)
             raise ArgumentError,
                   "Method `#{method_name}` doesn't exist."
           end
@@ -30,7 +30,7 @@ module Lighstorm
         def respond_to_missing?(method_name, include_private = false)
           service_key = method_name.to_sym
 
-          LND.instance.client.respond_to?(service_key) || super
+          LND.instance.as(@id).respond_to?(service_key) || super
         end
       end
 

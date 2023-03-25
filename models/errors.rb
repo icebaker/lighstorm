@@ -26,9 +26,7 @@ module Lighstorm
     class NotYourChannelError < LighstormError; end
     class NotYourNodeError < LighstormError; end
     class OperationNotAllowedError < LighstormError; end
-    class UnexpectedNumberOfHTLCsError < LighstormError; end
     class UnknownChannelError < LighstormError; end
-    class NoInvoiceFoundError < LighstormError; end
 
     class InvoiceMayHaveMultiplePaymentsError < LighstormError; end
 
@@ -55,7 +53,9 @@ module Lighstorm
       end
     end
 
-    class UpdateChannelPolicyError < RequestError; end    
+    class UpdateChannelPolicyError < RequestError; end
+
+    class NoInvoiceFoundError < RequestError; end
 
     class PaymentError < RequestError; end
 

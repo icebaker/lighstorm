@@ -116,28 +116,16 @@ RSpec.describe 'Integration Tests' do
 
           expect(Contract.for(channel.to_h)).to eq(
             { _key: 'String:50+',
-              accounting: {
-                capacity: { millisatoshis: 'Integer:0..10' }
-              },
+              accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
               id: 'String:11..20',
-              partners: [
-                { node: {
-                    _key: 'String:50+',
-                    alias: 'String:0..10',
-                    color: 'String:0..10',
-                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                    public_key: 'String:50+'
-                  },
-                  state: 'Nil' },
-                { node: {
-                    _key: 'String:50+',
-                    alias: 'String:0..10',
-                    color: 'String:0..10',
-                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                    public_key: 'String:50+'
-                  },
-                  state: 'Nil' }
-              ] }
+              partners: [{ initiator: 'Nil',
+                           node: { _key: 'String:50+', alias: 'String:0..10', color: 'String:0..10',
+                                   platform: { blockchain: 'String:0..10', network: 'String:0..10' }, public_key: 'String:50+' },
+                           state: 'Nil' },
+                         { initiator: 'Nil',
+                           node: { _key: 'String:50+', alias: 'String:0..10', color: 'String:0..10',
+                                   platform: { blockchain: 'String:0..10', network: 'String:0..10' }, public_key: 'String:50+' },
+                           state: 'Nil' }] }
           )
         end
       end
@@ -208,22 +196,9 @@ RSpec.describe 'Integration Tests' do
             { _key: 'String:50+',
               accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
               id: 'String:11..20',
-              partners: [
-                { node: {
-                    _key: 'String:50+',
-                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                    public_key: 'String:50+'
-                  },
-                  state: 'Nil' },
-                {
-                  node: {
-                    _key: 'String:50+',
-                    platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                    public_key: 'String:50+'
-                  },
-                  state: 'Nil'
-                }
-              ] }
+              partners: [{ initiator: 'Nil', node: { _key: 'String:50+', platform: { blockchain: 'String:0..10', network: 'String:0..10' }, public_key: 'String:50+' }, state: 'Nil' },
+                         { initiator: 'Nil',
+                           node: { _key: 'String:50+', platform: { blockchain: 'String:0..10', network: 'String:0..10' }, public_key: 'String:50+' }, state: 'Nil' }] }
           )
         end
       end

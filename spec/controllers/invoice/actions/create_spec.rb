@@ -175,31 +175,26 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             end
 
             Contract.expect(
-              action.to_h, '5b5b74d9a27a5f2b2a94ba9e35e0043a6622f4cbd2cbff9b9408ffc670970bba'
+              action.to_h, '917931ebdc82231328b969f798fb094b1eda768349884fdeca10f85b3c322c84'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: {
-                    add_index: 'Integer:0..10',
-                    payment_addr: 'String:31..40',
-                    payment_request: 'String:50+',
-                    r_hash: 'String:31..40'
-                  },
-                  result: {
-                    _key: 'String:50+',
-                    amount: 'Nil',
-                    code: 'String:50+',
-                    created_at: 'Time',
-                    description: { hash: 'Nil', memo: 'String:0..10' },
-                    expires_at: 'Time',
-                    payable: 'String:11..20',
-                    payments: 'Nil',
-                    received: 'Nil',
-                    secret: { hash: 'String:50+', preimage: 'Nil' },
-                    settled_at: 'Nil',
-                    state: 'String:0..10'
-                  } }
+                { request: { method: 'Symbol:11..20', params: { expiry: 'Integer:0..10', is_amp: 'Boolean', memo: 'String:0..10' }, service: 'Symbol:0..10' },
+                  response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+',
+                              r_hash: 'String:31..40' },
+                  result: { _key: 'String:50+',
+                            amount: 'Nil',
+                            code: 'String:50+',
+                            created_at: 'Time',
+                            description: { hash: 'Nil', memo: 'String:0..10' },
+                            expires_at: 'Time',
+                            payable: 'String:11..20',
+                            payments: 'Nil',
+                            received: 'Nil',
+                            secret: { hash: 'String:50+', preimage: 'Nil' },
+                            settled_at: 'Nil',
+                            state: 'String:0..10' } }
               )
             end
           end
@@ -354,31 +349,26 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             expect(action.result.class).to eq(Lighstorm::Models::Invoice)
 
             Contract.expect(
-              action.to_h, 'ea450f2ebd9f6657f974b90f6dc1079c016243bbf88a5445f878ca8f862545a6'
+              action.to_h, '2250d19cb80503dcf26c919197821b6a30410e855a7519c0a7b688d6b9301c01'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: {
-                    add_index: 'Integer:0..10',
-                    payment_addr: 'String:31..40',
-                    payment_request: 'String:50+',
-                    r_hash: 'String:31..40'
-                  },
-                  result: {
-                    _key: 'String:50+',
-                    amount: { millisatoshis: 'Integer:0..10' },
-                    code: 'String:50+',
-                    created_at: 'Time',
-                    description: { hash: 'Nil', memo: 'String:0..10' },
-                    expires_at: 'Time',
-                    payable: 'String:0..10',
-                    payments: 'Nil',
-                    received: 'Nil',
-                    secret: { hash: 'String:50+', preimage: 'String:50+' },
-                    settled_at: 'Nil',
-                    state: 'String:0..10'
-                  } }
+                { request: { method: 'Symbol:11..20', params: { expiry: 'Integer:0..10', memo: 'String:0..10', value_msat: 'Integer:0..10' }, service: 'Symbol:0..10' },
+                  response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+',
+                              r_hash: 'String:31..40' },
+                  result: { _key: 'String:50+',
+                            amount: { millisatoshis: 'Integer:0..10' },
+                            code: 'String:50+',
+                            created_at: 'Time',
+                            description: { hash: 'Nil', memo: 'String:0..10' },
+                            expires_at: 'Time',
+                            payable: 'String:0..10',
+                            payments: 'Nil',
+                            received: 'Nil',
+                            secret: { hash: 'String:50+', preimage: 'String:50+' },
+                            settled_at: 'Nil',
+                            state: 'String:0..10' } }
               )
             end
           end

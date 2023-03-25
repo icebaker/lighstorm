@@ -208,7 +208,7 @@ RSpec.describe Lighstorm::Models::Forward do
 
         Contract.expect(
           forward.to_h,
-          'b469aaa041f93dc3a6bd20e596c3d29480b5615ecf7972378dbe98791dcfd2e5'
+          'e4d65018e4ffd316a385a68bcf56bced949edd67b34f76a0186b3c350c6f6d74'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

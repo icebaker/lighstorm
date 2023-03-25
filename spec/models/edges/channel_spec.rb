@@ -160,7 +160,7 @@ RSpec.describe Lighstorm::Models::Channel do
       )
 
       Contract.expect(
-        channel.to_h, '00b987a5e9fa40fbc39b54bffa4635e54758248beb4395cc0edf662f2bfd0c96'
+        channel.to_h, '4b1f68cb598d859f01c207b53cae972bff4aad64cc5971cb75ce856c743bd652'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -307,7 +307,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.to_h, '00b987a5e9fa40fbc39b54bffa4635e54758248beb4395cc0edf662f2bfd0c96'
+          channel.to_h, '4b1f68cb598d859f01c207b53cae972bff4aad64cc5971cb75ce856c743bd652'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -390,7 +390,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, 'd1048ba476daa11d917f0d9bf7d6678b7e7d0e1f8d152c9a8977e7addd9f0924'
+          channel.to_h, 'fdb6fe2c4f6238554d4c23c2d3bd57188098946ce989658406835acd20635a18'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -487,7 +487,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '282bba92dfc1941ec52b2dfb1563a74993abc4caeb7cc926710f2db1c9c52728'
+          channel.to_h, '14fef612b83489baaf941b874f9a0741b69522ec46736e9816a2c3a4bc26f888'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -585,7 +585,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '35ee12eaad3ba2a047acd5c886c35e369e2bc88a9669072cffc2cddbbdd39310'
+          channel.to_h, '0cbaf2ce4b244d8c6f484b869da708f46e80369e9788936f784c72771ce0a81b'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -709,7 +709,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '7e63c0da76eee3d2567411bcf2eb34eba4dc484ea69e43cb7a8c890886f82d17'
+          channel.to_h, 'b15f32f2a9aca1c408a7af138c62dd905489399b2573306a397fe34576af249c'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
