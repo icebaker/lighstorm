@@ -57,48 +57,48 @@ module Lighstorm
           Models::Payment.new(data, components)
         end
 
-        def self.raise_error_if_exists!(response)
+        def self.raise_error_if_exists!(request, response)
           return if response[:exception].nil?
 
           if response[:exception].is_a?(GRPC::AlreadyExists)
             raise AlreadyPaidError.new(
               'The invoice is already paid.',
-              grpc: response[:exception]
+              request: request, grpc: response[:exception]
             )
           end
 
           if response[:exception].message =~ /amount must not be specified when paying a non-zero/
             raise AmountForNonZeroError.new(
               'Millisatoshis must not be specified when paying a non-zero amount invoice.',
-              grpc: response[:exception]
+              request: request, grpc: response[:exception]
             )
           end
 
           if response[:exception].message =~ /amount must be specified when paying a zero amount/
             raise MissingMillisatoshisError.new(
               'Millisatoshis must be specified when paying a zero amount invoice.',
-              grpc: response[:exception]
+              request: request, grpc: response[:exception]
             )
           end
 
           raise PaymentError.new(
             response[:exception].message,
-            grpc: response[:exception]
+            request: request, grpc: response[:exception]
           )
         end
 
-        def self.raise_failure_if_exists!(model, response)
+        def self.raise_failure_if_exists!(model, request, response)
           return unless model.state == 'failed'
 
           if response[:response].last[:failure_reason] == :FAILURE_REASON_NO_ROUTE
             raise NoRouteFoundError.new(
               response[:response].last[:failure_reason],
-              response: response[:response], result: model
+              request: request, response: response[:response], result: model
             )
           else
             raise PaymentError.new(
               response[:response].last[:failure_reason],
-              response: response[:response], result: model
+              request: request, response: response[:response], result: model
             )
           end
         end

@@ -83,7 +83,7 @@ module Lighstorm
             token: token
           }
 
-          Action::Output.new({ response: response, result: policy })
+          Action::Output.new({ request: grpc_request, response: response, result: policy })
         end
       end
     end

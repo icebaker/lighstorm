@@ -61,6 +61,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
       expect(channel.myself.node._key.size).to eq(64)
       expect(channel.myself.node.myself?).to be(true)
+      expect(channel.myself.initiator?).to be(true)
       expect(channel.myself.node.alias).to eq('icebaker/old-stone')
       expect(channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
       expect(channel.myself.node.color).to eq('#ff338f')

@@ -3,6 +3,30 @@
 module Sanitizer
   SAFE = {
     '' => true,
+
+    'balance <= channel_balance' => true,
+    'pending_open_balance <= channel_balance' => true,
+    'sat <= local_balance' => true,
+    'msat <= local_balance' => true,
+    'sat <= remote_balance' => true,
+    'msat <= remote_balance' => true,
+    'sat <= unsettled_local_balance' => true,
+    'msat <= unsettled_local_balance' => true,
+    'sat <= unsettled_remote_balance' => true,
+    'msat <= unsettled_remote_balance' => true,
+    'sat <= pending_open_local_balance' => true,
+    'msat <= pending_open_local_balance' => true,
+    'sat <= pending_open_remote_balance' => true,
+    'msat <= pending_open_remote_balance' => true,
+
+    'total_balance <= wallet_balance' => true,
+    'confirmed_balance <= wallet_balance' => true,
+    'unconfirmed_balance <= wallet_balance' => true,
+    'locked_balance <= wallet_balance' => true,
+    'reserved_balance_anchor_chan <= wallet_balance' => true,
+    'confirmed_balance <= default' => true,
+    'unconfirmed_balance <= default' => true,
+
     'is_our_output <= previous_outpoints' => true,
     'is_our_address <= output_details' => true,
     'label <= get_transactions' => true,

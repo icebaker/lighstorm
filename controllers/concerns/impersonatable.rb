@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../ports/grpc'
+
 module Lighstorm
   module Controllers
     module Impersonatable

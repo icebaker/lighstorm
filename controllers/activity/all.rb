@@ -10,30 +10,90 @@ module Lighstorm
   module Controllers
     module Activity
       module All
-        def self.fetch(components, direction: nil, how: nil, limit: nil)
+        def self.bitcoin_how(transaction_label)
+          if transaction_label =~ /:openchannel:/
+            'opening-channel'
+          elsif transaction_label =~ /:closechannel:/
+            'closing-channel'
+          else
+            'spontaneously'
+          end
+        end
+
+        def self.fetch(components, direction: nil, layer: nil, how: nil, order: nil, limit: nil)
           activities = []
 
+          # components[:grpc].lightning.list_channels.channels.each do |channel|
+          #   if (layer.nil? || layer == 'lightning')
+          #      activities << {
+          #         direction: 'out',
+          #         layer: 'lightning',
+          #         at: Time.now,
+          #         amount: {
+          #           millisatoshis: channel.to_h[:local_chan_reserve_sat] * 1000
+          #         },
+          #         how: 'reserve',
+          #         message: nil,
+          #         data: {}
+          #       }
+
+          #        activities << {
+          #         direction: 'out',
+          #         layer: 'lightning',
+          #         at: Time.now,
+          #         amount: {
+          #           millisatoshis: channel.to_h[:commit_fee] * 1000
+          #         },
+          #         how: 'commit',
+          #         message: nil,
+          #         data: {}
+          #       }
+          #     end
+          # end
+
           Transaction::All.data(components).each do |transaction|
-            next if !how.nil? && how != 'on-chain'
+            transaction_how = bitcoin_how(transaction[:label])
+
+            if (layer.nil? || layer == 'bitcoin') && (how.nil? || transaction_how =~ /#{Regexp.escape(how)}/)
+              activities << {
+                direction: (transaction[:amount][:millisatoshis]).positive? ? 'in' : 'out',
+                layer: 'bitcoin',
+                at: transaction[:at],
+                amount: {
+                  millisatoshis: if (transaction[:amount][:millisatoshis]).positive?
+                                   transaction[:amount][:millisatoshis]
+                                 else
+                                   -transaction[:amount][:millisatoshis]
+                                 end
+                },
+                how: transaction_how,
+                message: nil,
+                data: { transaction: transaction }
+              }
+            end
+
+            next unless (layer.nil? || layer == 'lightning') && (how.nil? || transaction_how =~ /#{Regexp.escape(how)}/) && %w[
+              channel opening-channel closing-channel
+            ].include?(transaction_how)
 
             activities << {
-              direction: (transaction[:amount][:millisatoshis]).positive? ? 'in' : 'out',
-              layer: 'on-chain',
-              at: transaction[:at],
+              direction: (transaction[:amount][:millisatoshis]).positive? ? 'out' : 'in',
+              layer: 'lightning',
+              at: transaction[:at] + ((transaction[:amount][:millisatoshis]).positive? ? -1 : 1),
               amount: {
                 millisatoshis: if (transaction[:amount][:millisatoshis]).positive?
-                                 transaction[:amount][:millisatoshis]
+                                 (transaction[:amount][:millisatoshis] - transaction[:fee][:millisatoshis])
                                else
-                                 -transaction[:amount][:millisatoshis]
+                                 -(transaction[:amount][:millisatoshis] + transaction[:fee][:millisatoshis])
                                end
               },
-              how: 'on-chain',
+              how: transaction_how,
               message: nil,
               data: { transaction: transaction }
             }
           end
 
-          if direction.nil? || direction == 'in'
+          if (direction.nil? || direction == 'in') && (layer.nil? || layer == 'lightning')
             Invoice::All.data(components, spontaneous: true).filter do |invoice|
               !invoice[:payments].nil? && invoice[:payments].size.positive?
             end.each do |invoice|
@@ -45,7 +105,7 @@ module Lighstorm
               invoice[:payments].each do |payment|
                 activities << {
                   direction: 'in',
-                  layer: 'off-chain',
+                  layer: 'lightning',
                   at: payment[:at],
                   amount: payment[:amount],
                   how: activity_how,
@@ -60,7 +120,7 @@ module Lighstorm
 
               activities << {
                 direction: 'in',
-                layer: 'off-chain',
+                layer: 'lightning',
                 at: forward[:at],
                 amount: forward[:fee],
                 how: 'forwarding',
@@ -70,7 +130,7 @@ module Lighstorm
             end
           end
 
-          if direction.nil? || direction == 'out'
+          if (direction.nil? || direction == 'out') && (layer.nil? || layer == 'lightning')
             Payment::All.data(
               components,
               fetch: {
@@ -87,7 +147,7 @@ module Lighstorm
               # TODO: Improve performance by reducing invoice fields?
               activities << {
                 direction: 'out',
-                layer: 'off-chain',
+                layer: 'lightning',
                 at: payment[:at],
                 amount: payment[:amount],
                 how: activity_how,
@@ -97,7 +157,11 @@ module Lighstorm
             end
           end
 
-          activities = activities.sort_by { |activity| -activity[:at].to_i }
+          activities = if order.nil? || order == 'desc'
+                         activities.sort_by { |activity| -activity[:at].to_i }
+                       else
+                         activities.sort_by { |activity| activity[:at].to_i }
+                       end
 
           activities = activities[0..limit - 1] unless limit.nil?
 
@@ -111,11 +175,11 @@ module Lighstorm
           end
         end
 
-        def self.data(components, direction: nil, how: nil, limit: nil, &vcr)
+        def self.data(components, direction: nil, layer: nil, how: nil, order: nil, limit: nil, &vcr)
           raw = if vcr.nil?
-                  fetch(components, direction: direction, how: how, limit: limit)
+                  fetch(components, direction: direction, layer: layer, how: how, order: order, limit: limit)
                 else
-                  vcr.call(-> { fetch(components, direction: direction, how: how, limit: limit) })
+                  vcr.call(-> { fetch(components, direction: direction, how: how, order: order, limit: limit) })
                 end
 
           transform(raw)

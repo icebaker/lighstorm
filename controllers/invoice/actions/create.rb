@@ -80,7 +80,7 @@ module Lighstorm
           data = fetch(components, adapted, &vcr)
           model = self.model(data, components)
 
-          Action::Output.new({ response: response, result: model })
+          Action::Output.new({ request: grpc_request, response: response, result: model })
         end
       end
     end

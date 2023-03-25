@@ -97,7 +97,7 @@ module Lighstorm
 
           response = dispatch(components, grpc_request, &vcr)
 
-          Payment::Pay.raise_error_if_exists!(response)
+          Payment::Pay.raise_error_if_exists!(grpc_request, response)
 
           data = fetch(components, &vcr)
 
@@ -105,9 +105,9 @@ module Lighstorm
 
           model = self.model(adapted, components)
 
-          Payment::Pay.raise_failure_if_exists!(model, response)
+          Payment::Pay.raise_failure_if_exists!(model, grpc_request, response)
 
-          Action::Output.new({ response: response[:response], result: model })
+          Action::Output.new({ request: grpc_request, response: response[:response], result: model })
         end
       end
     end

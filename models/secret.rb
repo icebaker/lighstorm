@@ -15,7 +15,7 @@ module Lighstorm
         data
       end
 
-      def self.create(components, &vcr)
+      def self.create(components = nil, &vcr)
         data = vcr.nil? ? generate : vcr.call(-> { generate })
 
         Secret.new(data, components)

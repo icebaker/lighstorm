@@ -17,12 +17,17 @@ module Lighstorm
         @data = data
         @components = components
         @state = data[:state]
+        @initiator = data[:initiator]
         @is_mine = is_mine
         @transaction = transaction
       end
 
       def active?
         state == 'active'
+      end
+
+      def initiator?
+        @initiator
       end
 
       def node
@@ -40,7 +45,11 @@ module Lighstorm
       end
 
       def to_h
-        restult = { state: state, node: node.to_h }
+        restult = {
+          state: state,
+          initiator: @initiator,
+          node: node.to_h
+        }
 
         restult[:accounting] = accounting.to_h if @is_mine
         restult[:policy] = policy.to_h if @data[:policy]

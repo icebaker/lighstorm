@@ -13,6 +13,7 @@ require_relative '../../controllers/forward'
 require_relative '../../controllers/invoice'
 require_relative '../../controllers/activity'
 require_relative '../../controllers/connection'
+require_relative '../../controllers/wallet'
 
 module Lighstorm
   Node = Controllers::Node
@@ -22,6 +23,7 @@ module Lighstorm
   Invoice = Controllers::Invoice
   Activity = Controllers::Activity
   Connection = Controllers::Connection
+  Wallet = Controllers::Wallet
 
   Satoshis = Models::Satoshis
 

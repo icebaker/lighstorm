@@ -4,6 +4,10 @@ module Lighstorm
   module Controllers
     module Action
       Output = Struct.new(:data) do
+        def request
+          data[:request]
+        end
+
         def response
           data[:response]
         end
@@ -14,6 +18,7 @@ module Lighstorm
 
         def to_h
           {
+            request: request,
             response: response,
             result: result.to_h
           }

@@ -3,18 +3,12 @@
 module Lighstorm
   module Errors
     class LighstormError < StandardError
-      attr_reader :grpc
-
-      def initialize(message = nil, grpc: nil)
+      def initialize(message = nil)
         super(message)
-        @grpc = grpc
       end
 
       def to_h
-        output = { class: self.class, message: message }
-        output[:grpc] = grpc.message unless grpc.nil?
-
-        output
+        { class: self.class, message: message }
       end
     end
 
@@ -38,39 +32,36 @@ module Lighstorm
 
     class InvoiceMayHaveMultiplePaymentsError < LighstormError; end
 
-    class PaymentError < LighstormError
-      attr_reader :response, :result, :grpc
+    class RequestError < LighstormError
+      attr_reader :request, :response, :result, :grpc
 
-      def initialize(message, response: nil, result: nil, grpc: nil)
+      def initialize(message, request: nil, response: nil, result: nil, grpc: nil)
         super(message)
+        @request = request
         @response = response
         @result = result
         @grpc = grpc
       end
 
       def to_h
-        output = { message: message }
+        output = { class: self.class, message: message }
 
+        output[:request] = request unless request.nil?
         output[:response] = response unless response.nil?
         output[:result] = result.to_h unless result.nil?
-        output[:grpc] = grpc.message unless grpc.nil?
+        output[:grpc] = { class: grpc.class, message: grpc.message } unless grpc.nil?
 
         output
       end
     end
 
+    class UpdateChannelPolicyError < RequestError; end    
+
+    class PaymentError < RequestError; end
+
     class NoRouteFoundError < PaymentError; end
     class AlreadyPaidError < PaymentError; end
     class AmountForNonZeroError < PaymentError; end
     class MissingMillisatoshisError < PaymentError; end
-
-    class UpdateChannelPolicyError < LighstormError
-      attr_reader :response
-
-      def initialize(message, response)
-        super(message)
-        @response = response
-      end
-    end
   end
 end

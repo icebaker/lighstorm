@@ -36,8 +36,9 @@ module Lighstorm
           _key: _key,
           at: at,
           direction: direction,
-          amount: amount.to_h,
+          layer: layer,
           how: how,
+          amount: amount.to_h,
           message: message
         }
 
