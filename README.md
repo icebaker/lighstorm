@@ -35,7 +35,7 @@ Although it tries to stay close to [Lightning's terminologies](https://docs.ligh
 Add to your `Gemfile`:
 
 ```ruby
-gem 'lighstorm', '~> 0.0.14'
+gem 'lighstorm', '~> 0.0.15'
 ```
 
 ```ruby
@@ -53,7 +53,7 @@ Lighstorm.connect!(
   macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
 )
 
-puts Lighstorm.version # => 0.0.14
+puts Lighstorm.version # => 0.0.15
 
 Lighstorm::Node.myself.alias # => icebaker/old-stone
 
