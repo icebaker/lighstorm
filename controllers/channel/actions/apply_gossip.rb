@@ -2,7 +2,6 @@
 
 require 'securerandom'
 
-require_relative '../../../ports/grpc'
 require_relative '../../../models/errors'
 require_relative '../../../models/edges/channel'
 require_relative '../../../adapters/edges/channel'
@@ -41,7 +40,7 @@ module Lighstorm
         ].freeze
 
         def self.perform(actual, gossip)
-          updated = Models::Channel.new(Adapter::Channel.subscribe_channel_graph(gossip))
+          updated = Models::Channel.new(Adapter::Channel.subscribe_channel_graph(gossip), nil)
 
           actual_dump = actual.dump
           updated_dump = updated.dump
@@ -99,7 +98,7 @@ module Lighstorm
           when 'partners/0/policy/htlc/minimum/millisatoshis',
                  'partners/1/policy/htlc/minimum/millisatoshis' then
             if actual.partners[change[:path][1]].policy.nil?
-              actual.partners[change[:path][1]].policy = Lighstorm::Models::Policy.new({})
+              actual.partners[change[:path][1]].policy = Lighstorm::Models::Policy.new({}, nil)
             end
 
             policy = actual.partners[change[:path][1]].policy
@@ -113,7 +112,7 @@ module Lighstorm
           when 'partners/0/policy/htlc/blocks/delta/minimum',
                 'partners/1/policy/htlc/blocks/delta/minimum' then
             if actual.partners[change[:path][1]].policy.nil?
-              actual.partners[change[:path][1]].policy = Lighstorm::Models::Policy.new({})
+              actual.partners[change[:path][1]].policy = Lighstorm::Models::Policy.new({}, nil)
             end
 
             policy = actual.partners[change[:path][1]].policy

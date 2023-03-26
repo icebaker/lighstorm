@@ -12,10 +12,10 @@ module Lighstorm
   module Controllers
     module Payment
       module All
-        def self.fetch(purpose: nil, invoice_code: nil, secret_hash: nil, limit: nil, fetch: {})
+        def self.fetch(components, purpose: nil, invoice_code: nil, secret_hash: nil, limit: nil, fetch: {})
           at = Time.now
 
-          grpc = Ports::GRPC.session
+          grpc = components[:grpc].session
 
           get_info = grpc.lightning.get_info.to_h
 
@@ -396,17 +396,20 @@ module Lighstorm
         end
 
         def self.data(
+          components,
           purpose: nil, invoice_code: nil, secret_hash: nil, limit: nil,
           fetch: {}, &vcr
         )
           raw = if vcr.nil?
                   self.fetch(
+                    components,
                     purpose: purpose, invoice_code: invoice_code, secret_hash: secret_hash,
                     limit: limit, fetch: fetch
                   )
                 else
                   vcr.call(lambda {
                              self.fetch(
+                               components,
                                purpose: purpose, invoice_code: invoice_code, secret_hash: secret_hash,
                                limit: limit, fetch: fetch
                              )
@@ -423,9 +426,9 @@ module Lighstorm
           }
         end
 
-        def self.model(data)
+        def self.model(data, components)
           data[:data].map do |node_data|
-            Lighstorm::Models::Payment.new(node_data)
+            Lighstorm::Models::Payment.new(node_data, components)
           end
         end
       end

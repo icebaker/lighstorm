@@ -193,6 +193,46 @@ Lighstorm.connect!(
 )
 ```
 
+## Multiclient
+
+Multiclient allows you to establish connections with multiple nodes and effortlessly switch between them.
+
+```ruby
+require 'lighstorm'
+
+Lighstorm::Connection.connect!(
+  address: '127.0.0.1:10009',
+  certificate_path: '/lnd/tls.cert',
+  macaroon_path: '/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
+)
+
+Lighstorm::Connection.add!(
+  'alice',
+  'lndconnect://127.0.0.2:10009?cert=MIICJz...JBEERQ&macaroon=AgEDbG...45ukJ4'
+)
+
+Lighstorm::Connection.add!(
+  'bob',
+  address: '127.0.0.3:10009',
+  certificate: 'LS0tLS1CRU...UtLS0tLQo=',
+  macaroon: 'AgEDbG5kAv...inv45ukJ4='
+)
+
+Lighstorm::Connection.default[:address] # => '127.0.0.1:10009'
+Lighstorm::Connection.for('alice')[:address] # => '127.0.0.2:10009'
+Lighstorm::Connection.for('bob')[:address] # => '127.0.0.3:10009'
+
+Lighstorm::Node.myself.alias # => 'icebaker/old-stone'
+Lighstorm::Node.as('alice').myself.alias # => alice
+Lighstorm::Node.as('bob').myself.alias # => bob
+
+Lighstorm::Connection.all # => ['alice', 'bob']
+
+Lighstorm::Connection.remove!('bob')
+
+Lighstorm::Connection.all # => ['alice']
+```
+
 ## Docker and Remote Access
 
 To connect to an LND node through a Docker container or remote host, you may need to adjust your certificate settings. Follow these steps:
@@ -1127,19 +1167,24 @@ LighstormError
 
 ArgumentError
 IncoherentGossipError
+InvoiceMayHaveMultiplePaymentsError
+MissingComponentsError
 MissingCredentialsError
 MissingGossipHandlerError
 MissingPartsPerMillionError
+MissingTTLError
 NegativeNotAllowedError
 NotYourChannelError
 NotYourNodeError
 OperationNotAllowedError
 TooManyArgumentsError
-UnexpectedNumberOfHTLCsError
 UnknownChannelError
-UpdateChannelPolicyError
 
+RequestError
+
+NoInvoiceFoundError
 PaymentError
+UpdateChannelPolicyError
 
 AlreadyPaidError
 AmountForNonZeroError

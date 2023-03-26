@@ -16,9 +16,9 @@ module Lighstorm
       def self.list_payments(grpc, node_get_info)
         return 'unknown' if grpc[:htlcs].empty?
 
-        return 'self-payment' if self_payment?(grpc[:htlcs].first[:route][:hops])
-        return 'peer-to-peer' if peer_to_peer?(grpc[:htlcs].first[:route][:hops])
-        return 'rebalance' if rebalance?(grpc[:htlcs].first[:route][:hops], node_get_info)
+        return 'self-payment' if self_payment?(grpc[:htlcs].last[:route][:hops])
+        return 'peer-to-peer' if peer_to_peer?(grpc[:htlcs].last[:route][:hops])
+        return 'rebalance' if rebalance?(grpc[:htlcs].last[:route][:hops], node_get_info)
 
         'payment'
       end

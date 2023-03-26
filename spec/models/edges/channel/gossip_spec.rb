@@ -2,6 +2,9 @@
 
 require 'json'
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../../models/edges/channel/hop'
 require_relative '../../../../models/edges/channel'
 
 RSpec.describe Lighstorm::Models::Channel do
@@ -48,14 +51,14 @@ RSpec.describe Lighstorm::Models::Channel do
           { _key: 'd727f0e4ecfd1a468a554a6f329e7c568a76999cf2a55d3cae231ec716537ed4',
             id: '766802707818938369',
             partners: [{ state: nil,
+                         initiator: nil,
                          node: { _key: nil,
                                  public_key: '03d5099461761b1b4d3f3d2edfe9c929c71ad384ac18abe58a7188890964c8390a' },
                          policy: { fee: { rate: { parts_per_million: 150 } },
                                    htlc: { minimum: { millisatoshis: 1200 }, maximum: { millisatoshis: 920_000_000 },
                                            blocks: { delta: { minimum: 20 } } } } },
-                       { state: nil,
-                         node: { _key: nil,
-                                 public_key: '02170ffa14bc0486252ad0213e698570cb5492955f6f6cd5ab97145a94e11ae696' } }] }
+                       { state: nil, initiator: nil,
+                         node: { _key: nil, public_key: '02170ffa14bc0486252ad0213e698570cb5492955f6f6cd5ab97145a94e11ae696' } }] }
         )
       end
     end

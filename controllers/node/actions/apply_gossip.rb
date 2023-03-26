@@ -26,7 +26,7 @@ module Lighstorm
         ].freeze
 
         def self.perform(actual, gossip)
-          updated = Models::Node.new(Adapter::Node.subscribe_channel_graph(gossip))
+          updated = Models::Node.new(Adapter::Node.subscribe_channel_graph(gossip), nil)
 
           actual_dump = actual.dump
           updated_dump = updated.dump

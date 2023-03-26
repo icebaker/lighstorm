@@ -12,8 +12,9 @@ module Lighstorm
     class Invoice
       attr_reader :_key, :created_at, :expires_at, :settled_at, :state, :payable, :code
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @_key = data[:_key]
         @created_at = data[:created_at]
@@ -35,7 +36,7 @@ module Lighstorm
       end
 
       def payments
-        @payments ||= @data[:payments]&.map { |data| Payment.new(data) }
+        @payments ||= @data[:payments]&.map { |data| Payment.new(data, @components) }
       end
 
       def amount
@@ -47,7 +48,7 @@ module Lighstorm
       end
 
       def secret
-        @secret ||= Secret.new(@data[:secret])
+        @secret ||= Secret.new(@data[:secret], @components)
       end
 
       def description
@@ -89,10 +90,15 @@ module Lighstorm
         times_out_in: { seconds: 5 },
         preview: false
       )
+        raise MissingComponentsError if @components.nil?
+
         if route
-          Controllers::Invoice::PayThroughRoute.perform(self, route: route, preview: preview)
+          Controllers::Invoice::PayThroughRoute.perform(
+            @components, self, route: route, preview: preview
+          )
         else
           Controllers::Invoice::Pay.perform(
+            @components,
             code: code,
             amount: amount,
             fee: fee,

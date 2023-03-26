@@ -8,15 +8,15 @@ module Lighstorm
   module Controllers
     module Invoice
       module FindByCode
-        def self.fetch(code)
+        def self.fetch(components, code)
           at = Time.now
 
-          decoded = Ports::GRPC.lightning.decode_pay_req(pay_req: code).to_h
+          decoded = components[:grpc].lightning.decode_pay_req(pay_req: code).to_h
 
           { response: {
             at: at,
             decode_pay_req: decoded,
-            lookup_invoice: Ports::GRPC.lightning.lookup_invoice(r_hash_str: decoded[:payment_hash]).to_h
+            lookup_invoice: components[:grpc].lightning.lookup_invoice(r_hash_str: decoded[:payment_hash]).to_h
           }, exception: nil }
         rescue StandardError => e
           { exception: e }
@@ -38,8 +38,8 @@ module Lighstorm
           adapted[:lookup_invoice]
         end
 
-        def self.data(code, &vcr)
-          raw = vcr.nil? ? fetch(code) : vcr.call(-> { fetch(code) })
+        def self.data(components, code, &vcr)
+          raw = vcr.nil? ? fetch(components, code) : vcr.call(-> { fetch(components, code) })
 
           raise_error_if_exists!(raw)
 
@@ -48,8 +48,8 @@ module Lighstorm
           transform(adapted)
         end
 
-        def self.model(data)
-          Lighstorm::Models::Invoice.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Invoice.new(data, components)
         end
 
         def self.raise_error_if_exists!(response)

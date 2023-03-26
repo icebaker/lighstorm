@@ -7,11 +7,11 @@ module Lighstorm
   module Controllers
     module Node
       module All
-        def self.fetch(limit: nil)
+        def self.fetch(components, limit: nil)
           data = {
             at: Time.now,
-            get_info: Ports::GRPC.lightning.get_info.to_h,
-            describe_graph: Ports::GRPC.lightning.describe_graph.nodes
+            get_info: components[:grpc].lightning.get_info.to_h,
+            describe_graph: components[:grpc].lightning.describe_graph.nodes
           }
 
           data[:describe_graph] = data[:describe_graph][0..limit - 1] unless limit.nil?
@@ -42,8 +42,12 @@ module Lighstorm
           end
         end
 
-        def self.data(limit: nil, &vcr)
-          raw = vcr.nil? ? fetch(limit: limit) : vcr.call(-> { fetch(limit: limit) })
+        def self.data(components, limit: nil, &vcr)
+          raw = if vcr.nil?
+                  fetch(components, limit: limit)
+                else
+                  vcr.call(-> { fetch(components, limit: limit) })
+                end
 
           adapted = adapt(raw)
 
@@ -52,9 +56,9 @@ module Lighstorm
           end
         end
 
-        def self.model(data)
+        def self.model(data, components)
           data.map do |node_data|
-            Lighstorm::Models::Node.new(node_data)
+            Lighstorm::Models::Node.new(node_data, components)
           end
         end
       end

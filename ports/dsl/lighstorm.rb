@@ -12,6 +12,8 @@ require_relative '../../controllers/payment'
 require_relative '../../controllers/forward'
 require_relative '../../controllers/invoice'
 require_relative '../../controllers/activity'
+require_relative '../../controllers/connection'
+require_relative '../../controllers/wallet'
 
 module Lighstorm
   Node = Controllers::Node
@@ -20,11 +22,13 @@ module Lighstorm
   Forward = Controllers::Forward
   Invoice = Controllers::Invoice
   Activity = Controllers::Activity
+  Connection = Controllers::Connection
+  Wallet = Controllers::Wallet
 
   Satoshis = Models::Satoshis
 
-  def self.connect!(config)
-    LND.instance.connect!(config)
+  def self.connect!(...)
+    Controllers::Connection.connect!(...)
   end
 
   def self.inject_middleware!(middleware_lambda)

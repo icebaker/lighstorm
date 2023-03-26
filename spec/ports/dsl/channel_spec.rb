@@ -75,34 +75,20 @@ RSpec.describe Lighstorm::Channel do
           { _key: 'String:50+',
             accounting: { capacity: { millisatoshis: 'Integer:0..10' } },
             id: 'String:11..20',
-            partners: [
-              { node: {
-                  _key: 'String:50+',
-                  platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                  public_key: 'String:50+'
-                },
-                policy: {
-                  fee: { base: { millisatoshis: 'Integer:0..10' },
-                         rate: { parts_per_million: 'Integer:0..10' } },
-                  htlc: { blocks: { delta: { minimum: 'Integer:0..10' } },
-                          maximum: { millisatoshis: 'Integer:0..10' },
-                          minimum: { millisatoshis: 'Integer:0..10' } }
-                },
-                state: 'String:0..10' },
-              { node: {
-                  _key: 'String:50+',
-                  platform: { blockchain: 'String:0..10', network: 'String:0..10' },
-                  public_key: 'String:50+'
-                },
-                policy: {
-                  fee: { base: { millisatoshis: 'Integer:0..10' },
-                         rate: { parts_per_million: 'Integer:0..10' } },
-                  htlc: { blocks: { delta: { minimum: 'Integer:0..10' } },
-                          maximum: { millisatoshis: 'Integer:0..10' },
-                          minimum: { millisatoshis: 'Integer:0..10' } }
-                },
-                state: 'String:0..10' }
-            ] }
+            partners: [{ initiator: 'Nil',
+                         node: { _key: 'String:50+', platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                                 public_key: 'String:50+' },
+                         policy: { fee: { base: { millisatoshis: 'Integer:0..10' }, rate: { parts_per_million: 'Integer:0..10' } },
+                                   htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { millisatoshis: 'Integer:0..10' },
+                                           minimum: { millisatoshis: 'Integer:0..10' } } },
+                         state: 'String:0..10' },
+                       { initiator: 'Nil',
+                         node: { _key: 'String:50+', platform: { blockchain: 'String:0..10', network: 'String:0..10' },
+                                 public_key: 'String:50+' },
+                         policy: { fee: { base: { millisatoshis: 'Integer:0..10' }, rate: { parts_per_million: 'Integer:0..10' } },
+                                   htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { millisatoshis: 'Integer:0..10' },
+                                           minimum: { millisatoshis: 'Integer:0..10' } } },
+                         state: 'String:0..10' }] }
         )
       end
     end
@@ -118,23 +104,13 @@ RSpec.describe Lighstorm::Channel do
         expect(Contract.for(channel.to_h)).to eq(
           { _key: 'String:50+',
             id: 'String:11..20',
-            partners: [
-              { node: { _key: 'Nil', public_key: 'String:50+' },
-                policy: {
-                  fee: {
-                    rate: { parts_per_million: 'Integer:0..10' }
-                  },
-                  htlc: { blocks: { delta: { minimum: 'Integer:0..10' } },
-                          maximum: { millisatoshis: 'Integer:0..10' },
-                          minimum: { millisatoshis: 'Integer:0..10' } }
-                },
-                state: 'Nil' },
-              { node: {
-                  _key: 'Nil',
-                  public_key: 'String:50+'
-                },
-                state: 'Nil' }
-            ] }
+            partners: [{ initiator: 'Nil',
+                         node: { _key: 'Nil', public_key: 'String:50+' },
+                         policy: { fee: { rate: { parts_per_million: 'Integer:0..10' } },
+                                   htlc: { blocks: { delta: { minimum: 'Integer:0..10' } }, maximum: { millisatoshis: 'Integer:0..10' },
+                                           minimum: { millisatoshis: 'Integer:0..10' } } },
+                         state: 'Nil' },
+                       { initiator: 'Nil', node: { _key: 'Nil', public_key: 'String:50+' }, state: 'Nil' }] }
         )
       end
     end

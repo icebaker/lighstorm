@@ -10,6 +10,7 @@ module Lighstorm
         data = {
           _source: :list_channels,
           state: grpc[:active] ? 'active' : 'inactive',
+          initiator: grpc[:initiator] && key == :local,
           accounting: { balance: { millisatoshis: grpc[:"#{key}_balance"] * 1000 } },
           node: Node.list_channels(grpc, key)
         }

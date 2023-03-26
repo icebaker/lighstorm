@@ -13,9 +13,11 @@ module Lighstorm
 
       attr_reader :state
 
-      def initialize(data, is_mine, transaction)
+      def initialize(data, components, is_mine, transaction)
         @data = data
+        @components = components
         @state = data[:state]
+        @initiator = data[:initiator]
         @is_mine = is_mine
         @transaction = transaction
       end
@@ -24,12 +26,16 @@ module Lighstorm
         state == 'active'
       end
 
+      def initiator?
+        @initiator
+      end
+
       def node
-        @node ||= Node.new(@data[:node])
+        @node ||= Node.new(@data[:node], @components)
       end
 
       def policy
-        @policy ||= Policy.new(@data[:policy], @transaction)
+        @policy ||= Policy.new(@data[:policy], @components, @transaction)
       end
 
       def accounting
@@ -39,7 +45,11 @@ module Lighstorm
       end
 
       def to_h
-        restult = { state: state, node: node.to_h }
+        restult = {
+          state: state,
+          initiator: @initiator,
+          node: node.to_h
+        }
 
         restult[:accounting] = accounting.to_h if @is_mine
         restult[:policy] = policy.to_h if @data[:policy]

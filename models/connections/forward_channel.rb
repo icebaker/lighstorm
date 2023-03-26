@@ -5,8 +5,9 @@ require_relative '../edges/channel'
 module Lighstorm
   module Models
     class ForwardChannel
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
       end
 
       def amount
@@ -14,7 +15,7 @@ module Lighstorm
       end
 
       def channel
-        @channel ||= Channel.new(@data[:channel])
+        @channel ||= Channel.new(@data[:channel], @components)
       end
 
       def to_h

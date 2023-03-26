@@ -7,7 +7,8 @@ RSpec.describe VCR do
     'spec/helpers/test_data.rb',
     'spec/helpers/test_data_spec.rb',
     'spec/helpers/vcr.rb',
-    'spec/helpers/vcr_spec.rb'
+    'spec/helpers/vcr_spec.rb',
+    'spec/gem_spec.rb'
   ].freeze
 
   describe 'ensure no File.read' do

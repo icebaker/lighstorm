@@ -10,8 +10,8 @@ module Lighstorm
   module Controllers
     module Invoice
       module Create
-        def self.call(grpc_request)
-          Lighstorm::Ports::GRPC.send(grpc_request[:service]).send(
+        def self.call(components, grpc_request)
+          components[:grpc].send(grpc_request[:service]).send(
             grpc_request[:method], grpc_request[:params]
           ).to_h
         end
@@ -39,23 +39,31 @@ module Lighstorm
           request
         end
 
-        def self.dispatch(grpc_request, &vcr)
-          vcr.nil? ? call(grpc_request) : vcr.call(-> { call(grpc_request) }, :dispatch)
+        def self.dispatch(components, grpc_request, &vcr)
+          if vcr.nil?
+            call(components, grpc_request)
+          else
+            vcr.call(-> { call(components, grpc_request) }, :dispatch)
+          end
         end
 
         def self.adapt(response)
           Lighstorm::Adapter::Invoice.add_invoice(response)
         end
 
-        def self.fetch(adapted, &vcr)
-          FindBySecretHash.data(adapted[:secret][:hash], &vcr)
+        def self.fetch(components, adapted, &vcr)
+          FindBySecretHash.data(components, adapted[:secret][:hash], &vcr)
         end
 
-        def self.model(data)
-          FindBySecretHash.model(data)
+        def self.model(data, components)
+          FindBySecretHash.model(data, components)
         end
 
-        def self.perform(payable:, expires_in:, description: nil, amount: nil, preview: false, &vcr)
+        def self.perform(
+          components,
+          payable:, expires_in:, description: nil, amount: nil,
+          preview: false, &vcr
+        )
           grpc_request = prepare(
             description: description,
             amount: amount,
@@ -65,14 +73,14 @@ module Lighstorm
 
           return grpc_request if preview
 
-          response = dispatch(grpc_request, &vcr)
+          response = dispatch(components, grpc_request, &vcr)
 
           adapted = adapt(response)
 
-          data = fetch(adapted, &vcr)
-          model = self.model(data)
+          data = fetch(components, adapted, &vcr)
+          model = self.model(data, components)
 
-          Action::Output.new({ response: response, result: model })
+          Action::Output.new({ request: grpc_request, response: response, result: model })
         end
       end
     end

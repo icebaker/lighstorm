@@ -2,6 +2,9 @@
 
 require 'json'
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../models/edges/channel/hop'
 require_relative '../../../controllers/channel/mine'
 require_relative '../../../controllers/channel/all'
 require_relative '../../../controllers/channel/find_by_id'
@@ -13,7 +16,9 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Models::Channel do
   describe '.mine' do
     it 'models' do
-      data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
+      data = Lighstorm::Controllers::Channel::Mine.data(
+        Lighstorm::Controllers::Channel.components
+      ) do |fetch|
         VCR.tape.replay('Controllers::Channel.mine') do
           data = fetch.call
           data[:list_channels] = [data[:list_channels][0].to_h]
@@ -21,7 +26,7 @@ RSpec.describe Lighstorm::Models::Channel do
         end
       end
 
-      channel = described_class.new(data[0])
+      channel = described_class.new(data[0], Lighstorm::Controllers::Channel.components)
 
       expect(channel._key.size).to eq(64)
       expect(channel.known?).to be(true)
@@ -56,6 +61,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
       expect(channel.myself.node._key.size).to eq(64)
       expect(channel.myself.node.myself?).to be(true)
+      expect(channel.myself.initiator?).to be(true)
       expect(channel.myself.node.alias).to eq('icebaker/old-stone')
       expect(channel.myself.node.public_key).to eq('02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997')
       expect(channel.myself.node.color).to eq('#ff338f')
@@ -154,7 +160,7 @@ RSpec.describe Lighstorm::Models::Channel do
       )
 
       Contract.expect(
-        channel.to_h, '00b987a5e9fa40fbc39b54bffa4635e54758248beb4395cc0edf662f2bfd0c96'
+        channel.to_h, '4b1f68cb598d859f01c207b53cae972bff4aad64cc5971cb75ce856c743bd652'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -167,11 +173,14 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'models' do
         channel_id = '850111604344029185'
 
-        data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
+        data = Lighstorm::Controllers::Channel::FindById.data(
+          Lighstorm::Controllers::Channel.components,
+          channel_id
+        ) do |fetch|
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         as_hash = channel.to_h
 
@@ -298,7 +307,7 @@ RSpec.describe Lighstorm::Models::Channel do
         )
 
         Contract.expect(
-          channel.to_h, '00b987a5e9fa40fbc39b54bffa4635e54758248beb4395cc0edf662f2bfd0c96'
+          channel.to_h, '4b1f68cb598d859f01c207b53cae972bff4aad64cc5971cb75ce856c743bd652'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -310,11 +319,14 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'models' do
         channel_id = '553951550347608065'
 
-        data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
+        data = Lighstorm::Controllers::Channel::FindById.data(
+          Lighstorm::Controllers::Channel.components,
+          channel_id
+        ) do |fetch|
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -378,7 +390,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, 'd1048ba476daa11d917f0d9bf7d6678b7e7d0e1f8d152c9a8977e7addd9f0924'
+          channel.to_h, 'fdb6fe2c4f6238554d4c23c2d3bd57188098946ce989658406835acd20635a18'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -390,11 +402,14 @@ RSpec.describe Lighstorm::Models::Channel do
       it 'models' do
         channel_id = '853996178921881601'
 
-        data = Lighstorm::Controllers::Channel::FindById.data(channel_id) do |fetch|
+        data = Lighstorm::Controllers::Channel::FindById.data(
+          Lighstorm::Controllers::Channel.components,
+          channel_id
+        ) do |fetch|
           VCR.tape.replay("Controllers::Channel.find_by_id/#{channel_id}") { fetch.call }
         end
 
-        channel = described_class.new(data)
+        channel = described_class.new(data, Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -472,7 +487,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '282bba92dfc1941ec52b2dfb1563a74993abc4caeb7cc926710f2db1c9c52728'
+          channel.to_h, '14fef612b83489baaf941b874f9a0741b69522ec46736e9816a2c3a4bc26f888'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -483,7 +498,9 @@ RSpec.describe Lighstorm::Models::Channel do
 
   describe 'all' do
     let :data do
-      Lighstorm::Controllers::Channel::All.data do |fetch|
+      Lighstorm::Controllers::Channel::All.data(
+        Lighstorm::Controllers::Channel.components
+      ) do |fetch|
         VCR.tape.replay('Controllers::Channel.all') do
           data = fetch.call
 
@@ -501,7 +518,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'other' do
       it 'models' do
-        channel = described_class.new(data[0])
+        channel = described_class.new(data[0], Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -568,7 +585,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '35ee12eaad3ba2a047acd5c886c35e369e2bc88a9669072cffc2cddbbdd39310'
+          channel.to_h, '0cbaf2ce4b244d8c6f484b869da708f46e80369e9788936f784c72771ce0a81b'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -578,7 +595,7 @@ RSpec.describe Lighstorm::Models::Channel do
 
     context 'mine' do
       it 'models' do
-        channel = described_class.new(data[1])
+        channel = described_class.new(data[1], Lighstorm::Controllers::Channel.components)
 
         expect(channel._key.size).to eq(64)
         expect(channel.known?).to be(true)
@@ -692,7 +709,7 @@ RSpec.describe Lighstorm::Models::Channel do
         expect { channel.partners[1].node.platform.lightning }.to raise_error(NotYourNodeError)
 
         Contract.expect(
-          channel.to_h, '7e63c0da76eee3d2567411bcf2eb34eba4dc484ea69e43cb7a8c890886f82d17'
+          channel.to_h, 'b15f32f2a9aca1c408a7af138c62dd905489399b2573306a397fe34576af249c'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

@@ -7,10 +7,10 @@ module Lighstorm
   module Controllers
     module Node
       module Myself
-        def self.fetch
+        def self.fetch(components)
           {
             at: Time.now,
-            get_info: Ports::GRPC.lightning.get_info.to_h
+            get_info: components[:grpc].lightning.get_info.to_h
           }
         end
 
@@ -18,15 +18,15 @@ module Lighstorm
           { get_info: Lighstorm::Adapter::Node.get_info(raw[:get_info]) }
         end
 
-        def self.data(&vcr)
-          raw = vcr.nil? ? fetch : vcr.call(-> { fetch })
+        def self.data(components, &vcr)
+          raw = vcr.nil? ? fetch(components) : vcr.call(-> { fetch(components) })
 
           adapted = adapt(raw)
           adapted[:get_info].merge(myself: true)
         end
 
-        def self.model(data)
-          Lighstorm::Models::Node.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Node.new(data, components)
         end
       end
     end

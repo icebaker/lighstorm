@@ -22,7 +22,7 @@ module Lighstorm
     end
 
     def safety_key(key)
-      key.gsub('.', '_').to_sym
+      key.gsub('.', '_').sub(/^\[.*\]:/, '').to_sym
     end
 
     def for(key, ttl: nil, params: {}, &block)

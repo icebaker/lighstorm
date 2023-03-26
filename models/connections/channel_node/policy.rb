@@ -8,13 +8,14 @@ module Lighstorm
     class Policy
       attr_reader :transaction
 
-      def initialize(data, transaction)
+      def initialize(data, components, transaction)
         @data = data
+        @components = components
         @transaction = transaction
       end
 
       def fee
-        @fee ||= Fee.new(self, @data ? @data[:fee] : {})
+        @fee ||= Fee.new(self, @components, @data ? @data[:fee] : {})
       end
 
       def htlc

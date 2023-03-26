@@ -92,11 +92,17 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
             } }
         )
 
-        response = described_class.dispatch(request) do |grpc|
+        response = described_class.dispatch(
+          Lighstorm::Controllers::Invoice.components,
+          request
+        ) do |grpc|
           VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
         end
 
-        data = described_class.fetch(params[:code]) do |fetch|
+        data = described_class.fetch(
+          Lighstorm::Controllers::Invoice.components,
+          params[:code]
+        ) do |fetch|
           VCR.tape.replay("#{vcr_key}/fetch", params) { fetch.call }
         end
 
@@ -109,7 +115,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(actual.contract).to eq(expected.contract)
         end
 
-        model = described_class.model(adapted)
+        model = described_class.model(adapted, Lighstorm::Controllers::Invoice.components)
 
         expect(model.at.utc.to_s.size).to eq(23)
         expect(model.state).to eq('succeeded')
@@ -140,6 +146,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
+            Lighstorm::Controllers::Invoice.components,
             code: params[:code],
             times_out_in: { seconds: 5 },
             preview: true
@@ -160,6 +167,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'perform' do
         it 'performs' do
           action = described_class.perform(
+            Lighstorm::Controllers::Invoice.components,
             code: params[:code],
             times_out_in: { seconds: 5 }
           ) do |fn, from = :fetch|
@@ -188,7 +196,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
           Contract.expect(
-            action.to_h, '39331542ef1158d66da20c36567c8faaf3897a93cb675e2e38e108401eb3ac8d'
+            action.to_h, '01a325b6570a4bc74326181c0ea89de301c7f1e889c8e0c23fb733536ad17f43'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -201,6 +209,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
       context 'preview' do
         it 'previews' do
           request = described_class.perform(
+            Lighstorm::Controllers::Invoice.components,
             code: params[:code],
             message: 'hello!',
             times_out_in: { seconds: 5 },
@@ -240,6 +249,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
       it 'performs' do
         action = described_class.perform(
+          Lighstorm::Controllers::Invoice.components,
           code: params[:code],
           times_out_in: { seconds: 5 }
         ) do |fn, from = :fetch|
@@ -268,7 +278,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         expect(action.result.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
         Contract.expect(
-          action.to_h, 'dbc55f1eb55ce202298642de7ffd2a3cf9bf99d0b5b712780bef776dec7e5f67'
+          action.to_h, 'ef222bbe156ea9d790f772bf98f672368e8df09a5170802aea39e7a6a12ebc54'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -286,6 +296,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
       it 'previews millisatoshis' do
         preview = described_class.perform(
+          Lighstorm::Controllers::Invoice.components,
           code: params[:code],
           fee: { maximum: { millisatoshis: 1358 } },
           times_out_in: { seconds: 5 },
@@ -312,6 +323,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         it 'raises error' do
           expect do
             described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               code: params[:code],
               times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
@@ -321,6 +333,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
           begin
             described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               code: params[:code],
               times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
@@ -337,6 +350,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         it 'raises error' do
           expect do
             described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               code: params[:code], amount: params[:amount],
               times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
@@ -349,6 +363,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
           begin
             described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               code: params[:code], amount: params[:amount],
               times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
@@ -372,6 +387,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
         it 'raises error' do
           expect do
             described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               code: params[:code],
               times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|
@@ -384,6 +400,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Pay do
 
           begin
             described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               code: params[:code],
               times_out_in: { seconds: 5 }
             ) do |fn, from = :fetch|

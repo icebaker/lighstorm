@@ -39,7 +39,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               params: { memo: params[:description], expiry: 86_400, is_amp: true } }
           )
 
-          response = described_class.dispatch(request) do |grpc|
+          response = described_class.dispatch(
+            Lighstorm::Controllers::Invoice.components,
+            request
+          ) do |grpc|
             VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
           end
 
@@ -52,7 +55,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               secret: { hash: '34edfc3ab4a65b6864d5d1b2fdad2d4195160bec95f58b8e9d4f34c75a84bd4d' } }
           )
 
-          data = described_class.fetch(adapted) do |fetch|
+          data = described_class.fetch(
+            Lighstorm::Controllers::Invoice.components,
+            adapted
+          ) do |fetch|
             VCR.reel.replay("#{vcr_key}/fetch", params) { fetch.call }
           end
 
@@ -78,7 +84,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               known: true }
           )
 
-          model = described_class.model(data)
+          model = described_class.model(data, Lighstorm::Controllers::Invoice.components)
 
           expect(model.payable).to be('indefinitely')
 
@@ -104,6 +110,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'preview' do
           it 'previews' do
             request = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               description: params[:description], payable: params[:payable],
               expires_in: { hours: 24 },
               preview: true
@@ -120,6 +127,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'perform' do
           it 'performs' do
             action = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               payable: params[:payable], description: params[:description],
               expires_in: { hours: 24 }
             ) do |fn, from = :fetch|
@@ -167,31 +175,26 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             end
 
             Contract.expect(
-              action.to_h, '5b5b74d9a27a5f2b2a94ba9e35e0043a6622f4cbd2cbff9b9408ffc670970bba'
+              action.to_h, '917931ebdc82231328b969f798fb094b1eda768349884fdeca10f85b3c322c84'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: {
-                    add_index: 'Integer:0..10',
-                    payment_addr: 'String:31..40',
-                    payment_request: 'String:50+',
-                    r_hash: 'String:31..40'
-                  },
-                  result: {
-                    _key: 'String:50+',
-                    amount: 'Nil',
-                    code: 'String:50+',
-                    created_at: 'Time',
-                    description: { hash: 'Nil', memo: 'String:0..10' },
-                    expires_at: 'Time',
-                    payable: 'String:11..20',
-                    payments: 'Nil',
-                    received: 'Nil',
-                    secret: { hash: 'String:50+', preimage: 'Nil' },
-                    settled_at: 'Nil',
-                    state: 'String:0..10'
-                  } }
+                { request: { method: 'Symbol:11..20', params: { expiry: 'Integer:0..10', is_amp: 'Boolean', memo: 'String:0..10' }, service: 'Symbol:0..10' },
+                  response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+',
+                              r_hash: 'String:31..40' },
+                  result: { _key: 'String:50+',
+                            amount: 'Nil',
+                            code: 'String:50+',
+                            created_at: 'Time',
+                            description: { hash: 'Nil', memo: 'String:0..10' },
+                            expires_at: 'Time',
+                            payable: 'String:11..20',
+                            payments: 'Nil',
+                            received: 'Nil',
+                            secret: { hash: 'String:50+', preimage: 'Nil' },
+                            settled_at: 'Nil',
+                            state: 'String:0..10' } }
               )
             end
           end
@@ -224,7 +227,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
               } }
           )
 
-          response = described_class.dispatch(request) do |grpc|
+          response = described_class.dispatch(
+            Lighstorm::Controllers::Invoice.components,
+            request
+          ) do |grpc|
             VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
           end
 
@@ -245,7 +251,10 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             )
           end
 
-          data = described_class.fetch(adapted) do |fetch|
+          data = described_class.fetch(
+            Lighstorm::Controllers::Invoice.components,
+            adapted
+          ) do |fetch|
             VCR.reel.replay("#{vcr_key}/fetch", params) { fetch.call }
           end
 
@@ -277,7 +286,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             )
           end
 
-          model = described_class.model(data)
+          model = described_class.model(data, Lighstorm::Controllers::Invoice.components)
 
           Contract.expect(
             model.to_h, '0cc11f5cd2e9cfd54ab3789f155d9661f288ce3dbadf28f7fb8877a6f38e36d2'
@@ -306,6 +315,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'preview' do
           it 'previews' do
             request = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               amount: params[:amount], description: params[:description],
               payable: params[:payable],
               expires_in: { hours: 24 },
@@ -327,6 +337,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
         context 'perform' do
           it 'performs' do
             action = described_class.perform(
+              Lighstorm::Controllers::Invoice.components,
               amount: params[:amount],
               description: params[:description],
               expires_in: { hours: 24 },
@@ -338,31 +349,26 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             expect(action.result.class).to eq(Lighstorm::Models::Invoice)
 
             Contract.expect(
-              action.to_h, 'ea450f2ebd9f6657f974b90f6dc1079c016243bbf88a5445f878ca8f862545a6'
+              action.to_h, '2250d19cb80503dcf26c919197821b6a30410e855a7519c0a7b688d6b9301c01'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
               expect(actual.contract).to eq(
-                { response: {
-                    add_index: 'Integer:0..10',
-                    payment_addr: 'String:31..40',
-                    payment_request: 'String:50+',
-                    r_hash: 'String:31..40'
-                  },
-                  result: {
-                    _key: 'String:50+',
-                    amount: { millisatoshis: 'Integer:0..10' },
-                    code: 'String:50+',
-                    created_at: 'Time',
-                    description: { hash: 'Nil', memo: 'String:0..10' },
-                    expires_at: 'Time',
-                    payable: 'String:0..10',
-                    payments: 'Nil',
-                    received: 'Nil',
-                    secret: { hash: 'String:50+', preimage: 'String:50+' },
-                    settled_at: 'Nil',
-                    state: 'String:0..10'
-                  } }
+                { request: { method: 'Symbol:11..20', params: { expiry: 'Integer:0..10', memo: 'String:0..10', value_msat: 'Integer:0..10' }, service: 'Symbol:0..10' },
+                  response: { add_index: 'Integer:0..10', payment_addr: 'String:31..40', payment_request: 'String:50+',
+                              r_hash: 'String:31..40' },
+                  result: { _key: 'String:50+',
+                            amount: { millisatoshis: 'Integer:0..10' },
+                            code: 'String:50+',
+                            created_at: 'Time',
+                            description: { hash: 'Nil', memo: 'String:0..10' },
+                            expires_at: 'Time',
+                            payable: 'String:0..10',
+                            payments: 'Nil',
+                            received: 'Nil',
+                            secret: { hash: 'String:50+', preimage: 'String:50+' },
+                            settled_at: 'Nil',
+                            state: 'String:0..10' } }
               )
             end
           end

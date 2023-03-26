@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../../models/edges/channel/hop'
 require_relative '../../../../controllers/channel/actions/update_fee'
 require_relative '../../../../controllers/channel/mine'
 require_relative '../../../../models/edges/channel'
@@ -11,7 +14,9 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
   let(:vcr_key) { 'Controllers::Channel::UpdateFee' }
 
   let(:channel) do
-    data = Lighstorm::Controllers::Channel::Mine.data do |fetch|
+    data = Lighstorm::Controllers::Channel::Mine.data(
+      Lighstorm::Controllers::Channel.components
+    ) do |fetch|
       VCR.reel.replay('Controllers::Channel.mine/first/fee-update') do
         data = fetch.call
         data[:list_channels] = [data[:list_channels][0].to_h]
@@ -19,7 +24,7 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
       end
     end
 
-    Lighstorm::Models::Channel.new(data[0])
+    Lighstorm::Models::Channel.new(data[0], Lighstorm::Controllers::Channel.components)
   end
 
   let(:policy) { channel.myself.policy }
@@ -46,7 +51,10 @@ RSpec.describe Lighstorm::Controllers::Channel::UpdateFee do
                     min_htlc_msat: 1000 } }
       )
 
-      response = described_class.dispatch(request) do |grpc|
+      response = described_class.dispatch(
+        Lighstorm::Controllers::Channel.components,
+        request
+      ) do |grpc|
         VCR.reel.replay("#{vcr_key}/dispatch", params) { grpc.call }
       end
 

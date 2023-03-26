@@ -12,8 +12,9 @@ module Lighstorm
     class Forward
       attr_reader :_key, :at
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @_key = data[:_key]
         @at = data[:at]
@@ -24,11 +25,11 @@ module Lighstorm
       end
 
       def in
-        @in ||= ForwardChannel.new(@data[:in])
+        @in ||= ForwardChannel.new(@data[:in], @components)
       end
 
       def out
-        @out ||= ForwardChannel.new(@data[:out])
+        @out ||= ForwardChannel.new(@data[:out], @components)
       end
 
       def to_h

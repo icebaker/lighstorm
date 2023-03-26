@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../../../controllers/node'
 require_relative '../../../../controllers/node/myself'
 require_relative '../../../../controllers/node/find_by_public_key'
 require_relative '../../../../controllers/node/all'
@@ -14,11 +15,15 @@ RSpec.describe Lighstorm::Models::Node do
   describe '.dump' do
     context 'samples' do
       let(:data) do
-        myself = Lighstorm::Controllers::Node::Myself.data do |fetch|
+        myself = Lighstorm::Controllers::Node::Myself.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.myself') { fetch.call }
         end
 
-        data = Lighstorm::Controllers::Node::All.data do |fetch|
+        data = Lighstorm::Controllers::Node::All.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.all/samples') do
             data = fetch.call
 
@@ -34,9 +39,9 @@ RSpec.describe Lighstorm::Models::Node do
       end
 
       it 'provides data portability' do
-        node_alias = described_class.new(data[0])
-        node_no_alias = described_class.new(data[1])
-        node_myself = described_class.new(data[2])
+        node_alias = described_class.new(data[0], Lighstorm::Controllers::Node.components)
+        node_no_alias = described_class.new(data[1], Lighstorm::Controllers::Node.components)
+        node_myself = described_class.new(data[2], Lighstorm::Controllers::Node.components)
 
         Contract.expect(
           node_alias.dump, 'e383c9cb552c7d960adb867d7d584be794687ca0d0f4e1089be16f64296b62b3'
@@ -96,13 +101,25 @@ RSpec.describe Lighstorm::Models::Node do
           )
         end
 
-        expect(node_alias.dump).to eq(described_class.new(node_alias.dump).dump)
-        expect(node_no_alias.dump).to eq(described_class.new(node_no_alias.dump).dump)
-        expect(node_myself.dump).to eq(described_class.new(node_myself.dump).dump)
+        expect(node_alias.dump).to eq(
+          described_class.new(node_alias.dump, Lighstorm::Controllers::Node.components).dump
+        )
+        expect(node_no_alias.dump).to eq(
+          described_class.new(node_no_alias.dump, Lighstorm::Controllers::Node.components).dump
+        )
+        expect(node_myself.dump).to eq(
+          described_class.new(node_myself.dump, Lighstorm::Controllers::Node.components).dump
+        )
 
-        expect(node_alias.to_h).to eq(described_class.new(node_alias.dump).to_h)
-        expect(node_no_alias.to_h).to eq(described_class.new(node_no_alias.dump).to_h)
-        expect(node_myself.to_h).to eq(described_class.new(node_myself.dump).to_h)
+        expect(node_alias.to_h).to eq(
+          described_class.new(node_alias.dump, Lighstorm::Controllers::Node.components).to_h
+        )
+        expect(node_no_alias.to_h).to eq(
+          described_class.new(node_no_alias.dump, Lighstorm::Controllers::Node.components).to_h
+        )
+        expect(node_myself.to_h).to eq(
+          described_class.new(node_myself.dump, Lighstorm::Controllers::Node.components).to_h
+        )
       end
     end
   end

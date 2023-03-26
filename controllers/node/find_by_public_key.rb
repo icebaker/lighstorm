@@ -7,11 +7,11 @@ module Lighstorm
   module Controllers
     module Node
       module FindByPublicKey
-        def self.fetch(public_key)
+        def self.fetch(components, public_key)
           {
             at: Time.now,
-            get_info: Ports::GRPC.lightning.get_info.to_h,
-            get_node_info: Ports::GRPC.lightning.get_node_info(pub_key: public_key).to_h
+            get_info: components[:grpc].lightning.get_info.to_h,
+            get_node_info: components[:grpc].lightning.get_node_info(pub_key: public_key).to_h
           }
         end
 
@@ -22,8 +22,12 @@ module Lighstorm
           }
         end
 
-        def self.data(public_key, &vcr)
-          raw = vcr.nil? ? fetch(public_key) : vcr.call(-> { fetch(public_key) })
+        def self.data(components, public_key, &vcr)
+          raw = if vcr.nil?
+                  fetch(components, public_key)
+                else
+                  vcr.call(-> { fetch(components, public_key) })
+                end
 
           adapted = adapt(raw)
 
@@ -40,8 +44,8 @@ module Lighstorm
           end
         end
 
-        def self.model(data)
-          Lighstorm::Models::Node.new(data)
+        def self.model(data, components)
+          Lighstorm::Models::Node.new(data, components)
         end
       end
     end

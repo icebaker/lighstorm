@@ -148,7 +148,10 @@ module Contract
     when FalseClass, TrueClass
       return 'Boolean'
     else
-      raise "missing contract type for #{node.class}"
+      raise "missing contract type for #{node.class}" unless node.ancestors.include?(Exception)
+
+      node.class
+
     end
 
     type = node.class.to_s.gsub(/Class$/, '')

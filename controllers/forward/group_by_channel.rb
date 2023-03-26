@@ -67,8 +67,8 @@ module Lighstorm
                 .sort_by { |group| - group[:analysis][:count] }
         end
 
-        def self.data(direction: :out, hours_ago: nil, limit: nil, &vcr)
-          data = All.data(&vcr)
+        def self.data(components, direction: :out, hours_ago: nil, limit: nil, &vcr)
+          data = All.data(components, &vcr)
 
           filtered = filter(data, hours_ago)
           groups = group(filtered, direction)

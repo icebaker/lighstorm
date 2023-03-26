@@ -2,6 +2,10 @@
 
 require 'json'
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../../models/edges/channel/hop'
+require_relative '../../../../controllers/forward'
 require_relative '../../../../controllers/forward/group_by_channel'
 
 require_relative '../../../../models/edges/groups/channel_forwards'
@@ -12,14 +16,19 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
   describe 'all' do
     context 'no filters' do
       let(:data) do
-        data = Lighstorm::Controllers::Forward::GroupByChannel.data do |fetch|
+        data = Lighstorm::Controllers::Forward::GroupByChannel.data(
+          Lighstorm::Controllers::Forward.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Forward.group_by_channel') { fetch.call }
         end
       end
 
       context 'known peer' do
         it 'models' do
-          group = described_class.new(data.find { |d| d[:channel][:known] })
+          group = described_class.new(
+            data.find { |d| d[:channel][:known] },
+            Lighstorm::Controllers::Forward.components
+          )
 
           expect(group._key.size).to eq(64)
 
@@ -114,7 +123,7 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
           )
 
           Contract.expect(
-            group.to_h, 'af1334546a5b469569413f438b4470565174adc8a88a885e53c494577f767a63'
+            group.to_h, 'c0655bde7bc059f62eb26c37e19c3e6f3f9cd3b9380c82d516c291cbca5b3c54'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -124,7 +133,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
       context 'lost peer' do
         it 'models' do
-          group = described_class.new(data.find { |d| !d[:channel][:known] })
+          group = described_class.new(
+            data.find { |d| !d[:channel][:known] },
+            Lighstorm::Controllers::Forward.components
+          )
 
           expect(group._key.size).to eq(64)
 
@@ -172,7 +184,10 @@ RSpec.describe Lighstorm::Models::ChannelForwardsGroup do
 
     context 'hours-ago filter' do
       let(:data) do
-        data = Lighstorm::Controllers::Forward::GroupByChannel.data(hours_ago: 24) do |fetch|
+        data = Lighstorm::Controllers::Forward::GroupByChannel.data(
+          Lighstorm::Controllers::Forward.components,
+          hours_ago: 24
+        ) do |fetch|
           VCR.tape.replay('Controllers::Forward.group_by_channel', hours_ago: 24) { fetch.call }
         end
       end

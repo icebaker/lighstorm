@@ -2,6 +2,7 @@
 
 require 'json'
 
+require_relative '../../../controllers/node'
 require_relative '../../../controllers/node/myself'
 require_relative '../../../controllers/node/find_by_public_key'
 require_relative '../../../controllers/node/all'
@@ -13,11 +14,13 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 RSpec.describe Lighstorm::Models::Node do
   describe '.myself' do
     it 'models' do
-      data = Lighstorm::Controllers::Node::Myself.data do |fetch|
+      data = Lighstorm::Controllers::Node::Myself.data(
+        Lighstorm::Controllers::Node.components
+      ) do |fetch|
         VCR.tape.replay('Controllers::Node.myself') { fetch.call }
       end
 
-      node = described_class.new(data)
+      node = described_class.new(data, Lighstorm::Controllers::Node.components)
 
       expect(node._key.size).to eq(64)
       expect(node.myself?).to be(true)
@@ -43,11 +46,14 @@ RSpec.describe Lighstorm::Models::Node do
       it 'models' do
         public_key = '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 
-        data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
+        data = Lighstorm::Controllers::Node::FindByPublicKey.data(
+          Lighstorm::Controllers::Node.components,
+          public_key
+        ) do |fetch|
           VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
         end
 
-        node = described_class.new(data)
+        node = described_class.new(data, Lighstorm::Controllers::Node.components)
 
         expect(node._key.size).to eq(64)
         expect(node.myself?).to be(true)
@@ -72,11 +78,14 @@ RSpec.describe Lighstorm::Models::Node do
       it 'models' do
         public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78877928'
 
-        data = Lighstorm::Controllers::Node::FindByPublicKey.data(public_key) do |fetch|
+        data = Lighstorm::Controllers::Node::FindByPublicKey.data(
+          Lighstorm::Controllers::Node.components,
+          public_key
+        ) do |fetch|
           VCR.tape.replay("Controllers::Node.find_by_public_key/#{public_key}") { fetch.call }
         end
 
-        node = described_class.new(data)
+        node = described_class.new(data, Lighstorm::Controllers::Node.components)
 
         expect(node._key.size).to eq(64)
         expect(node.myself?).to be(false)
@@ -103,11 +112,15 @@ RSpec.describe Lighstorm::Models::Node do
   describe '.all' do
     context 'samples' do
       it 'models' do
-        myself = Lighstorm::Controllers::Node::Myself.data do |fetch|
+        myself = Lighstorm::Controllers::Node::Myself.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.myself') { fetch.call }
         end
 
-        data = Lighstorm::Controllers::Node::All.data do |fetch|
+        data = Lighstorm::Controllers::Node::All.data(
+          Lighstorm::Controllers::Node.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Node.all/samples') do
             data = fetch.call
 
@@ -121,9 +134,9 @@ RSpec.describe Lighstorm::Models::Node do
           end
         end
 
-        node_alias = described_class.new(data[0])
-        node_no_alias = described_class.new(data[1])
-        node_myself = described_class.new(data[2])
+        node_alias = described_class.new(data[0], Lighstorm::Controllers::Node.components)
+        node_no_alias = described_class.new(data[1], Lighstorm::Controllers::Node.components)
+        node_myself = described_class.new(data[2], Lighstorm::Controllers::Node.components)
 
         expect(node_alias._key.size).to eq(64)
         expect(node_alias.myself?).to be(false)

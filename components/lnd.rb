@@ -33,21 +33,37 @@ module Lighstorm
       LNDClient.add_connection!(@default_key, *params)
     end
 
+    def as(id)
+      LNDClient.as(id)
+    end
+
+    def add_connection!(...)
+      LNDClient.add_connection!(...)
+    end
+
+    def connections(...)
+      LNDClient.connections(...)
+    end
+
+    def remove_connection!(...)
+      LNDClient.remove_connection!(...)
+    end
+
     def middleware(key, &block)
       @middleware.call(key, &block)
+    end
+
+    def for(id)
+      as(id)&.connection
+    end
+
+    def default
+      client.connection.merge(id: @default_key)
     end
 
     def client
       try_to_connect_from_environment_variables! unless LNDClient.connections.include?(@default_key)
       LNDClient.as(@default_key)
-    end
-
-    def create_client_from_config
-      LNDClient.new(
-        socket_address: @config[:lnd_address],
-        certificate_path: @config[:certificate_path],
-        macaroon_path: @config[:macaroon_path]
-      )
     end
 
     def try_to_connect_from_environment_variables!

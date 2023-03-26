@@ -142,8 +142,6 @@ module Lighstorm
       end
 
       def self.list_payments(grpc, invoice_decode = nil)
-        raise UnexpectedNumberOfHTLCsError, "htlcs: #{grpc[:htlcs].size}" if grpc[:htlcs].size > 1
-
         data = {
           _key: _key(grpc),
           _source: :list_payments,

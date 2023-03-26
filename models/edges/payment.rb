@@ -14,8 +14,9 @@ module Lighstorm
     class Payment
       attr_reader :_key, :at, :state, :secret, :purpose, :through, :message
 
-      def initialize(data)
+      def initialize(data, components)
         @data = data
+        @components = components
 
         @_key = data[:_key]
         @at = data[:at]
@@ -30,7 +31,7 @@ module Lighstorm
       end
 
       def invoice
-        @invoice ||= !spontaneous? && @data[:invoice] ? Invoice.new(@data[:invoice]) : nil
+        @invoice ||= !spontaneous? && @data[:invoice] ? Invoice.new(@data[:invoice], @components) : nil
       end
 
       def amount
@@ -42,7 +43,7 @@ module Lighstorm
       end
 
       def secret
-        @secret ||= @data[:secret] ? Secret.new(@data[:secret]) : nil
+        @secret ||= @data[:secret] ? Secret.new(@data[:secret], @components) : nil
       end
 
       def hops

@@ -2,6 +2,11 @@
 
 require 'json'
 
+# Circular dependency issue:
+# https://stackoverflow.com/questions/8057625/ruby-how-to-require-correctly-to-avoid-circular-dependencies
+require_relative '../../../models/edges/channel/hop'
+
+require_relative '../../../controllers/forward'
 require_relative '../../../controllers/forward/all'
 
 require_relative '../../../models/edges/forward'
@@ -12,7 +17,9 @@ RSpec.describe Lighstorm::Models::Forward do
   describe 'all' do
     context 'known peer' do
       it 'models' do
-        data = Lighstorm::Controllers::Forward::All.data do |fetch|
+        data = Lighstorm::Controllers::Forward::All.data(
+          Lighstorm::Controllers::Forward.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Forward.all.last/known-peer') do
             data = fetch.call
 
@@ -29,7 +36,7 @@ RSpec.describe Lighstorm::Models::Forward do
           end
         end
 
-        forward = described_class.new(data[0])
+        forward = described_class.new(data[0], Lighstorm::Controllers::Forward.components)
 
         expect(forward._key.size).to eq(64)
 
@@ -201,7 +208,7 @@ RSpec.describe Lighstorm::Models::Forward do
 
         Contract.expect(
           forward.to_h,
-          'b469aaa041f93dc3a6bd20e596c3d29480b5615ecf7972378dbe98791dcfd2e5'
+          'e4d65018e4ffd316a385a68bcf56bced949edd67b34f76a0186b3c350c6f6d74'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -211,7 +218,9 @@ RSpec.describe Lighstorm::Models::Forward do
 
     context 'lost peer' do
       it 'models' do
-        data = Lighstorm::Controllers::Forward::All.data do |fetch|
+        data = Lighstorm::Controllers::Forward::All.data(
+          Lighstorm::Controllers::Forward.components
+        ) do |fetch|
           VCR.tape.replay('Controllers::Forward.all.last/lost-peer') do
             data = fetch.call
 
@@ -228,7 +237,7 @@ RSpec.describe Lighstorm::Models::Forward do
           end
         end
 
-        forward = described_class.new(data[0])
+        forward = described_class.new(data[0], Lighstorm::Controllers::Forward.components)
 
         expect(forward._key.size).to eq(64)
 

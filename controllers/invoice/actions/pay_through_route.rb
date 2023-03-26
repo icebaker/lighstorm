@@ -7,11 +7,11 @@ module Lighstorm
   module Controllers
     module Invoice
       module PayThroughRoute
-        def self.perform(_invoice, route:, preview: false, fake: false)
+        def self.perform(components, _invoice, route:, preview: false, fake: false)
           raise Errors::ToDoError, self
 
           channels = route.map do |channel_id|
-            Channel.find_by_id(channel_id)
+            Channel.find_by_id(channel_id, components)
           end
 
           outgoing_channel_id = channels.first.id

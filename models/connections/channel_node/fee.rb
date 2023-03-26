@@ -6,7 +6,6 @@ require_relative '../../satoshis'
 require_relative '../../rate'
 require_relative '../../concerns/protectable'
 
-require_relative '../../../components/lnd'
 require_relative '../../../controllers/channel/actions/update_fee'
 
 module Lighstorm
@@ -14,8 +13,9 @@ module Lighstorm
     class Fee
       include Protectable
 
-      def initialize(policy, data)
+      def initialize(policy, components, data)
         @policy = policy
+        @components = components
         @data = data
       end
 
@@ -47,7 +47,10 @@ module Lighstorm
       end
 
       def update(params, preview: false, &vcr)
+        raise MissingComponentsError if @components.nil?
+
         Controllers::Channel::UpdateFee.perform(
+          @components,
           @policy, @policy.transaction, params,
           preview: preview, &vcr
         )

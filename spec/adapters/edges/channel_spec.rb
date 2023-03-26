@@ -26,7 +26,7 @@ RSpec.describe Lighstorm::Adapter::Channel do
 
       Contract.expect(
         adapted,
-        '5e1c616da6abb8b8f9690fa33880ac258431765abdd70a6aeb08f99b0a8fbb6c'
+        '78638b130b0ecc2cae35f36adeb0a393b9d81c5c70a3285ae4c50c15374f1247'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)

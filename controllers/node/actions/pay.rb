@@ -18,20 +18,20 @@ module Lighstorm
   module Controllers
     module Node
       module Pay
-        def self.dispatch(grpc_request, &vcr)
-          Payment::Pay.dispatch(grpc_request, &vcr)
+        def self.dispatch(components, grpc_request, &vcr)
+          Payment::Pay.dispatch(components, grpc_request, &vcr)
         end
 
-        def self.fetch(&vcr)
-          Payment::Pay.fetch(&vcr)
+        def self.fetch(components, &vcr)
+          Payment::Pay.fetch(components, &vcr)
         end
 
         def self.adapt(data, node_get_info)
           Payment::Pay.adapt(data, node_get_info)
         end
 
-        def self.model(data)
-          Payment::Pay.model(data)
+        def self.model(data, components)
+          Payment::Pay.model(data, components)
         end
 
         def self.prepare(public_key:, amount:, times_out_in:, secret:, through:, fee: nil, message: nil)
@@ -75,6 +75,7 @@ module Lighstorm
         end
 
         def self.perform(
+          components,
           public_key:, amount:, through:,
           times_out_in:, fee: nil,
           message: nil, secret: nil,
@@ -94,19 +95,19 @@ module Lighstorm
 
           return grpc_request if preview
 
-          response = dispatch(grpc_request, &vcr)
+          response = dispatch(components, grpc_request, &vcr)
 
-          Payment::Pay.raise_error_if_exists!(response)
+          Payment::Pay.raise_error_if_exists!(grpc_request, response)
 
-          data = fetch(&vcr)
+          data = fetch(components, &vcr)
 
           adapted = adapt(response, data)
 
-          model = self.model(adapted)
+          model = self.model(adapted, components)
 
-          Payment::Pay.raise_failure_if_exists!(model, response)
+          Payment::Pay.raise_failure_if_exists!(model, grpc_request, response)
 
-          Action::Output.new({ response: response[:response], result: model })
+          Action::Output.new({ request: grpc_request, response: response[:response], result: model })
         end
       end
     end
