@@ -297,6 +297,8 @@ channel.partner.policy.fee.rate.parts_per_million
 channel.myself.accounting.balance.millisatoshis
 channel.myself.node.alias
 channel.myself.policy.fee.rate.parts_per_million
+
+channel.myself.initiator?
 ```
 
 [![This is an image representing Channel as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-channel.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-channel.png)
@@ -560,6 +562,7 @@ channel.partner.policy.htlc.blocks.delta.minimum
 channel.myself
 channel.myself.state
 channel.myself.active?
+channel.myself.initiator?
 
 channel.myself.node.public_key
 channel.myself.node.alias
@@ -952,6 +955,21 @@ Lighstorm::Payment.all(
     decode_pay_req: false,
     get_chan_info: false }
 )
+```
+
+## Wallet
+
+```ruby
+balance = Lighstorm::Wallet.balance
+
+balance.at
+
+balance.lightning.millisatoshis
+balance.bitcoin.millisatoshis
+
+balance.total.millisatoshis
+
+balance.to_h
 ```
 
 ## Forward
