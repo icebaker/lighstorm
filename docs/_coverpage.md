@@ -8,7 +8,7 @@
 - Built for maximum **reliability**.
 - Optimized for programmer **happiness**.
 
-0.0.13
+0.0.14
 
 ⚠️ _Warning: Early-stage, breaking changes are expected._
 
