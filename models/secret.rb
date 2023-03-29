@@ -36,7 +36,7 @@ module Lighstorm
       def valid_proof?(candidate_preimage, &vcr)
         raise MissingComponentsError if @components.nil?
 
-        return true if candidate_preimage == preimage
+        return true if preimage && preimage.size == 64 && candidate_preimage == preimage
 
         Controllers::Secret::ValidProof.data(
           @components,
@@ -46,7 +46,7 @@ module Lighstorm
 
       def to_h
         {
-          preimage: preimage,
+          proof: proof,
           hash: hash
         }
       end
