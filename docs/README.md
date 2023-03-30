@@ -648,7 +648,7 @@ invoice.description.memo
 invoice.description.hash
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-invoice.secret.preimage
+invoice.secret.proof
 invoice.secret.hash
 ```
 
@@ -854,7 +854,6 @@ payment.purpose
 # 'rebalance', 'payment'
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-payment.secret.preimage
 payment.secret.hash
 payment.secret.proof
 
@@ -874,8 +873,8 @@ payment.invoice.description.memo
 payment.invoice.description.hash
 
 # https://docs.lightning.engineering/the-lightning-network/multihop-payments
-payment.invoice.secret.preimage
 payment.invoice.secret.hash
+payment.invoice.secret.proof
 
 payment.from.hop
 payment.from.amount.millisatoshis
