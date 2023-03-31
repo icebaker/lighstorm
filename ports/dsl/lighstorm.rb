@@ -14,6 +14,7 @@ require_relative '../../controllers/invoice'
 require_relative '../../controllers/activity'
 require_relative '../../controllers/connection'
 require_relative '../../controllers/wallet'
+require_relative '../../controllers/wallet/bitcoin'
 
 module Lighstorm
   Node = Controllers::Node

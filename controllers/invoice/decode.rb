@@ -29,10 +29,10 @@ module Lighstorm
 
         def self.data(components, code, &vcr)
           raw = if vcr.nil?
-            fetch(components, code.sub('lightning:', ''))
-          else
-            vcr.call(-> { fetch(components, code.sub('lightning:', '')) })
-          end
+                  fetch(components, code.sub('lightning:', ''))
+                else
+                  vcr.call(-> { fetch(components, code.sub('lightning:', '')) })
+                end
 
           adapted = adapt(raw)
 
