@@ -8,7 +8,7 @@ module Lighstorm
   module Controllers
     module Transaction
       module All
-        def self.fetch(components, limit: nil)
+        def self.fetch(components, hash: nil, limit: nil)
           at = Time.now
 
           transactions = []
@@ -16,6 +16,8 @@ module Lighstorm
           response = components[:grpc].lightning.get_transactions
 
           response.transactions.each do |transaction|
+            next unless hash.nil? || transaction.to_h[:tx_hash] == hash
+
             transactions << transaction.to_h
           end
 
@@ -38,11 +40,11 @@ module Lighstorm
           adapted[:get_transactions]
         end
 
-        def self.data(components, limit: nil, &vcr)
+        def self.data(components, hash: nil, limit: nil, &vcr)
           raw = if vcr.nil?
-                  fetch(components, limit: limit)
+                  fetch(components, hash: hash, limit: limit)
                 else
-                  vcr.call(-> { fetch(components, limit: limit) })
+                  vcr.call(-> { fetch(components, hash: hash, limit: limit) })
                 end
 
           adapted = adapt(raw)

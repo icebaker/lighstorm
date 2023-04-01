@@ -5,7 +5,7 @@ require 'digest'
 require 'fileutils'
 
 module Contract
-  GENERATE = false
+  GENERATE = true
 
   class Monitor
     include Singleton

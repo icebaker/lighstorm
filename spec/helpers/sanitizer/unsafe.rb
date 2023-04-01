@@ -2,10 +2,11 @@
 
 module Sanitizer
   UNSAFE = {
+    'txid' => true,
+    'txid <= response' => true,
     'num_confirmations <= get_transactions' => true,
     'block_hash <= get_transactions' => true,
     'block_height <= get_transactions' => true,
-    'dest_addresses <= get_transactions' => true,
     'output_type <= output_details' => true,
     'address <= output_details' => true,
     'pk_script <= output_details' => true,

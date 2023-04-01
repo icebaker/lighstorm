@@ -441,6 +441,10 @@ destination.pay(
 )
 
 action = destination.pay(amount: { millisatoshis: 1000 })
+
+action.request
+action.response
+
 action.result.fee.millisatoshis
 ```
 
@@ -480,6 +484,10 @@ action = destination.send_message(
   'Hello from Lighstorm!',
   amount: { millisatoshis: 1000 }
 )
+
+action.request
+action.response
+
 action.result.fee.millisatoshis
 ```
 
@@ -685,7 +693,9 @@ action = Lighstorm::Invoice.create(
 
 action.to_h
 
+action.request
 action.response
+
 invoice = action.result
 ```
 
@@ -717,7 +727,9 @@ action = invoice.pay
 
 action.to_h
 
+action.request
 action.response
+
 payment = action.result
 
 payment.at
@@ -958,6 +970,8 @@ Lighstorm::Payment.all(
 
 ## Wallet
 
+### Balance
+
 ```ruby
 balance = Lighstorm::Wallet.balance
 
@@ -969,6 +983,66 @@ balance.bitcoin.millisatoshis
 balance.total.millisatoshis
 
 balance.to_h
+```
+
+## Bitcoin Address
+
+### Create
+
+The Lightning Network promotes the idea of creating a new Bitcoin address every time you need one, which helps maintain transaction privacy and fund security. This makes it harder for others to trace your activity, providing a more secure and private experience.
+
+```ruby
+Lighstorm::BitcoinAddress.create(preview: true)
+
+action = Lighstorm::BitcoinAddress.create
+
+action.request
+action.response
+
+address = action.result
+
+address._key
+address.created_at
+address.code # 'bcrt1qpma0wpaf2wzlflvamgz2zvw3x0k4vfzwq45x9s'
+```
+
+```ruby
+address = Lighstorm::BitcoinAddress.create.result.code
+```
+
+### Pay
+
+```ruby
+Lighstorm::BitcoinAddress.new(
+  code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
+).pay(
+  amount: { millisatoshis: 250_000_000 },
+  fee: { satoshis_per_vitual_byte: 4 },
+  preview: true
+)
+
+action = Lighstorm::BitcoinAddress.new(
+  code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
+).pay(
+  amount: { millisatoshis: 500_000_000 },
+  fee: { satoshis_per_vitual_byte: 1 },
+  description: 'Wallet Withdrawal',
+  required_confirmations: 6
+)
+
+action.request
+action.response
+
+transaction = action.result
+
+transaction._key
+transaction.at
+transaction.amount.millisatoshis
+transaction.fee.millisatoshis
+transaction.description
+
+transaction.hash
+transaction.to.address.code
 ```
 
 ## Forward

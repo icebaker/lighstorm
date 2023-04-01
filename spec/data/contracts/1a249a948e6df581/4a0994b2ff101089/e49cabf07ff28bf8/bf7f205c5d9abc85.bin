@@ -1,0 +1,3 @@
+{:request{:methodI"Symbol:11..20:ET:params{:expiryI"Integer:0..10;T:is_ampI"Boolean;T:	memoI"String:0..10;T:serviceI"Symbol:0..10;T:response{	:add_indexI"Integer:0..10;T:payment_addrI"String:31..40;T:payment_requestI"String:50+;T:r_hashI"String:31..40;T:result{:	_keyI"String:50+;T:amountI"Nil;F:	codeI"String:50+;T:created_atI"	Time;F:description{:	hashI"Nil;F;I"String:0..10;T:expires_atI"	Time;F:payableI"String:11..20;T:paymentsI"Nil;F:receivedI"Nil;F:secret{;I"String:50+;T:
+proofI"Nil;F:settled_atI"Nil;F:
+stateI"String:0..10;T

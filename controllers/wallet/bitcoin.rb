@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../concerns/impersonatable'
-require_relative './actions/create'
+require_relative './actions/send'
 
 module Lighstorm
   module Controllers
@@ -10,8 +10,8 @@ module Lighstorm
         extend Impersonatable
 
         class DSL < Impersonatable::DSL
-          def create(preview: false, &vcr)
-            Create.perform(components, preview: preview, &vcr)
+          def send(preview: false, &vcr)
+            # Balance.model(Balance.data(components))
           end
         end
       end

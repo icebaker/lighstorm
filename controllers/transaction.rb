@@ -10,14 +10,12 @@ module Lighstorm
       extend Impersonatable
 
       class DSL < Impersonatable::DSL
-        def all(direction: nil, how: nil, layer: nil, limit: nil)
-          All.model(All.data(
-                      components,
-                      direction: direction,
-                      how: how,
-                      layer: layer,
-                      limit: limit
-                    ))
+        def all(limit: nil)
+          All.model(All.data(components, limit: limit))
+        end
+
+        def find_by_hash(hash, &vcr)
+          All.model(All.data(components, hash: hash, limit: 1, &vcr)).first
         end
       end
     end

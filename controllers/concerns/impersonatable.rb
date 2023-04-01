@@ -6,6 +6,8 @@ module Lighstorm
   module Controllers
     module Impersonatable
       class DSL
+        alias _send send
+
         attr_reader :components
 
         def initialize(components = nil)
@@ -19,9 +21,9 @@ module Lighstorm
 
       def method_missing(method_name, *args, &block)
         if args.size == 1 && args.first.is_a?(Hash)
-          self::DSL.new.send(method_name, **args.first, &block)
+          self::DSL.new._send(method_name, **args.first, &block)
         else
-          self::DSL.new.send(method_name, *args, &block)
+          self::DSL.new._send(method_name, *args, &block)
         end
       end
 

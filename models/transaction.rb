@@ -5,7 +5,7 @@ require_relative './satoshis'
 module Lighstorm
   module Models
     class Transaction
-      attr_reader :_key, :at, :hash, :label
+      attr_reader :_key, :at, :hash, :description
 
       def initialize(data)
         @data = data
@@ -13,7 +13,7 @@ module Lighstorm
         @_key = @data[:_key]
         @at = @data[:at]
         @hash = @data[:hash]
-        @label = @data[:label]
+        @description = @data[:description]
       end
 
       def amount
@@ -31,7 +31,7 @@ module Lighstorm
           hash: hash,
           amount: amount.to_h,
           fee: fee.to_h,
-          label: label
+          description: description
         }
       end
     end

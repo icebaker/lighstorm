@@ -3,13 +3,10 @@
 require_relative './concerns/impersonatable'
 
 require_relative './wallet/balance'
-require_relative './wallet/bitcoin'
 
 module Lighstorm
   module Controllers
     module Wallet
-      Bitcoin = Bitcoin
-
       extend Impersonatable
 
       class DSL < Impersonatable::DSL

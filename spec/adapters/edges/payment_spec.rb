@@ -81,7 +81,7 @@ RSpec.describe Lighstorm::Adapter::Payment do
       adapted = described_class.list_payments(raw, node_get_info)
 
       Contract.expect(
-        adapted, '1cbdc0c54ef8ad5c06c386be3305af21d1fdd1c39e3eab11428c7aaadc06fb3c'
+        adapted, 'a93f9f44b8af7711c5938c788c67c667563418c5a77c49c735069b7002dea18f'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)

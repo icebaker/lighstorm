@@ -14,7 +14,7 @@ require_relative '../../controllers/invoice'
 require_relative '../../controllers/activity'
 require_relative '../../controllers/connection'
 require_relative '../../controllers/wallet'
-require_relative '../../controllers/wallet/bitcoin'
+require_relative '../../controllers/bitcoin_address'
 
 module Lighstorm
   Node = Controllers::Node
@@ -25,6 +25,7 @@ module Lighstorm
   Activity = Controllers::Activity
   Connection = Controllers::Connection
   Wallet = Controllers::Wallet
+  BitcoinAddress = Controllers::BitcoinAddress
 
   Satoshis = Models::Satoshis
 

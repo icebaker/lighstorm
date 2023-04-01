@@ -5,11 +5,9 @@ require 'json'
 require_relative '../../controllers/wallet'
 require_relative '../../controllers/wallet/balance'
 
-require_relative '../../models/wallet'
-
 require_relative '../../ports/dsl/lighstorm/errors'
 
-RSpec.describe Lighstorm::Models::Wallet do
+RSpec.describe Lighstorm::Models::Wallet::Balance do
   describe '.balance' do
     it 'models' do
       data = Lighstorm::Controllers::Wallet::Balance.data(

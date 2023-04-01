@@ -86,7 +86,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
       adapted = described_class.list_invoices(raw, at)
 
       Contract.expect(
-        adapted, '2f5bc36ae472c3713ac92455d051ef3a2e285981bc143c41bc65c1e51d04b383'
+        adapted, 'ebeeac84d4ebbb2d598ba14c15963bd09045358ef084c7252541355f18600b70'
       ) do |actual, expected|
         expect(actual.hash).to eq(expected.hash)
         expect(actual.contract).to eq(expected.contract)
@@ -133,7 +133,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         adapted = described_class.lookup_invoice(raw, at)
 
         Contract.expect(
-          adapted, '2f5bc36ae472c3713ac92455d051ef3a2e285981bc143c41bc65c1e51d04b383'
+          adapted, 'ebeeac84d4ebbb2d598ba14c15963bd09045358ef084c7252541355f18600b70'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -179,7 +179,7 @@ RSpec.describe Lighstorm::Adapter::Invoice do
         adapted = described_class.lookup_invoice(raw, at)
 
         Contract.expect(
-          adapted, '2ca4434e2046948f864254ba3cda1bc936aa3e8d7f173505317a44970441352f'
+          adapted, 'b9cb9b9d9000b028b6d900e6fbb65f6052e6ac0e271c6bc53b34a6a15ed136b8'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

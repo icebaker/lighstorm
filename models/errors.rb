@@ -53,6 +53,8 @@ module Lighstorm
       end
     end
 
+    class AmountBelowDustLimitError < RequestError; end
+
     class UpdateChannelPolicyError < RequestError; end
 
     class NoInvoiceFoundError < RequestError; end

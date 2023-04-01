@@ -69,16 +69,16 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           data[:expires_at] = data[:expires_at].utc.to_s
 
           expect(data).to eq(
-            { _key: 'c18e8ff5fc5b8003c77720a29b4fec91ad11b26433da6aa39cd320e7a1588a87',
+            { _key: 'd0abbe35b45e3a71d612b9176d4b6c4fbf738556e9b5ab05e24f677bbc24eedd',
               created_at: '2023-03-11 21:31:53 UTC',
               expires_at: '2023-03-12 21:31:53 UTC',
               settled_at: nil,
-              state: 'open',
+              state: 'canceled',
               code: 'lnbc1pjqeu6fpp5xnklcw455edksex46xe0mtfdgx23vzlvjh6chr5afu6vwk5yh4xsdqdg3hkuct5d9hkucqzpgxqyz5vqsp5hf535cnvephhue006zt925eem6d7sl065ku4ve494626gzqh2pls9q8pqqqssqkeq9njfd235nq2wy8zrzph8x2agmy9429wdug3mx6f9zrwxedf8y2jk55jgd8aruvue3emzxfmskvm9c7mlppaf9m8vyhmqtcaefkrcph2jpse',
               payable: 'indefinitely',
               description: { memo: 'Donation', hash: nil },
-              address: '43611f6d7740ace3db80a67e64f4216f0748af38be793306faff347e5d5fea80',
-              secret: { preimage: nil,
+              address: '7a9563c5df0c99a3a39beb93e84531377deedfeb1821c88d1dcab63df4194c30',
+              secret: { proof: nil,
                         hash: '34edfc3ab4a65b6864d5d1b2fdad2d4195160bec95f58b8e9d4f34c75a84bd4d' },
               _source: :lookup_invoice,
               known: true }
@@ -89,17 +89,17 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           expect(model.payable).to be('indefinitely')
 
           expect(model.to_h).to eq(
-            { _key: 'c18e8ff5fc5b8003c77720a29b4fec91ad11b26433da6aa39cd320e7a1588a87',
+            { _key: 'd0abbe35b45e3a71d612b9176d4b6c4fbf738556e9b5ab05e24f677bbc24eedd',
               created_at: '2023-03-11 21:31:53 UTC',
               expires_at: '2023-03-12 21:31:53 UTC',
               settled_at: nil,
               payable: 'indefinitely',
-              state: 'open',
+              state: 'canceled',
               code: 'lnbc1pjqeu6fpp5xnklcw455edksex46xe0mtfdgx23vzlvjh6chr5afu6vwk5yh4xsdqdg3hkuct5d9hkucqzpgxqyz5vqsp5hf535cnvephhue006zt925eem6d7sl065ku4ve494626gzqh2pls9q8pqqqssqkeq9njfd235nq2wy8zrzph8x2agmy9429wdug3mx6f9zrwxedf8y2jk55jgd8aruvue3emzxfmskvm9c7mlppaf9m8vyhmqtcaefkrcph2jpse',
               amount: nil,
               received: nil,
               description: { memo: 'Donation', hash: nil },
-              secret: { preimage: nil,
+              secret: { proof: nil,
                         hash: '34edfc3ab4a65b6864d5d1b2fdad2d4195160bec95f58b8e9d4f34c75a84bd4d' },
               payments: nil }
           )
@@ -145,17 +145,17 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             result_to_h[:expires_at] = result_to_h[:expires_at].utc.to_s
 
             expect(result_to_h).to eq(
-              { _key: 'c18e8ff5fc5b8003c77720a29b4fec91ad11b26433da6aa39cd320e7a1588a87',
+              { _key: 'd0abbe35b45e3a71d612b9176d4b6c4fbf738556e9b5ab05e24f677bbc24eedd',
                 created_at: '2023-03-11 21:31:53 UTC',
                 expires_at: '2023-03-12 21:31:53 UTC',
                 settled_at: nil,
                 payable: 'indefinitely',
-                state: 'open',
+                state: 'canceled',
                 code: 'lnbc1pjqeu6fpp5xnklcw455edksex46xe0mtfdgx23vzlvjh6chr5afu6vwk5yh4xsdqdg3hkuct5d9hkucqzpgxqyz5vqsp5hf535cnvephhue006zt925eem6d7sl065ku4ve494626gzqh2pls9q8pqqqssqkeq9njfd235nq2wy8zrzph8x2agmy9429wdug3mx6f9zrwxedf8y2jk55jgd8aruvue3emzxfmskvm9c7mlppaf9m8vyhmqtcaefkrcph2jpse',
                 amount: nil,
                 received: nil,
                 description: { memo: 'Donation', hash: nil },
-                secret: { preimage: nil,
+                secret: { proof: nil,
                           hash: '34edfc3ab4a65b6864d5d1b2fdad2d4195160bec95f58b8e9d4f34c75a84bd4d' },
                 payments: nil }
             )
@@ -175,7 +175,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             end
 
             Contract.expect(
-              action.to_h, '917931ebdc82231328b969f798fb094b1eda768349884fdeca10f85b3c322c84'
+              action.to_h, '1a249a948e6df5814a0994b2ff101089e49cabf07ff28bf8bf7f205c5d9abc85'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
@@ -192,7 +192,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
                             payable: 'String:11..20',
                             payments: 'Nil',
                             received: 'Nil',
-                            secret: { hash: 'String:50+', preimage: 'Nil' },
+                            secret: { hash: 'String:50+', proof: 'Nil' },
                             settled_at: 'Nil',
                             state: 'String:0..10' } }
               )
@@ -265,7 +265,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           data[:expires_at] = data[:expires_at].utc.to_s
 
           Contract.expect(
-            data, '897e6d358eae2adf6d2fca88e7cc1c550dfb6fe4fd98114d352ce4cdee59a831'
+            data, '8fa49e2e403c301a59186363f0d9df759a25183f8ee68604fa3de1df8f009bf4'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
 
@@ -280,7 +280,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
                 expires_at: 'String:21..30',
                 known: 'Boolean',
                 payable: 'String:0..10',
-                secret: { hash: 'String:50+', preimage: 'String:50+' },
+                secret: { hash: 'String:50+', proof: 'String:50+' },
                 settled_at: 'Nil',
                 state: 'String:0..10' }
             )
@@ -289,7 +289,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
           model = described_class.model(data, Lighstorm::Controllers::Invoice.components)
 
           Contract.expect(
-            model.to_h, '0cc11f5cd2e9cfd54ab3789f155d9661f288ce3dbadf28f7fb8877a6f38e36d2'
+            model.to_h, 'b91495c72a81df75ad1305d5cb88c04d67551533307c58abdadfbe3937e50b16'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
 
@@ -303,7 +303,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
                 payable: 'String:0..10',
                 payments: 'Nil',
                 received: 'Nil',
-                secret: { hash: 'String:50+', preimage: 'String:50+' },
+                secret: { hash: 'String:50+', proof: 'String:50+' },
                 settled_at: 'Nil',
                 state: 'String:0..10' }
             )
@@ -349,7 +349,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
             expect(action.result.class).to eq(Lighstorm::Models::Invoice)
 
             Contract.expect(
-              action.to_h, '2250d19cb80503dcf26c919197821b6a30410e855a7519c0a7b688d6b9301c01'
+              action.to_h, '82c71a396189e75f20cf76a2f74ce1c12c7487fd5f9c655b7d33a841feb7160a'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
@@ -366,7 +366,7 @@ RSpec.describe Lighstorm::Controllers::Invoice::Create do
                             payable: 'String:0..10',
                             payments: 'Nil',
                             received: 'Nil',
-                            secret: { hash: 'String:50+', preimage: 'String:50+' },
+                            secret: { hash: 'String:50+', proof: 'String:50+' },
                             settled_at: 'Nil',
                             state: 'String:0..10' } }
               )

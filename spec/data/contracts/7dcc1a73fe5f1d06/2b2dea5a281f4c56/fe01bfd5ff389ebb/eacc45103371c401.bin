@@ -1,0 +1,4 @@
+{:request{:methodI"Symbol:0..10:ET:params{
+:	addrI"String:41..50;T:amountI"Integer:0..10;T:
+labelI"String:11..20;T:min_confsI"Integer:0..10;T:sat_per_vbyteI"Integer:0..10;T:serviceI"Symbol:0..10;T:response{:	txidI"String:50+;T:result{:	_keyI"String:50+;T;
+{:millisatoshisI"Integer:0..10;T:atI"	Time;F:fee{;I"Integer:0..10;T:	hashI"String:50+;T;I"String:11..20;T

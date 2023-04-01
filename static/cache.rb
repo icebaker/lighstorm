@@ -3,6 +3,7 @@
 module Lighstorm
   module Static
     CACHE = {
+      lightning_send_coins: false,
       lightning_new_address: false,
       lightning_channel_balance: false,
       lightning_wallet_balance: false,

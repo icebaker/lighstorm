@@ -64,7 +64,7 @@ module Lighstorm
 
           if through.to_sym == :keysend
             request[:params][:payment_hash] = [secret[:hash]].pack('H*')
-            request[:params][:dest_custom_records][5_482_373_484] = [secret[:preimage]].pack('H*')
+            request[:params][:dest_custom_records][5_482_373_484] = [secret[:secret]].pack('H*')
           elsif through.to_sym == :amp
             request[:params][:amp] = true
           end
