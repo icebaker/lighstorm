@@ -6,7 +6,7 @@
 
 _Lighstorm_ is an opinionated abstraction layer on top of the [lnd-client](https://github.com/icebaker/lnd-client).
 
-It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Model](https://guides.rubyonrails.org/active_record_basics.html) conventions.
+It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Models](https://guides.rubyonrails.org/active_record_basics.html) conventions.
 
 However, despite the fluidity of _Object Orientation_ being desired in its public interface, internally, most of its code is structured following the [_Hexagonal Architecture_](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)) and [_Functional Programming_](https://en.wikipedia.org/wiki/Functional_programming) principles.
 
