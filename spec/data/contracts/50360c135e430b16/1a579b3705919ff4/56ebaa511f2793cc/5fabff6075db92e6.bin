@@ -1,0 +1,6 @@
+{:atI"	Time:EF:channel_balance{:balanceI"Integer:0..10;T:local_balance{:	msatI"Integer:0..10;T:satI"Integer:0..10;T:pending_open_balanceI"Integer:0..10;T:pending_open_local_balance{;
+I"Integer:0..10;T;I"Integer:0..10;T: pending_open_remote_balance{;
+I"Integer:0..10;T;I"Integer:0..10;T:remote_balance{;
+I"Integer:0..10;T;I"Integer:0..10;T:unsettled_local_balance{;
+I"Integer:0..10;T;I"Integer:0..10;T:unsettled_remote_balance{;
+I"Integer:0..10;T;I"Integer:0..10;T:wallet_balance{:account_balance{I"default;T{:confirmed_balanceI"Integer:0..10;T:unconfirmed_balanceI"Integer:0..10;T;I"Integer:0..10;T:locked_balanceI"Integer:0..10;T:!reserved_balance_anchor_chanI"Integer:0..10;T:total_balanceI"Integer:0..10;T;I"Integer:0..10;T

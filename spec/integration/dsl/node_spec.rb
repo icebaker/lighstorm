@@ -13,7 +13,7 @@ RSpec.describe 'Integration Tests' do
           public_key = '02003e8f41444fbddbfce965eaeb45b362b5c1b0e52b16cc249807ba7f78000928'
 
           expect do
-            Lighstorm::Node.find_by_public_key(public_key)
+            Lighstorm::Lightning::Node.find_by_public_key(public_key)
           end.to raise_error GRPC::NotFound
         end
       end
@@ -22,7 +22,7 @@ RSpec.describe 'Integration Tests' do
         it do
           check_integration!
 
-          myself = Lighstorm::Node.myself
+          myself = Lighstorm::Lightning::Node.myself
 
           expect(Contract.for(myself._key)).to eq('String:50+')
           expect(Contract.for(myself.alias)).to eq('String:11..20')
@@ -68,7 +68,7 @@ RSpec.describe 'Integration Tests' do
         it do
           check_integration!
 
-          find = Lighstorm::Node.find_by_public_key(
+          find = Lighstorm::Lightning::Node.find_by_public_key(
             '024bfaf0cabe7f874fd33ebf7c6f4e5385971fc504ef3f492432e9e3ec77e1b5cf'
           )
 
@@ -100,9 +100,9 @@ RSpec.describe 'Integration Tests' do
         it do
           check_integration!(slow: true)
 
-          expect(Lighstorm::Node.all.size).to be > 10_000
+          expect(Lighstorm::Lightning::Node.all.size).to be > 10_000
 
-          nodes = Lighstorm::Node.all(limit: 10)
+          nodes = Lighstorm::Lightning::Node.all(limit: 10)
 
           expect(nodes.size).to eq(10)
 

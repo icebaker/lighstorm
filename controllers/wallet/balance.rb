@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative '../../adapters/wallet'
-require_relative '../../models/wallet'
+require_relative '../../models/wallet/balance'
 
 module Lighstorm
-  module Controllers
+  module Controller
     module Wallet
       module Balance
         def self.fetch(components)
@@ -26,7 +26,7 @@ module Lighstorm
         end
 
         def self.model(data)
-          Models::Wallet.new(data)
+          Model::Wallet::Balance.new(data)
         end
       end
     end

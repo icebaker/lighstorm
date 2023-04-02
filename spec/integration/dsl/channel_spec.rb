@@ -10,7 +10,7 @@ RSpec.describe 'Integration Tests' do
         it do
           check_integration!
 
-          mine = Lighstorm::Channel.mine
+          mine = Lighstorm::Lightning::Channel.mine
 
           expect(mine.size).to be > 0
           expect(mine.size).to be < 10_000
@@ -66,7 +66,7 @@ RSpec.describe 'Integration Tests' do
         it do
           check_integration!
 
-          channel = Lighstorm::Channel.find_by_id('553951550347608065')
+          channel = Lighstorm::Lightning::Channel.find_by_id('553951550347608065')
 
           expect(Contract.for(channel._key)).to eq('String:50+')
 
@@ -136,11 +136,11 @@ RSpec.describe 'Integration Tests' do
         it do
           check_integration!(slow: true)
 
-          channels = Lighstorm::Channel.all
+          channels = Lighstorm::Lightning::Channel.all
 
           expect(channels.size).to be > 50_000
 
-          channels = Lighstorm::Channel.all(limit: 10)
+          channels = Lighstorm::Lightning::Channel.all(limit: 10)
 
           expect(channels.size).to eq(10)
 

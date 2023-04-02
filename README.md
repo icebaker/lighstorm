@@ -7,7 +7,7 @@ API for interacting with a [Lightning Node](https://lightning.network).
 ![Lighstorm text written stylized with an illustration of a Graph connecting two Nodes.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/lighstorm.png)
 
 ```ruby
-Lighstorm::Channel.mine.first.myself.node.alias
+Lighstorm::Lightning::Channel.mine.first.myself.node.alias
 ```
 
 ## Index
@@ -55,17 +55,17 @@ Lighstorm.connect!(
 
 puts Lighstorm.version # => 0.0.15
 
-Lighstorm::Node.myself.alias # => icebaker/old-stone
+Lighstorm::Lightning::Node.myself.alias # => icebaker/old-stone
 
-Lighstorm::Invoice.create(
+Lighstorm::Lightning::Invoice.create(
   description: 'Coffee',
   amount: { millisatoshis: 1_000 },
   payable: 'once'
 )
 
-Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
+Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
 
-Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
+Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
   fee: { maximum: { millisatoshis: 1000 } }
 )
 

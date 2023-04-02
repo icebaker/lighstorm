@@ -2,10 +2,16 @@
 
 module Sanitizer
   UNSAFE = {
+    'proof <= secret' => true,
+    'tx_hash' => true,
+    'dest_addresses' => true,
+    'raw_tx_hex' => true,
+    'txid' => true,
+    'address' => true,
+    'txid <= response' => true,
     'num_confirmations <= get_transactions' => true,
     'block_hash <= get_transactions' => true,
     'block_height <= get_transactions' => true,
-    'dest_addresses <= get_transactions' => true,
     'output_type <= output_details' => true,
     'address <= output_details' => true,
     'pk_script <= output_details' => true,

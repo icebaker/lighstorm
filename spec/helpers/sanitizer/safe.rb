@@ -2,7 +2,18 @@
 
 module Sanitizer
   SAFE = {
+    'layer <= activities' => true,
+    'expires_at <= invoice' => true,
+    'store_final_htlc_resolutions <= get_info' => true,
+    'peer_alias <= list_channels' => true,
     '' => true,
+    'peer_alias' => true,
+    'amount' => true,
+    'num_confirmations' => true,
+    'time_stamp' => true,
+    'total_fees' => true,
+    'label' => true,
+    'store_final_htlc_resolutions' => true,
 
     'balance <= channel_balance' => true,
     'pending_open_balance <= channel_balance' => true,

@@ -3,7 +3,7 @@
 require_relative '../../ports/dsl/lighstorm'
 require_relative '../../ports/dsl/lighstorm/errors'
 
-require_relative '../../models/invoice'
+require_relative '../../models/lightning/invoice'
 
 RSpec.describe 'Integration Tests' do
   context 'DSL' do
@@ -16,8 +16,8 @@ RSpec.describe 'Integration Tests' do
 
   context 'TODO' do
     it 'raises TODOError' do
-      expect { Lighstorm::Models::Invoice.new({}, {}).pay(route: []) }.to raise_error(
-        ToDoError, 'Lighstorm::Controllers::Invoice::PayThroughRoute'
+      expect { Lighstorm::Model::Lightning::Invoice.new({}, {}).pay(route: []) }.to raise_error(
+        ToDoError, 'Lighstorm::Controller::Lightning::Invoice::PayThroughRoute'
       )
     end
   end

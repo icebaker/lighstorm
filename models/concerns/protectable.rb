@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Lighstorm
-  module Models
+  module Model
     module Protectable
       def prepare_token!(token)
         @token = token
