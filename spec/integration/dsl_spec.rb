@@ -8,7 +8,7 @@ require_relative '../../models/lightning/invoice'
 RSpec.describe 'Integration Tests' do
   context 'DSL' do
     it 'works as expected' do
-      expect(Lighstorm.version).to eq('0.0.15')
+      expect(Lighstorm.version).to eq('0.0.16')
 
       expect(LighstormError.new('some error').message).to be('some error')
     end

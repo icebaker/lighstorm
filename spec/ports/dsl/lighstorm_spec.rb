@@ -5,7 +5,7 @@ require_relative '../../../ports/dsl/lighstorm/errors'
 
 RSpec.describe 'DSL' do
   it 'provides expected methods' do
-    expect(Lighstorm.version).to eq('0.0.15')
+    expect(Lighstorm.version).to eq('0.0.16')
     expect(Lighstorm).to respond_to(:connect!, :inject_middleware!)
 
     expect(Lighstorm::Wallet).to respond_to(:balance)
