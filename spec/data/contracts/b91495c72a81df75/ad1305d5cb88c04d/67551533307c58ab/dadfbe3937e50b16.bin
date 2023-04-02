@@ -1,3 +1,0 @@
-{:	_keyI"String:50+:ET:amount{:millisatoshisI"Integer:0..10;T:	codeI"String:50+;T:created_atI"String:21..30;T:description{:	hashI"Nil;F:	memoI"String:0..10;T:expires_atI"String:21..30;T:payableI"String:0..10;T:paymentsI"Nil;F:receivedI"Nil;F:secret{;I"String:50+;T:
-proofI"Nil;F:settled_atI"Nil;F:
-stateI"String:0..10;T

@@ -2,7 +2,7 @@
 
 require_relative '../../models/satoshis'
 
-RSpec.describe Lighstorm::Models::Satoshis do
+RSpec.describe Lighstorm::Model::Satoshis do
   describe 'satoshis' do
     it 'creates' do
       amount = described_class.new(

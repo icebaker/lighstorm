@@ -3,7 +3,7 @@
 require_relative './concerns/impersonatable'
 
 module Lighstorm
-  module Controllers
+  module Controller
     module Connection
       def self.connect!(...)
         LND.instance.connect!(...)

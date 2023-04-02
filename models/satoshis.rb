@@ -3,7 +3,7 @@
 require_relative '../ports/dsl/lighstorm/errors'
 
 module Lighstorm
-  module Models
+  module Model
     class Satoshis
       def initialize(millisatoshis: nil, bitcoins: nil)
         if [millisatoshis, bitcoins].compact.empty?

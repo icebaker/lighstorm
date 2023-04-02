@@ -3,7 +3,7 @@
 require_relative '../satoshis'
 
 module Lighstorm
-  module Models
+  module Model
     module Wallet
       class Balance
         attr_reader :_key, :at

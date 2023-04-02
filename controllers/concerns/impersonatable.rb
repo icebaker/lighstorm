@@ -3,7 +3,7 @@
 require_relative '../../ports/grpc'
 
 module Lighstorm
-  module Controllers
+  module Controller
     module Impersonatable
       class DSL
         alias _send send

@@ -5,7 +5,7 @@ require 'json'
 require_relative '../../../ports/dsl/lighstorm'
 require_relative '../../../ports/dsl/lighstorm/errors'
 
-RSpec.describe Lighstorm::Node do
+RSpec.describe Lighstorm::Lightning::Node do
   context 'adapts' do
     context 'errors' do
       it 'raises error' do

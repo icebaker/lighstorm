@@ -5,7 +5,7 @@ require_relative './concerns/impersonatable'
 require_relative './wallet/balance'
 
 module Lighstorm
-  module Controllers
+  module Controller
     module Wallet
       extend Impersonatable
 

@@ -7,7 +7,7 @@ API for interacting with a [Lightning Node](https://lightning.network).
 ![Lighstorm text written stylized with an illustration of a Graph connecting two Nodes.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/lighstorm.png)
 
 ```ruby
-Lighstorm::Channel.mine.first.myself.node.alias
+Lighstorm::Lightning::Channel.mine.first.myself.node.alias
 ```
 
 ## Index
@@ -22,7 +22,7 @@ Lighstorm::Channel.mine.first.myself.node.alias
 
 _Lighstorm_ is an opinionated abstraction layer on top of the [lnd-client](https://github.com/icebaker/lnd-client).
 
-It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Models](https://guides.rubyonrails.org/active_record_basics.html) conventions.
+It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Model](https://guides.rubyonrails.org/active_record_basics.html) conventions.
 
 However, despite the fluidity of _Object Orientation_ being desired in its public interface, internally, most of its code is structured following the [_Hexagonal Architecture_](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)) and [_Functional Programming_](https://en.wikipedia.org/wiki/Functional_programming) principles.
 
@@ -55,17 +55,17 @@ Lighstorm.connect!(
 
 puts Lighstorm.version # => 0.0.15
 
-Lighstorm::Node.myself.alias # => icebaker/old-stone
+Lighstorm::Lightning::Node.myself.alias # => icebaker/old-stone
 
-Lighstorm::Invoice.create(
+Lighstorm::Lightning::Invoice.create(
   description: 'Coffee',
   amount: { millisatoshis: 1_000 },
   payable: 'once'
 )
 
-Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
+Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
 
-Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
+Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
   fee: { maximum: { millisatoshis: 1000 } }
 )
 

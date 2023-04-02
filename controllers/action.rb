@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Lighstorm
-  module Controllers
+  module Controller
     module Action
       Output = Struct.new(:data) do
         def request

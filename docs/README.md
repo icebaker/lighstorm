@@ -6,7 +6,7 @@
 
 _Lighstorm_ is an opinionated abstraction layer on top of the [lnd-client](https://github.com/icebaker/lnd-client).
 
-It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Models](https://guides.rubyonrails.org/active_record_basics.html) conventions.
+It brings an [_object-oriented_](https://en.wikipedia.org/wiki/Object-oriented_programming) approach for interacting with a [Lightning Node](https://github.com/lightningnetwork/lnd), influenced by the [Active Record Pattern](https://www.martinfowler.com/eaaCatalog/activeRecord.html) and [Active Record Model](https://guides.rubyonrails.org/active_record_basics.html) conventions.
 
 However, despite the fluidity of _Object Orientation_ being desired in its public interface, internally, most of its code is structured following the [_Hexagonal Architecture_](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software)) and [_Functional Programming_](https://en.wikipedia.org/wiki/Functional_programming) principles.
 
@@ -19,7 +19,7 @@ Although it tries to stay close to [Lightning's terminologies](https://docs.ligh
 ![Lighstorm text written stylized with an illustration of a Graph connecting two Nodes.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/lighstorm.png)
 
 ```ruby
-Lighstorm::Channel.mine.first.myself.node.alias
+Lighstorm::Lightning::Channel.mine.first.myself.node.alias
 ```
 
 ## Installing
@@ -38,34 +38,34 @@ require 'lighstorm'
 
 puts Lighstorm.version # => 0.0.15
 
-Lighstorm::Invoice.create(
+Lighstorm::Lightning::Invoice.create(
   description: 'Coffee', amount: { millisatoshis: 1000 }, payable: 'once'
 )
 
-Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
+Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay
 
-Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
+Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay(
   fee: { maximum: { millisatoshis: 1000 } }
 )
 
-Lighstorm::Node.find_by_public_key(
+Lighstorm::Lightning::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 ).pay(amount: { millisatoshis: 1000 })
 
-Lighstorm::Node.find_by_public_key(
+Lighstorm::Lightning::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 ).send_message('Hello from Lighstorm!', amount: { millisatoshis: 1000 })
 
-Lighstorm::Node.myself.alias # => icebaker/old-stone
-Lighstorm::Node.myself.public_key # => 02d3...e997
+Lighstorm::Lightning::Node.myself.alias # => icebaker/old-stone
+Lighstorm::Lightning::Node.myself.public_key # => 02d3...e997
 
-Lighstorm::Node.myself.to_h #> { ... }
+Lighstorm::Lightning::Node.myself.to_h #> { ... }
 
-Lighstorm::Node.myself.channels.count # => 5
+Lighstorm::Lightning::Node.myself.channels.count # => 5
 
-Lighstorm::Channel.mine.first.partner.node.alias
+Lighstorm::Lightning::Channel.mine.first.partner.node.alias
 
-forward = Lighstorm::Forward.all(limit: 10).first
+forward = Lighstorm::Lightning::Forward.all(limit: 10).first
 
 forward.in.amount.millisatoshis # => 75621650
 forward.in.amount.satoshis # => 75621
@@ -75,7 +75,7 @@ forward.out.channel.partner.node.alias
 
 forward.to_h # => { ... }
 
-payment = Lighstorm::Payment.all.first
+payment = Lighstorm::Lightning::Payment.all.first
 
 payment.from.channel.id # => 850099509773795329
 payment.to.channel.id # => 821539695188246532
@@ -222,9 +222,9 @@ Lighstorm::Connection.default[:address] # => '127.0.0.1:10009'
 Lighstorm::Connection.for('alice')[:address] # => '127.0.0.2:10009'
 Lighstorm::Connection.for('bob')[:address] # => '127.0.0.3:10009'
 
-Lighstorm::Node.myself.alias # => 'icebaker/old-stone'
-Lighstorm::Node.as('alice').myself.alias # => alice
-Lighstorm::Node.as('bob').myself.alias # => bob
+Lighstorm::Lightning::Node.myself.alias # => 'icebaker/old-stone'
+Lighstorm::Lightning::Node.as('alice').myself.alias # => alice
+Lighstorm::Lightning::Node.as('bob').myself.alias # => bob
 
 Lighstorm::Connection.all # => ['alice', 'bob']
 
@@ -284,7 +284,7 @@ So, we are going to think in terms of _Edges_, _Nodes_, and _Connections_:
 ### Channel
 
 ```ruby
-channel = Lighstorm::Channel.mine.first
+channel = Lighstorm::Lightning::Channel.mine.first
 
 channel.id
 
@@ -311,7 +311,7 @@ channel.myself.initiator?
 ### Forward
 
 ```ruby
-forward = Lighstorm::Forward.last
+forward = Lighstorm::Lightning::Forward.last
 
 forward.at
 
@@ -340,7 +340,7 @@ forward.out.channel.partner.node.alias
 ### Payment
 
 ```ruby
-payment = Lighstorm::Payment.last
+payment = Lighstorm::Lightning::Payment.last
 
 payment.at
 payment.state
@@ -379,14 +379,116 @@ payment.hops[0].channel.target.alias
 
 # API
 
-## Node
-```ruby
-Lighstorm::Node
+## Satoshis
 
-Lighstorm::Node.myself # Your Node.
-Lighstorm::Node.all # All 18k+ Nodes on the Network.
-Lighstorm::Node.all(limit: 10)
-Lighstorm::Node.find_by_public_key(
+```ruby
+Lighstorm::Satoshis
+Lighstorm::Satoshis.new(bitcoins: 0.005)
+Lighstorm::Satoshis.new(millisatoshis: 75621650)
+
+satoshis.to_h
+
+satoshis.millisatoshis
+satoshis.satoshis
+satoshis.bitcoins
+
+satoshis.msats
+satoshis.sats
+satoshis.btc
+
+reference_in_millisatoshis = 75621650000
+satoshis.parts_per_million(reference_in_millisatoshis)
+```
+
+## Wallet
+
+### Balance
+
+```ruby
+balance = Lighstorm::Wallet.balance
+
+balance.at
+
+balance.lightning.millisatoshis
+balance.bitcoin.millisatoshis
+
+balance.total.millisatoshis
+
+balance.to_h
+```
+
+## Bitcoin
+
+### Address
+
+#### Create
+
+The Lightning Network promotes the idea of creating a new Bitcoin address every time you need one, which helps maintain transaction privacy and fund security. This makes it harder for others to trace your activity, providing a more secure and private experience.
+
+```ruby
+Lighstorm::Bitcoin::Address.create(preview: true)
+
+action = Lighstorm::Bitcoin::Address.create
+
+action.request
+action.response
+
+address = action.result
+
+address._key
+address.created_at
+address.code # 'bcrt1qpma0wpaf2wzlflvamgz2zvw3x0k4vfzwq45x9s'
+```
+
+```ruby
+address = Lighstorm::Bitcoin::Address.create.result.code
+```
+
+#### Pay
+
+```ruby
+Lighstorm::Bitcoin::Address.new(
+  code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
+).pay(
+  amount: { millisatoshis: 250_000_000 },
+  fee: { satoshis_per_vitual_byte: 4 },
+  preview: true
+)
+
+action = Lighstorm::Bitcoin::Address.new(
+  code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
+).pay(
+  amount: { millisatoshis: 500_000_000 },
+  fee: { satoshis_per_vitual_byte: 1 },
+  description: 'Wallet Withdrawal',
+  required_confirmations: 6
+)
+
+action.request
+action.response
+
+transaction = action.result
+
+transaction._key
+transaction.at
+transaction.amount.millisatoshis
+transaction.fee.millisatoshis
+transaction.description
+
+transaction.hash
+transaction.to.address.code
+```
+
+## Lightning
+
+### Node
+```ruby
+Lighstorm::Lightning::Node
+
+Lighstorm::Lightning::Node.myself # Your Node.
+Lighstorm::Lightning::Node.all # All 18k+ Nodes on the Network.
+Lighstorm::Lightning::Node.all(limit: 10)
+Lighstorm::Lightning::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
 
@@ -411,12 +513,12 @@ node.platform.lightning.implementation
 node.platform.lightning.version
 ```
 
-### Pay
+#### Pay
 
 Read more about [_Spontaneous Payments_](https://docs.lightning.engineering/lightning-network-tools/lnd/send-messages-with-keysend#send-a-spontaneous-payment).
 
 ```ruby
-destination = Lighstorm::Node.find_by_public_key(
+destination = Lighstorm::Lightning::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
 
@@ -448,12 +550,12 @@ action.response
 action.result.fee.millisatoshis
 ```
 
-### Send Messages
+#### Send Messages
 
 **Warning:** Sending messages through Lightning Network requires you to spend satoshis and potentially pay fees.
 
 ```ruby
-destination = Lighstorm::Node.find_by_public_key(
+destination = Lighstorm::Lightning::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
 
@@ -496,10 +598,10 @@ Read more about sending messages:
 - [_Does Private messaging over Bitcoin’s Lightning Network have potential?_](https://cryptopurview.com/private-messaging-over-bitcoins-lightning-network/)
 - [_How Bitcoin's Lightning Can Be Used for Private Messaging_](https://www.coindesk.com/markets/2019/11/09/how-bitcoins-lightning-can-be-used-for-private-messaging/)
 
-### Error Handling
+#### Error Handling
 Same error handling used for [Invoices Payment Errors](?id=error-handling-1)
 
-## Channel
+### Channel
 
 [![This is an image representing Channel as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-channel.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-channel.png)
 <center style="margin-top: -1.4em;">
@@ -509,11 +611,11 @@ Same error handling used for [Invoices Payment Errors](?id=error-handling-1)
 </center>
 
 ```ruby
-Lighstorm::Channel
-Lighstorm::Channel.mine # Your Node's Channels.
-Lighstorm::Channel.all # All 80k+ Channels on the Network.
-Lighstorm::Channel.all(limit: 10)
-Lighstorm::Channel.find_by_id('850099509773795329')
+Lighstorm::Lightning::Channel
+Lighstorm::Lightning::Channel.mine # Your Node's Channels.
+Lighstorm::Lightning::Channel.all # All 80k+ Channels on the Network.
+Lighstorm::Lightning::Channel.all(limit: 10)
+Lighstorm::Lightning::Channel.find_by_id('850099509773795329')
 
 # _key is helpful for reactive javascript frameworks.
 # Please don't consider it as a unique identifier
@@ -586,10 +688,10 @@ channel.myself.policy.htlc.maximum.millisatoshis
 channel.myself.policy.htlc.blocks.delta.minimum
 ```
 
-### Fee Update
+#### Fee Update
 
 ```ruby
-channel = Lighstorm::Channel.mine.first
+channel = Lighstorm::Lightning::Channel.mine.first
 
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
@@ -610,24 +712,24 @@ channel.myself.policy.fee.update(
 )
 ```
 
-## Invoice
+### Invoice
 
 [Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
 
 ```ruby
-Lighstorm::Invoice
-Lighstorm::Invoice.all
-Lighstorm::Invoice.all(limit: 10)
-Lighstorm::Invoice.first
-Lighstorm::Invoice.last
+Lighstorm::Lightning::Invoice
+Lighstorm::Lightning::Invoice.all
+Lighstorm::Lightning::Invoice.all(limit: 10)
+Lighstorm::Lightning::Invoice.first
+Lighstorm::Lightning::Invoice.last
 
-Lighstorm::Invoice.decode('lnbc20n1pj...0eqps7h0k9')
+Lighstorm::Lightning::Invoice.decode('lnbc20n1pj...0eqps7h0k9')
 
-Lighstorm::Invoice.find_by_secret_hash(
+Lighstorm::Lightning::Invoice.find_by_secret_hash(
   '1d438b8100518c9fba0a607e3317d6b36f74ceef3a6591836eb2f679c6853501'
 )
 
-invoice = Lighstorm::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
+invoice = Lighstorm::Lightning::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
 
 invoice.secret.valid_proof?(
   'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
@@ -660,33 +762,33 @@ invoice.secret.proof
 invoice.secret.hash
 ```
 
-### Create
+#### Create
 
 [Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
 
 ```ruby
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
-preview = Lighstorm::Invoice.create(
+preview = Lighstorm::Lightning::Invoice.create(
   description: 'Coffee', amount: { millisatoshis: 1000 },
   payable: 'once', preview: true
 )
 
-action = Lighstorm::Invoice.create(
+action = Lighstorm::Lightning::Invoice.create(
   description: 'Coffee', amount: { millisatoshis: 1000 },
   payable: 'once', expires_in: { minutes: 5 }
 )
 
-action = Lighstorm::Invoice.create(
+action = Lighstorm::Lightning::Invoice.create(
   description: 'Beer', payable: 'once'
 )
 
-action = Lighstorm::Invoice.create(
+action = Lighstorm::Lightning::Invoice.create(
   description: 'Donations', payable: 'indefinitely',
   expires_in: { hours: 24 }
 )
 
-action = Lighstorm::Invoice.create(
+action = Lighstorm::Lightning::Invoice.create(
   description: 'Concert Ticket', amount: { millisatoshis: 500000000 },
   payable: 'indefinitely', expires_in: { days: 5 }
 )
@@ -699,25 +801,25 @@ action.response
 invoice = action.result
 ```
 
-### Proof of Payment
+#### Proof of Payment
 
 [Making Payments](https://docs.lightning.engineering/the-lightning-network/multihop-payments)
 
 
 ```ruby
-invoice = Lighstorm::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
+invoice = Lighstorm::Lightning::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
 
 invoice.secret.valid_proof?(
   'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
 ) # => true
 ```
 
-### Pay
+#### Pay
 
 [Understanding Lightning Invoices](https://docs.lightning.engineering/the-lightning-network/payment-lifecycle/understanding-lightning-invoices)
 
 ```ruby
-invoice = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj')
+invoice = Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj')
 
 # 'preview' let you check the expected operation
 # before actually performing it for debug purposes
@@ -756,7 +858,7 @@ invoice.pay(
 )
 ```
 
-#### Error Handling
+##### Error Handling
 Check [Error Handling](?id=error-handling-2)
 
 ```ruby
@@ -813,7 +915,7 @@ rescue PaymentError => error
 end
 ```
 
-## Payment
+### Payment
 
 [![This is an image representing Payment as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-payment.png)
 <center style="margin-top: -1.4em;">
@@ -823,19 +925,19 @@ end
 </center>
 
 ```ruby
-Lighstorm::Payment
-Lighstorm::Payment.all
-Lighstorm::Payment.first
-Lighstorm::Payment.last
-Lighstorm::Payment.all(limit: 10, purpose: 'rebalance')
+Lighstorm::Lightning::Payment
+Lighstorm::Lightning::Payment.all
+Lighstorm::Lightning::Payment.first
+Lighstorm::Lightning::Payment.last
+Lighstorm::Lightning::Payment.all(limit: 10, purpose: 'rebalance')
 
 # Possible Purposes:
 # 'self-payment', 'peer-to-peer',
 # 'rebalance', 'payment'
 
-Lighstorm::Payment.find_by_invoice_code('lnbc20n1pj...0eqps7h0k9')
+Lighstorm::Lightning::Payment.find_by_invoice_code('lnbc20n1pj...0eqps7h0k9')
 
-Lighstorm::Payment.find_by_secret_hash(
+Lighstorm::Lightning::Payment.find_by_secret_hash(
   '1d438b8100518c9fba0a607e3317d6b36f74ceef3a6591836eb2f679c6853501'
 )
 
@@ -945,21 +1047,21 @@ payment.hops[0].channel.entry.alias
 payment.hops[0].channel.entry.color
 ```
 
-### Proof of Payment
+#### Proof of Payment
 
 [Making Payments](https://docs.lightning.engineering/the-lightning-network/multihop-payments)
 
 ```ruby
-payment = Lighstorm::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay.result
+payment = Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj').pay.result
 
 payment.secret.proof
 # => 'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
 ```
 
-### Performance
+#### Performance
 Avoid fetching data that you don't need:
 ```ruby
-Lighstorm::Payment.all(
+Lighstorm::Lightning::Payment.all(
   fetch: {
     get_node_info: false,
     lookup_invoice: false,
@@ -968,84 +1070,7 @@ Lighstorm::Payment.all(
 )
 ```
 
-## Wallet
-
-### Balance
-
-```ruby
-balance = Lighstorm::Wallet.balance
-
-balance.at
-
-balance.lightning.millisatoshis
-balance.bitcoin.millisatoshis
-
-balance.total.millisatoshis
-
-balance.to_h
-```
-
-## Bitcoin Address
-
-### Create
-
-The Lightning Network promotes the idea of creating a new Bitcoin address every time you need one, which helps maintain transaction privacy and fund security. This makes it harder for others to trace your activity, providing a more secure and private experience.
-
-```ruby
-Lighstorm::BitcoinAddress.create(preview: true)
-
-action = Lighstorm::BitcoinAddress.create
-
-action.request
-action.response
-
-address = action.result
-
-address._key
-address.created_at
-address.code # 'bcrt1qpma0wpaf2wzlflvamgz2zvw3x0k4vfzwq45x9s'
-```
-
-```ruby
-address = Lighstorm::BitcoinAddress.create.result.code
-```
-
-### Pay
-
-```ruby
-Lighstorm::BitcoinAddress.new(
-  code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
-).pay(
-  amount: { millisatoshis: 250_000_000 },
-  fee: { satoshis_per_vitual_byte: 4 },
-  preview: true
-)
-
-action = Lighstorm::BitcoinAddress.new(
-  code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
-).pay(
-  amount: { millisatoshis: 500_000_000 },
-  fee: { satoshis_per_vitual_byte: 1 },
-  description: 'Wallet Withdrawal',
-  required_confirmations: 6
-)
-
-action.request
-action.response
-
-transaction = action.result
-
-transaction._key
-transaction.at
-transaction.amount.millisatoshis
-transaction.fee.millisatoshis
-transaction.description
-
-transaction.hash
-transaction.to.address.code
-```
-
-## Forward
+### Forward
 
 [![This is an image representing Forward as a graph.](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-forward.png)](https://raw.githubusercontent.com/icebaker/assets/main/lighstorm/graph-forward.png)
 <center style="margin-top: -1.4em;">
@@ -1055,11 +1080,11 @@ transaction.to.address.code
 </center>
 
 ```ruby
-Lighstorm::Forward
-Lighstorm::Forward.all
-Lighstorm::Forward.first
-Lighstorm::Forward.last
-Lighstorm::Forward.all(limit: 10)
+Lighstorm::Lightning::Forward
+Lighstorm::Lightning::Forward.all
+Lighstorm::Lightning::Forward.first
+Lighstorm::Lightning::Forward.last
+Lighstorm::Lightning::Forward.all(limit: 10)
 
 forward.to_h
 
@@ -1091,10 +1116,12 @@ forward.out.channel.partner.node.public_key
 forward.out.channel.partner.node.color
 ```
 
-### Grouping
+#### Grouping
 
 ```ruby
-Lighstorm::Forward.group_by_channel(direction: :in, hours_ago: 24, limit: 5)
+Lighstorm::Lightning::Forward.group_by_channel(
+  direction: :in, hours_ago: 24, limit: 5
+)
 
 group.to_h
 
@@ -1119,7 +1146,7 @@ group.channel.partner.node.alias
 group.channel.partner.node.public_key
 group.channel.partner.node.color
 
-Lighstorm::Forward.group_by_channel(direction: :out)
+Lighstorm::Lightning::Forward.group_by_channel(direction: :out)
 
 group.to_h
 
@@ -1132,11 +1159,11 @@ group.channel.partner.node.public_key
 group.channel.partner.node.color
 ```
 
-## Gossip
+### Gossip
 
 [The Gossip Network](https://docs.lightning.engineering/the-lightning-network/the-gossip-network)
 
-### Node
+#### Node
 
 ```ruby
 gossip = {
@@ -1145,18 +1172,18 @@ gossip = {
   'color' => '#eb34a4'
 }
 
-Lighstorm::Node.adapt(gossip: gossip)
+Lighstorm::Lightning::Node.adapt(gossip: gossip)
 
-node = Lighstorm::Node.find_by_public_key(
+node = Lighstorm::Lightning::Node.find_by_public_key(
   '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 )
 
 diff = node.apply!(gossip: gossip)
 
-Lighstorm::Node.adapt(dump: node.dump)
+Lighstorm::Lightning::Node.adapt(dump: node.dump)
 ```
 
-### Channel
+#### Channel
 
 ```ruby
 gossip = {
@@ -1172,34 +1199,13 @@ gossip = {
   'advertisingNode' => '02d3c80335a8ccb2ed364c06875f32240f36f7edb37d80f8dbe321b4c364b6e997'
 }
 
-Lighstorm::Channel.adapt(gossip: gossip)
+Lighstorm::Lightning::Channel.adapt(gossip: gossip)
 
-channel = Lighstorm::Channel.find_by_id('850099509773795329')
+channel = Lighstorm::Lightning::Channel.find_by_id('850099509773795329')
 
 diff = channel.apply!(gossip: gossip)
 
-Lighstorm::Channel.adapt(dump: channel.dump)
-```
-
-## Satoshis
-
-```ruby
-Lighstorm::Satoshis
-Lighstorm::Satoshis.new(bitcoins: 0.005)
-Lighstorm::Satoshis.new(millisatoshis: 75621650)
-
-satoshis.to_h
-
-satoshis.millisatoshis
-satoshis.satoshis
-satoshis.bitcoins
-
-satoshis.msats
-satoshis.sats
-satoshis.btc
-
-reference_in_millisatoshis = 75621650000
-satoshis.parts_per_million(reference_in_millisatoshis)
+Lighstorm::Lightning::Channel.adapt(dump: channel.dump)
 ```
 
 # Error Handling
@@ -1208,7 +1214,7 @@ satoshis.parts_per_million(reference_in_millisatoshis)
 ```ruby
 require 'lighstorm'
 
-channel = Lighstorm::Channel.mine.first
+channel = Lighstorm::Lightning::Channel.mine.first
 
 begin
   channel.myself.policy.fee.update(
@@ -1233,7 +1239,7 @@ end
 require 'lighstorm'
 require 'lighstorm/errors'
 
-channel = Lighstorm::Channel.mine.first
+channel = Lighstorm::Lightning::Channel.mine.first
 
 begin
   channel.myself.policy.fee.update(
@@ -1273,9 +1279,11 @@ UnknownChannelError
 
 RequestError
 
+AmountBelowDustLimitError
 NoInvoiceFoundError
-PaymentError
 UpdateChannelPolicyError
+
+PaymentError
 
 AlreadyPaidError
 AmountForNonZeroError
@@ -1325,17 +1333,17 @@ Let's get practical.
 
 To _request_ all Nodes you:
 ```ruby
-Lighstorm::Node.all
+Lighstorm::Lightning::Node.all
 ```
 
 Internally, what's happening:
 ```ruby
-nodes = Lighstorm::Node.all
+nodes = Lighstorm::Lightning::Node.all
 
-         data = Controllers::Node::All.fetch # side effect
-      adapted = Controllers::Node::All.adapt(data) # pure
-  transformed = Controllers::Node::All.transform(adapted) # pure
-       models = Controllers::Node::All.model(transformed) # pure
+         data = Controller::Lightning::Node::All.fetch # side effect
+      adapted = Controller::Lightning::Node::All.adapt(data) # pure
+  transformed = Controller::Lightning::Node::All.transform(adapted) # pure
+       models = Controller::Lightning::Node::All.model(transformed) # pure
         nodes = models # pure
 
 nodes.first.public_key
@@ -1353,22 +1361,22 @@ The downside is that we can't [lazy-load](https://en.wikipedia.org/wiki/Lazy_loa
 
 To perform an _action_, like creating an Invoice, you:
 ```ruby
-Lighstorm::Invoice.create(
+Lighstorm::Lightning::Invoice.create(
   description: 'Coffee', amount: { millisatoshis: 1000 }
 )
 ```
 
 Internally, what's happening:
 ```ruby
-action = Lighstorm::Invoice.create(
+action = Lighstorm::Lightning::Invoice.create(
   description: 'Coffee', amount: { millisatoshis: 1000 }
 )
 
-   request = Controllers::Invoice::Create.prepare(params) # pure
-  response = Controllers::Invoice::Create.dispatch(request) # side effect
-   adapted = Controllers::Invoice::Create.adapt(response) # pure
-      data = Controllers::Invoice::Create.fetch(adapted) # side effect
-     model = Controllers::Invoice::Create.model(data) # pure
+   request = Controller::Lightning::Invoice::Create.prepare(params) # pure
+  response = Controller::Lightning::Invoice::Create.dispatch(request) # side effect
+   adapted = Controller::Lightning::Invoice::Create.adapt(response) # pure
+      data = Controller::Lightning::Invoice::Create.fetch(adapted) # side effect
+     model = Controller::Lightning::Invoice::Create.model(data) # pure
     action = { response: response, result: model } # pure
 
 invoice = action.result
