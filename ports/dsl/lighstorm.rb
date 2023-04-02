@@ -18,6 +18,7 @@ require_relative '../../controllers/lightning/forward'
 require_relative '../../controllers/lightning/invoice'
 
 require_relative '../../controllers/bitcoin/transaction'
+require_relative '../../controllers/bitcoin/request'
 require_relative '../../controllers/bitcoin/address'
 
 module Lighstorm
@@ -37,6 +38,7 @@ module Lighstorm
 
   module Bitcoin
     Address = Controller::Bitcoin::Address
+    Request = Controller::Bitcoin::Request
     Transaction = Controller::Bitcoin::Transaction
   end
 

@@ -20,7 +20,7 @@ module Lighstorm
       end
 
       def parts_per_million(reference_millisatoshis)
-        (
+        integer_if_possible(
           (
             if reference_millisatoshis.zero?
               0
@@ -32,15 +32,15 @@ module Lighstorm
       end
 
       def millisatoshis
-        @amount_in_millisatoshis
+        integer_if_possible(@amount_in_millisatoshis)
       end
 
       def satoshis
-        @amount_in_millisatoshis.to_f / 1000.0
+        integer_if_possible(@amount_in_millisatoshis.to_f / 1000.0)
       end
 
       def bitcoins
-        @amount_in_millisatoshis.to_f / 100_000_000_000
+        integer_if_possible(@amount_in_millisatoshis.to_f / 100_000_000_000.0)
       end
 
       def sats
@@ -59,6 +59,14 @@ module Lighstorm
         {
           millisatoshis: millisatoshis
         }
+      end
+
+      private
+
+      def integer_if_possible(value)
+        return value.to_i if value.to_i == value
+
+        value
       end
     end
   end

@@ -419,6 +419,24 @@ balance.to_h
 
 ## Bitcoin
 
+### Request
+
+#### Decode
+
+Learn about [BIP 21](https://bips.xyz/21).
+
+```ruby
+Lighstorm::Bitcoin::Request.decode(
+  'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+)
+```
+
+#### Create
+
+```ruby
+# TODO
+```
+
 ### Address
 
 #### Create

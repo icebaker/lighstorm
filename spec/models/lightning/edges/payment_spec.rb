@@ -69,7 +69,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
         Lighstorm::Model::Satoshis.new(millisatoshis: 1000)
       end
 
-      let(:to_h_contract) { 'bbe712677e9e72c5eb65865cda29b7e92ae3b9a196b5a946badaf45d4a9d306e' }
+      let(:to_h_contract) { '36a6dee173c4783a3ac04c0d69e60cffb34e0fe33846d8bdb7c7967888e46fb2' }
 
       it 'models' do
         expect(data[:meta][:calls][:decode_pay_req]).to be_nil
@@ -184,7 +184,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1000)
         end
 
-        let(:to_h_contract) { 'abd510a173e1dc4de2547d48adab3b892a636802489e2fc99f239fe62d353760' }
+        let(:to_h_contract) { '0de14ab266b071700de90c0aa8a2f027873b30d7d997f45343a76e5d91b5f68f' }
 
         it 'models' do
           expect(data[:meta][:calls].keys.sort).to eq(
@@ -301,7 +301,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 150_000)
         end
 
-        let(:to_h_contract) { 'b965114e1ac50b653d74e39e8920235c95d79a2376a9e49837e78432e9587d21' }
+        let(:to_h_contract) { '5447edbf9384e7366a4c74283d324be2aa8ef390c44fcee365d17307bd0f43c1' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -400,7 +400,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 3_050_000_000)
         end
 
-        let(:to_h_contract) { '96769c5f7263f741463b7f0da83351219064a47f70180d6d4d2c9399c36ba88b' }
+        let(:to_h_contract) { '82049dafe05d8c5ddb3511538fc19af36d1f9ca4f4a91e8d99d41efd11eaac30' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -497,7 +497,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 137_000)
         end
 
-        let(:to_h_contract) { '99cbf5f017de4101e0612424d9378d9fa1d7628ae95a5644a97d4ea7cbb1bd0c' }
+        let(:to_h_contract) { '744a266bf986652626047c64f22d26e6902cb10ebb93978c3a9338643a73cf24' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -598,7 +598,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 130_000_000)
         end
 
-        let(:to_h_contract) { 'caf71adfc1bbe7a2f91a5a5935776aad3d921b8e2b7cb850cf98ce070d3db530' }
+        let(:to_h_contract) { 'a5560d0326bf693487f32bfa81e3388c76724330736e136186b78e69b56a6ff0' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -699,7 +699,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1200)
         end
 
-        let(:to_h_contract) { 'ffb21922e00a6f37fa7ee599d38bb6f494a60efb40f4fc66a49a84e9b21d0b0d' }
+        let(:to_h_contract) { '39039307f9b86cb29aa45300709600111c5a985c6ce1fc8d0905a625e7b6f02c' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -784,7 +784,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1500)
         end
 
-        let(:to_h_contract) { 'ffb21922e00a6f37fa7ee599d38bb6f494a60efb40f4fc66a49a84e9b21d0b0d' }
+        let(:to_h_contract) { '39039307f9b86cb29aa45300709600111c5a985c6ce1fc8d0905a625e7b6f02c' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -869,7 +869,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1000)
         end
 
-        let(:to_h_contract) { 'e44bca0cb1d28df0865ee6eb880977367a4a5b18a55193f44cc5e86dcaacf154' }
+        let(:to_h_contract) { '5faff4c86ce94b6f06af506fa564da999640f9909ecfb4745a3a3bbbb1446f07' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -983,7 +983,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1210)
         end
 
-        let(:to_h_contract) { 'bc43dd9fc7648e54185c27060219c2ee52adc14ec503469c0221513f826dfae3' }
+        let(:to_h_contract) { '4a98877e35774b817e887922ccfb86c5d6ac7ebb7b18749077922886741542be' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1096,7 +1096,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1121)
         end
 
-        let(:to_h_contract) { 'd54e69d7f72d4dbb8c5c617ff00bad9c9e42064b94e6e0a50a7a1174c9b19432' }
+        let(:to_h_contract) { 'bf98664158b4c62929000d2df2dc3d2140f1b629b372306498b0d13689fe4a6e' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1209,7 +1209,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 1278)
         end
 
-        let(:to_h_contract) { '735c79f5d1120313407dd5f2b947c9afb44b6d5ccc5eb68e813a4d124d491d14' }
+        let(:to_h_contract) { '5360e82c935621238eedc10fea167472af32cc795bba828f23b74ae8c4156c89' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1322,7 +1322,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
           Lighstorm::Model::Satoshis.new(millisatoshis: 3_000_000)
         end
 
-        let(:to_h_contract) { 'bcdf5ab24266264839bed40e9ed45af9676a7b27d2ec95ad209efaacb1809b04' }
+        let(:to_h_contract) { 'fb3562b218ee7deee56bcd12b54e5cdf697f8bb8a68c6fc3b7de5c95c1f5fc1c' }
 
         it 'models' do
           expect(payment._key.size).to eq(64)
@@ -1447,7 +1447,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
         Lighstorm::Model::Satoshis.new(millisatoshis: 49_000)
       end
 
-      let(:to_h_contract) { '8e72f213933366aa4099659d167f90890bce1448b1a04183e2cd8d7563dce7bc' }
+      let(:to_h_contract) { 'e5e5b0901e2a5c1e401aea998b2b75bfd9f6d794747dc07521005b771c00954a' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)
@@ -1563,7 +1563,7 @@ RSpec.describe Lighstorm::Model::Lightning::Payment do
         Lighstorm::Model::Satoshis.new(millisatoshis: 49_000)
       end
 
-      let(:to_h_contract) { '8e72f213933366aa4099659d167f90890bce1448b1a04183e2cd8d7563dce7bc' }
+      let(:to_h_contract) { 'e5e5b0901e2a5c1e401aea998b2b75bfd9f6d794747dc07521005b771c00954a' }
 
       it 'models' do
         expect(payment._key.size).to eq(64)

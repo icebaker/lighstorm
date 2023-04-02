@@ -11,6 +11,7 @@ RSpec.describe 'DSL' do
     expect(Lighstorm::Wallet).to respond_to(:balance)
     expect(Lighstorm::Wallet::Activity).to respond_to(:all)
 
+    expect(Lighstorm::Bitcoin::Request).to respond_to(:decode, :create)
     expect(Lighstorm::Bitcoin::Address).to respond_to(:new, :create)
     expect(Lighstorm::Bitcoin::Transaction).to respond_to(:all, :find_by_hash)
 

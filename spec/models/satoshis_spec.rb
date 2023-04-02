@@ -23,6 +23,26 @@ RSpec.describe Lighstorm::Model::Satoshis do
     end
   end
 
+  describe 'satoshis int' do
+    it 'creates' do
+      amount = described_class.new(
+        millisatoshis: 50_000_000_000_0
+      )
+
+      expect(amount.millisatoshis).to eq(500_000_000_000)
+      expect(amount.satoshis).to eq(500_000_000)
+      expect(amount.bitcoins).to eq(5)
+
+      expect(amount.msats).to eq(500_000_000_000)
+      expect(amount.sats).to eq(500_000_000)
+      expect(amount.btc).to eq(5)
+
+      expect(amount.parts_per_million(25_000_000_000_000)).to eq(20_000)
+
+      expect(amount.to_h).to eq({ millisatoshis: 500_000_000_000 })
+    end
+  end
+
   describe 'bitcoins' do
     it 'creates 0.0045' do
       amount = described_class.new(
