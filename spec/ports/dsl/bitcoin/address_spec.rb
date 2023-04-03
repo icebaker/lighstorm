@@ -2,8 +2,8 @@
 
 require 'json'
 
-require_relative '../../../ports/dsl/lighstorm'
-require_relative '../../../ports/dsl/lighstorm/errors'
+require_relative '../../../../ports/dsl/lighstorm'
+require_relative '../../../../ports/dsl/lighstorm/errors'
 
 RSpec.describe Lighstorm::Bitcoin::Address do
   describe 'create invoice' do
@@ -73,10 +73,10 @@ RSpec.describe Lighstorm::Bitcoin::Address do
         transaction = action.result
 
         expect(transaction._key.size).to eq(64)
-        expect(transaction.at.utc.to_s).to eq('2023-04-02 13:14:44 UTC')
+        expect(transaction.at.utc.to_s).to eq('2023-04-02 23:14:28 UTC')
         expect(transaction.hash).to eq(action.response[:txid])
         expect(transaction.amount.millisatoshis).to eq(-250_000_000)
-        expect(transaction.fee.millisatoshis).to eq(154_000)
+        expect(transaction.fee.millisatoshis).to eq(203_000)
         expect(transaction.description).to eq('external')
       end
     end

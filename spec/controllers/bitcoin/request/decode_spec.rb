@@ -25,6 +25,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Request::Decode do
 
       model = described_class.model(data, Lighstorm::Controller::Bitcoin::Request.components)
 
+      expect(model._key.size).to eq(64)
       expect(model.address.code).to eq('175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W')
       expect(model.amount.bitcoins).to eq(50)
       expect(model.description).to eq('Luke-Jr')

@@ -123,7 +123,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
         expect(model.description).to eq('Wallet Withdrawal')
 
         Contract.expect(
-          model.to_h, '2f2827afe3acae0d17abdbee49f1006f63a826ccadd06f5bc3fc8e859e6dffad'
+          model.to_h, '43ba1c30001bdee50a01d6b61006444535ff8073cb25cd31dd690ecdaed44ca1'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -185,7 +185,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
           expect(action.result.description).to eq('Wallet Withdrawal')
 
           Contract.expect(
-            action.to_h, 'f2a2ecb8b4443ed8511f30cc76b1639552421ec0afdca3b134e0dc8b071e3e2b'
+            action.to_h, '3974376ae14a4685ef4612c453dd839a6d020897b70fcb91518411acc9297a45'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)

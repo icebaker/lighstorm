@@ -54,7 +54,7 @@ module Lighstorm
             fee: fee,
             description: description || self.description,
             required_confirmations: required_confirmations,
-            preview: false, &vcr
+            preview: preview, &vcr
           )
         end
 

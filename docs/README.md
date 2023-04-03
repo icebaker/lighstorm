@@ -421,20 +421,123 @@ balance.to_h
 
 ### Request
 
+#### Create
+
+```ruby
+Lighstorm::Bitcoin::Request.create(
+ { address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
+   amount: { millisatoshis: 5000000000000 },
+   description: 'Luke-Jr',
+   message: 'Donation for project xyz',
+   preview: true }
+)
+```
+
+```ruby
+action = Lighstorm::Bitcoin::Request.create(
+ { address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
+   amount: { millisatoshis: 5000000000000 },
+   description: 'Luke-Jr',
+   message: 'Donation for project xyz' }
+)
+
+action.request
+action.response
+
+request = action.result
+
+request.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
+request.amount.bitcoins # 50
+request.description # 'Luke-Jr'
+request.message # 'Donation for project xyz'
+request.uri # 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+```
+
+If you don't provide a Bitcoin Address, a new one will be generated for your request, with your wallet as the destination:
+
+```ruby
+action = Lighstorm::Bitcoin::Request.create
+
+action.request
+action.response
+
+request = action.result
+
+request.address.code # 'bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j'
+request.uri # 'bitcoin:bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j'
+```
+
+```ruby
+action = Lighstorm::Bitcoin::Request.create(
+ { amount: { millisatoshis: 5000000000000 },
+   description: 'Luke-Jr',
+   message: 'Donation for project xyz' }
+)
+
+action.request
+action.response
+
+request = action.result
+
+request.address.code # 'bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j'
+request.amount.bitcoins # 50
+request.description # 'Luke-Jr'
+request.message # 'Donation for project xyz'
+request.uri # 'bitcoin:bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+```
+
 #### Decode
 
 Learn about [BIP 21](https://bips.xyz/21).
 
 ```ruby
-Lighstorm::Bitcoin::Request.decode(
+request = Lighstorm::Bitcoin::Request.decode(
   'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+)
+
+request._key
+
+request.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
+request.amount.bitcoins # 50
+request.description # 'Luke-Jr'
+request.message # 'Donation for project xyz'
+request.uri # 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+```
+
+#### Pay
+
+Learn about [BIP 21](https://bips.xyz/21).
+
+```ruby
+action = Lighstorm::Bitcoin::Request.decode(
+  'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+).pay(
+  amount: { millisatoshis: 5000000000000 },
+  description: 'Making a Donation',
+  fee: { satoshis_per_vitual_byte: 1 },
+  required_confirmations: 6,
+  preview: true
 )
 ```
 
-#### Create
-
 ```ruby
-# TODO
+action = Lighstorm::Bitcoin::Request.decode(
+  'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+).pay(fee: { satoshis_per_vitual_byte: 1 })
+
+action.request
+action.response
+
+transaction = action.result
+
+transaction._key
+transaction.at
+transaction.amount.bitcoins # 50
+transaction.fee.millisatoshis # 154_000
+transaction.description # 'Luke-Jr'
+
+transaction.hash # 5ee90f3d8f3efac87c80797773d696e59986477c9201e5cf15a8abac5f632dd4
+transaction.to.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
 ```
 
 ### Address
