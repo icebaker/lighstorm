@@ -425,7 +425,8 @@ balance.to_h
 
 ```ruby
 Lighstorm::Bitcoin::Request.create(
- { address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
+ { address: {
+     code: 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a' },
    amount: { millisatoshis: 5000000000000 },
    description: 'Luke-Jr',
    message: 'Donation for project xyz',
@@ -435,7 +436,8 @@ Lighstorm::Bitcoin::Request.create(
 
 ```ruby
 action = Lighstorm::Bitcoin::Request.create(
- { address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
+ { address: {
+     code: 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a' },
    amount: { millisatoshis: 5000000000000 },
    description: 'Luke-Jr',
    message: 'Donation for project xyz' }
@@ -446,16 +448,24 @@ action.response
 
 request = action.result
 
-request.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
+request.address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
 request.amount.bitcoins # 50
 request.description # 'Luke-Jr'
 request.message # 'Donation for project xyz'
-request.uri # 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+request.uri # 'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+
+request.address.specification.format # 'taproot'
+request.address.specification.bip # 341
+request.address.specification.code # 'P2TR'
 ```
 
 If you don't provide a Bitcoin Address, a new one will be generated for your request, with your wallet as the destination:
 
 ```ruby
+Lighstorm::Bitcoin::Request.create(
+  format: 'taproot', # 'taproot', 'segwit', or 'script'
+)
+
 action = Lighstorm::Bitcoin::Request.create
 
 action.request
@@ -463,15 +473,17 @@ action.response
 
 request = action.result
 
-request.address.code # 'bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j'
-request.uri # 'bitcoin:bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j'
+request.address.code # 'bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq'
+request.uri # 'bitcoin:bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq'
 ```
 
 ```ruby
 action = Lighstorm::Bitcoin::Request.create(
  { amount: { millisatoshis: 5000000000000 },
    description: 'Luke-Jr',
-   message: 'Donation for project xyz' }
+   message: 'Donation for project xyz',
+   format: 'taproot', # 'taproot', 'segwit', or 'script'
+ }
 )
 
 action.request
@@ -479,11 +491,11 @@ action.response
 
 request = action.result
 
-request.address.code # 'bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j'
+request.address.code # 'bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq'
 request.amount.bitcoins # 50
 request.description # 'Luke-Jr'
 request.message # 'Donation for project xyz'
-request.uri # 'bitcoin:bc1qytzke5v5qa4wqzhct37gwnpqs08tuyq9stst5j?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+request.uri # 'bitcoin:bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
 ```
 
 #### Decode
@@ -492,16 +504,20 @@ Learn about [BIP 21](https://bips.xyz/21).
 
 ```ruby
 request = Lighstorm::Bitcoin::Request.decode(
-  'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+  'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
 )
 
 request._key
 
-request.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
+request.address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
 request.amount.bitcoins # 50
 request.description # 'Luke-Jr'
 request.message # 'Donation for project xyz'
-request.uri # 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+request.uri # 'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+
+request.address.specification.format # 'taproot'
+request.address.specification.bip # 341
+request.address.specification.code # 'P2TR'
 ```
 
 #### Pay
@@ -510,7 +526,7 @@ Learn about [BIP 21](https://bips.xyz/21).
 
 ```ruby
 action = Lighstorm::Bitcoin::Request.decode(
-  'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+  'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
 ).pay(
   amount: { millisatoshis: 5000000000000 },
   description: 'Making a Donation',
@@ -522,7 +538,7 @@ action = Lighstorm::Bitcoin::Request.decode(
 
 ```ruby
 action = Lighstorm::Bitcoin::Request.decode(
-  'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+  'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
 ).pay(fee: { maximum: { satoshis_per_vitual_byte: 1 } })
 
 action.request
@@ -537,7 +553,7 @@ transaction.fee.millisatoshis # 154_000
 transaction.description # 'Luke-Jr'
 
 transaction.hash # 5ee90f3d8f3efac87c80797773d696e59986477c9201e5cf15a8abac5f632dd4
-transaction.to.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
+transaction.to.address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
 ```
 
 ### Address
@@ -547,7 +563,10 @@ transaction.to.address.code # '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
 The Lightning Network promotes the idea of creating a new Bitcoin address every time you need one, which helps maintain transaction privacy and fund security. This makes it harder for others to trace your activity, providing a more secure and private experience.
 
 ```ruby
-Lighstorm::Bitcoin::Address.create(preview: true)
+Lighstorm::Bitcoin::Address.create(
+  format: 'taproot', # 'taproot', 'segwit', or 'script'
+  preview: true
+)
 
 action = Lighstorm::Bitcoin::Address.create
 
@@ -558,7 +577,11 @@ address = action.result
 
 address._key
 address.created_at
-address.code # 'bcrt1qpma0wpaf2wzlflvamgz2zvw3x0k4vfzwq45x9s'
+address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
+
+address.specification.format # 'taproot'
+address.specification.bip # 341
+address.specification.code # 'P2TR'
 ```
 
 ```ruby
