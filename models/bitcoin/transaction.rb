@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../satoshis'
+require_relative './address'
 
 module Lighstorm
   module Model
@@ -25,8 +26,22 @@ module Lighstorm
           @fee ||= Satoshis.new(millisatoshis: @data[:fee][:millisatoshis])
         end
 
+        def to
+          @to ||= if @data[:to]
+                    Struct.new(:data) do
+                      def address
+                        @address ||= Address.new({ code: data[:address][:code] }, nil)
+                      end
+
+                      def to_h
+                        { address: address.to_h }
+                      end
+                    end.new(@data[:to])
+                  end
+        end
+
         def to_h
-          {
+          output = {
             _key: _key,
             at: at,
             hash: hash,
@@ -34,6 +49,10 @@ module Lighstorm
             fee: fee.to_h,
             description: description
           }
+
+          output[:to] = to.to_h if to
+
+          output
         end
       end
     end

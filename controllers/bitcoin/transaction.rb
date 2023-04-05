@@ -11,8 +11,8 @@ module Lighstorm
         extend Impersonatable
 
         class DSL < Impersonatable::DSL
-          def all(limit: nil)
-            All.model(All.data(components, limit: limit))
+          def all(direction: nil, limit: nil)
+            All.model(All.data(components, direction: direction, limit: limit))
           end
 
           def find_by_hash(hash, &vcr)

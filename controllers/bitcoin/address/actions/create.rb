@@ -10,6 +10,28 @@ module Lighstorm
     module Bitcoin
       module Address
         module Create
+          # https://bitcoin.design/guide/glossary/address/
+          SPECIFICATIONS = {
+            # Taproot: pay-to-taproot (P2TR)
+            # TAPROOT_PUBKEY (4): A new type of Bitcoin address that comes with the Taproot upgrade.
+            # It improves privacy and supports more complex transactions (like smart contracts).
+            # Addresses usually start with "bc1p" (mainnet) or "tb1p" (testnet).
+            'taproot' => :TAPROOT_PUBKEY,
+
+            # SegWit: pay-to-witness-public-key-hash (P2WPKH)
+            # WITNESS_PUBKEY_HASH (0)
+            # A modern and efficient Bitcoin address type. It uses less space in transactions,
+            # so it has lower fees. Addresses usually start with "bc1" (mainnet) or "tb1" (testnet).
+            'segwit' => :WITNESS_PUBKEY_HASH,
+
+            # Script: pay-to-script-hash (P2SH)
+            # NESTED_PUBKEY_HASH (1)
+            # \A backward-compatible version of the modern address. It works with older wallets and
+            # services but has slightly higher fees. Addresses usually start with "3" (mainnet)
+            # or "2" (testnet).
+            'script' => :NESTED_PUBKEY_HASH
+          }.freeze
+
           def self.call(components, grpc_request)
             {
               at: Time.now,
@@ -19,36 +41,12 @@ module Lighstorm
             }
           end
 
-          def self.prepare
-            # WITNESS_PUBKEY_HASH (0)
-            # A modern and efficient Bitcoin address type. It uses less space in transactions,
-            # so it has lower fees. Addresses usually start with "bc1" (mainnet) or "tb1" (testnet).
-
-            # NESTED_PUBKEY_HASH (1)
-            # \A backward-compatible version of the modern address. It works with older wallets and
-            # services but has slightly higher fees. Addresses usually start with "3" (mainnet)
-            # or "2" (testnet).
-
-            # UNUSED_WITNESS_PUBKEY_HASH (2)
-            # An unused version of the modern address. It's like having a reserved spot for a future
-            # address, but it's not being used right now.
-
-            # UNUSED_NESTED_PUBKEY_HASH (3)
-            # An unused version of the backward-compatible address. Similar to the unused modern
-            # address, it's a reserved spot for a future address but not in use currently.
-
-            # TAPROOT_PUBKEY (4): A new type of Bitcoin address that comes with the Taproot upgrade.
-            # It improves privacy and supports more complex transactions (like smart contracts).
-            # Addresses usually start with "bc1p" (mainnet) or "tb1p" (testnet).
-
-            # UNUSED_TAPROOT_PUBKEY (5)
-            # An unused version of the Taproot address. Like the other unused addresses, it's a
-            # reserved spot for a future address but not in use at the moment.
+          def self.prepare(format:)
             {
               service: :lightning,
               method: :new_address,
               params: {
-                type: :WITNESS_PUBKEY_HASH
+                type: SPECIFICATIONS[format]
               }
             }
           end
@@ -71,8 +69,8 @@ module Lighstorm
             Model::Bitcoin::Address.new(data, components)
           end
 
-          def self.perform(components, preview: false, &vcr)
-            grpc_request = prepare
+          def self.perform(components, format: 'taproot', preview: false, &vcr)
+            grpc_request = prepare(format: format)
 
             return grpc_request if preview
 

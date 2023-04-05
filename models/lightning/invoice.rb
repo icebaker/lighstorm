@@ -28,6 +28,10 @@ module Lighstorm
           @code = data[:code]
         end
 
+        def uri
+          @uri ||= "lightning:#{@code}"
+        end
+
         def payment
           if payable != 'once' || @data[:payments].size > 1
             raise InvoiceMayHaveMultiplePaymentsError, "payable: #{payable}, payments: #{@data[:payments].size.size}"
@@ -77,6 +81,7 @@ module Lighstorm
             payable: payable,
             state: state,
             code: code,
+            uri: uri,
             amount: amount&.to_h,
             received: received&.to_h,
             description: description.to_h,

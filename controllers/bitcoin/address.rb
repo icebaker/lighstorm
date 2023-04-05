@@ -14,8 +14,8 @@ module Lighstorm
             Model::Bitcoin::Address.new({ code: code }, components)
           end
 
-          def create(preview: false, &vcr)
-            Create.perform(components, preview: preview, &vcr)
+          def create(format: 'taproot', preview: false, &vcr)
+            Create.perform(components, format: format, preview: preview, &vcr)
           end
         end
       end

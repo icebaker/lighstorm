@@ -2,8 +2,8 @@
 
 require 'json'
 
-require_relative '../../../ports/dsl/lighstorm'
-require_relative '../../../ports/dsl/lighstorm/errors'
+require_relative '../../../../ports/dsl/lighstorm'
+require_relative '../../../../ports/dsl/lighstorm/errors'
 
 RSpec.describe Lighstorm::Lightning::Channel do
   context 'adapts' do

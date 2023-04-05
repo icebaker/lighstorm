@@ -98,6 +98,7 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
               payable: 'indefinitely',
               state: 'open',
               code: 'lnbcrt1pjz35aqpp55rul98whw4jlp8vehqwctzr3fzp67x5s8zaweypstad0j0tgh33qdqdg3hkuct5d9hkucqzpgxqyz5vqsp5cej84s93fnrn725avqhrcvs4y6720ya3pka5raupf9uhmccr30lq9q8pqqqssq0rwdfklxcvah27ljnx88f97swen9lmgm3fm726rjuz6fgvaljdm4lc5jmhlvs2z3ht4mxaf7xcyga9d3krhyn40v7dfw5pgmwez4vkspt7t4dw',
+              uri: 'lightning:lnbcrt1pjz35aqpp55rul98whw4jlp8vehqwctzr3fzp67x5s8zaweypstad0j0tgh33qdqdg3hkuct5d9hkucqzpgxqyz5vqsp5cej84s93fnrn725avqhrcvs4y6720ya3pka5raupf9uhmccr30lq9q8pqqqssq0rwdfklxcvah27ljnx88f97swen9lmgm3fm726rjuz6fgvaljdm4lc5jmhlvs2z3ht4mxaf7xcyga9d3krhyn40v7dfw5pgmwez4vkspt7t4dw',
               amount: nil,
               received: nil,
               description: { memo: 'Donation', hash: nil },
@@ -153,13 +154,12 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
                 payable: 'indefinitely',
                 state: 'open',
                 code: 'lnbcrt1pjz35aqpp55rul98whw4jlp8vehqwctzr3fzp67x5s8zaweypstad0j0tgh33qdqdg3hkuct5d9hkucqzpgxqyz5vqsp5cej84s93fnrn725avqhrcvs4y6720ya3pka5raupf9uhmccr30lq9q8pqqqssq0rwdfklxcvah27ljnx88f97swen9lmgm3fm726rjuz6fgvaljdm4lc5jmhlvs2z3ht4mxaf7xcyga9d3krhyn40v7dfw5pgmwez4vkspt7t4dw',
+                uri: 'lightning:lnbcrt1pjz35aqpp55rul98whw4jlp8vehqwctzr3fzp67x5s8zaweypstad0j0tgh33qdqdg3hkuct5d9hkucqzpgxqyz5vqsp5cej84s93fnrn725avqhrcvs4y6720ya3pka5raupf9uhmccr30lq9q8pqqqssq0rwdfklxcvah27ljnx88f97swen9lmgm3fm726rjuz6fgvaljdm4lc5jmhlvs2z3ht4mxaf7xcyga9d3krhyn40v7dfw5pgmwez4vkspt7t4dw',
                 amount: nil,
                 received: nil,
                 description: { memo: 'Donation', hash: nil },
-                secret: {
-                  proof: nil,
-                  hash: 'a0f9f29dd77565f09d99b81d8588714883af1a9038baec90305f5af93d68bc62'
-                },
+                secret: { proof: nil,
+                          hash: 'a0f9f29dd77565f09d99b81d8588714883af1a9038baec90305f5af93d68bc62' },
                 payments: nil }
             )
 
@@ -178,7 +178,7 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
             end
 
             Contract.expect(
-              action.to_h, '1a249a948e6df5814a0994b2ff101089e49cabf07ff28bf8bf7f205c5d9abc85'
+              action.to_h, '64f4bc062f4e1a1fae57980f7156f5288abc2837ce5580a3457e59c22f91d802'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
@@ -197,7 +197,8 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
                             received: 'Nil',
                             secret: { hash: 'String:50+', proof: 'Nil' },
                             settled_at: 'Nil',
-                            state: 'String:0..10' } }
+                            state: 'String:0..10',
+                            uri: 'String:50+' } }
               )
             end
           end
@@ -292,7 +293,7 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
           model = described_class.model(data, Lighstorm::Controller::Lightning::Invoice.components)
 
           Contract.expect(
-            model.to_h, '001dac92137661c295e0fa816a4c3b088a8196257980ae93f1b74e6af4e371bc'
+            model.to_h, '30f8f5957e7ff3e2efb096f030389c3e3cc35e060c9f8d7f35a153429b2f2ff5'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
 
@@ -308,7 +309,8 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
                 received: 'Nil',
                 secret: { hash: 'String:50+', proof: 'String:50+' },
                 settled_at: 'Nil',
-                state: 'String:0..10' }
+                state: 'String:0..10',
+                uri: 'String:50+' }
             )
           end
         end
@@ -352,7 +354,7 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
             expect(action.result.class).to eq(Lighstorm::Model::Lightning::Invoice)
 
             Contract.expect(
-              action.to_h, 'f916b13ca90b63c39c8228dd88cb502ef8e2c24a69c77f8eff9495767de9d91b'
+              action.to_h, '27a60ae7a7ad33936d1d1bfbc54589a56b7c6cb1d4b7dd6fc120bed606a16423'
             ) do |actual, expected|
               expect(actual.hash).to eq(expected.hash)
 
@@ -371,7 +373,8 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Create do
                             received: 'Nil',
                             secret: { hash: 'String:50+', proof: 'String:50+' },
                             settled_at: 'Nil',
-                            state: 'String:0..10' } }
+                            state: 'String:0..10',
+                            uri: 'String:50+' } }
               )
             end
           end

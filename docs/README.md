@@ -419,6 +419,143 @@ balance.to_h
 
 ## Bitcoin
 
+### Request
+
+#### Create
+
+```ruby
+Lighstorm::Bitcoin::Request.create(
+ { address: {
+     code: 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a' },
+   amount: { millisatoshis: 5000000000000 },
+   description: 'Luke-Jr',
+   message: 'Donation for project xyz',
+   preview: true }
+)
+```
+
+```ruby
+action = Lighstorm::Bitcoin::Request.create(
+ { address: {
+     code: 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a' },
+   amount: { millisatoshis: 5000000000000 },
+   description: 'Luke-Jr',
+   message: 'Donation for project xyz' }
+)
+
+action.request
+action.response
+
+request = action.result
+
+request.address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
+request.amount.bitcoins # 50
+request.description # 'Luke-Jr'
+request.message # 'Donation for project xyz'
+request.uri # 'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+
+request.address.specification.format # 'taproot'
+request.address.specification.bip # 341
+request.address.specification.code # 'P2TR'
+```
+
+If you don't provide a Bitcoin Address, a new one will be generated for your request, with your wallet as the destination:
+
+```ruby
+Lighstorm::Bitcoin::Request.create(
+  format: 'taproot', # 'taproot', 'segwit', or 'script'
+)
+
+action = Lighstorm::Bitcoin::Request.create
+
+action.request
+action.response
+
+request = action.result
+
+request.address.code # 'bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq'
+request.uri # 'bitcoin:bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq'
+```
+
+```ruby
+action = Lighstorm::Bitcoin::Request.create(
+ { amount: { millisatoshis: 5000000000000 },
+   description: 'Luke-Jr',
+   message: 'Donation for project xyz',
+   format: 'taproot', # 'taproot', 'segwit', or 'script'
+ }
+)
+
+action.request
+action.response
+
+request = action.result
+
+request.address.code # 'bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq'
+request.amount.bitcoins # 50
+request.description # 'Luke-Jr'
+request.message # 'Donation for project xyz'
+request.uri # 'bitcoin:bc1pxxexzg7a4tszd0t782qlqk02533wmrkcfx2nk8cplnv74c8n5qwscya8dq?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+```
+
+#### Decode
+
+Learn about [BIP 21](https://bips.xyz/21).
+
+```ruby
+request = Lighstorm::Bitcoin::Request.decode(
+  'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+)
+
+request._key
+
+request.address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
+request.amount.bitcoins # 50
+request.description # 'Luke-Jr'
+request.message # 'Donation for project xyz'
+request.uri # 'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
+
+request.address.specification.format # 'taproot'
+request.address.specification.bip # 341
+request.address.specification.code # 'P2TR'
+```
+
+#### Pay
+
+Learn about [BIP 21](https://bips.xyz/21).
+
+```ruby
+action = Lighstorm::Bitcoin::Request.decode(
+  'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+).pay(
+  amount: { millisatoshis: 5000000000000 },
+  description: 'Making a Donation',
+  fee: { maximum: { satoshis_per_vitual_byte: 1 } },
+  required_confirmations: 6,
+  preview: true
+)
+```
+
+```ruby
+action = Lighstorm::Bitcoin::Request.decode(
+  'bitcoin:bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
+).pay(fee: { maximum: { satoshis_per_vitual_byte: 1 } })
+
+action.request
+action.response
+
+transaction = action.result
+
+transaction._key
+transaction.at
+transaction.amount.bitcoins # 50
+transaction.fee.millisatoshis # 154_000
+transaction.description # 'Luke-Jr'
+
+transaction.hash # 5ee90f3d8f3efac87c80797773d696e59986477c9201e5cf15a8abac5f632dd4
+transaction.to.address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
+```
+
 ### Address
 
 #### Create
@@ -426,7 +563,10 @@ balance.to_h
 The Lightning Network promotes the idea of creating a new Bitcoin address every time you need one, which helps maintain transaction privacy and fund security. This makes it harder for others to trace your activity, providing a more secure and private experience.
 
 ```ruby
-Lighstorm::Bitcoin::Address.create(preview: true)
+Lighstorm::Bitcoin::Address.create(
+  format: 'taproot', # 'taproot', 'segwit', or 'script'
+  preview: true
+)
 
 action = Lighstorm::Bitcoin::Address.create
 
@@ -437,7 +577,11 @@ address = action.result
 
 address._key
 address.created_at
-address.code # 'bcrt1qpma0wpaf2wzlflvamgz2zvw3x0k4vfzwq45x9s'
+address.code # 'bc1pd5jgrk4k0qmrl3ddr0qrap0nrafrdydpsznq9v3a5ny33fz6tklsqut72a'
+
+address.specification.format # 'taproot'
+address.specification.bip # 341
+address.specification.code # 'P2TR'
 ```
 
 ```ruby
@@ -451,7 +595,7 @@ Lighstorm::Bitcoin::Address.new(
   code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
 ).pay(
   amount: { millisatoshis: 250_000_000 },
-  fee: { satoshis_per_vitual_byte: 4 },
+  fee: { maximum: { satoshis_per_vitual_byte: 4 } },
   preview: true
 )
 
@@ -459,7 +603,7 @@ action = Lighstorm::Bitcoin::Address.new(
   code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
 ).pay(
   amount: { millisatoshis: 500_000_000 },
-  fee: { satoshis_per_vitual_byte: 1 },
+  fee: { maximum: { satoshis_per_vitual_byte: 1 } },
   description: 'Wallet Withdrawal',
   required_confirmations: 6
 )
@@ -749,6 +893,7 @@ invoice.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
 invoice.code # "lnbc20m1pv...qqdhhwkj"
+invoice.uri # "lightning:lnbc20m1pv...qqdhhwkj"
 
 invoice.amount.millisatoshis
 
@@ -812,6 +957,24 @@ invoice = Lighstorm::Lightning::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
 invoice.secret.valid_proof?(
   'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
 ) # => true
+```
+
+#### Decode
+
+```ruby
+invoice = Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj')
+
+invoice.amount.millisatoshis
+invoice.description.memo
+invoice.expires_at
+
+invoice.created_at
+invoice.payable
+invoice.secret.hash
+
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+invoice.code # "lnbc20m1pv...qqdhhwkj"
+invoice.uri # "lightning:lnbc20m1pv...qqdhhwkj"
 ```
 
 #### Pay

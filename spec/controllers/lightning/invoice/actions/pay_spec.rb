@@ -196,7 +196,7 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Pay do
           expect(action.result.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
           Contract.expect(
-            action.to_h, '176e70048ea1618e0412201e4e6c494326f5a8a1de41c73a081082ef390b35e5'
+            action.to_h, 'ba1ba34d7fc8335e8bce0fc3de33c78c8385435d7441aaca8e94f67f38265d0b'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -278,7 +278,7 @@ RSpec.describe Lighstorm::Controller::Lightning::Invoice::Pay do
         expect(action.result.hops.last.amount.millisatoshis).to eq(params[:amount][:millisatoshis])
 
         Contract.expect(
-          action.to_h, '32223ce26ec6f43a68f78b2c20a7427f9fb269f6714db1c5f79e8f8ac0f63f02'
+          action.to_h, '3884b5859c10462b30b48aaca5cd6a555179f786d772a651ad672edec21e523e'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)

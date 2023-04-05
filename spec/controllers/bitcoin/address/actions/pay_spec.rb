@@ -13,7 +13,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
       {
         address_code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2',
         amount: { millisatoshis: 500_000_000 },
-        fee: { satoshis_per_vitual_byte: 1 },
+        fee: { maximum: { satoshis_per_vitual_byte: 1 } },
         description: 'Wallet Withdrawal',
         required_confirmations: 1
       }
@@ -123,7 +123,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
         expect(model.description).to eq('Wallet Withdrawal')
 
         Contract.expect(
-          model.to_h, '2f2827afe3acae0d17abdbee49f1006f63a826ccadd06f5bc3fc8e859e6dffad'
+          model.to_h, '5961259e87ed775b8ec88246b467269bb06f19db5bddcf2413d8382957db553e'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -138,7 +138,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
             Lighstorm::Controller::Bitcoin::Address.components,
             address_code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2',
             amount: { millisatoshis: 500_000_000 },
-            fee: { satoshis_per_vitual_byte: 1 },
+            fee: { maximum: { satoshis_per_vitual_byte: 1 } },
             description: 'Wallet Withdrawal',
             required_confirmations: 1,
             preview: true
@@ -164,7 +164,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
             Lighstorm::Controller::Bitcoin::Address.components,
             address_code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2',
             amount: { millisatoshis: 500_000_000 },
-            fee: { satoshis_per_vitual_byte: 1 },
+            fee: { maximum: { satoshis_per_vitual_byte: 1 } },
             description: 'Wallet Withdrawal',
             required_confirmations: 1
           ) do |fn, from = :fetch|
@@ -172,20 +172,20 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Pay do
           end
 
           expect(action.response).to eq(
-            { txid: '6f5f1b781e2c7d676702abdbc9726e88f12c75d606751b10ed97811b25f9a00d' }
+            { txid: '9068b5e021e2259fe9461a4e8108d3b8dc4494d72ff2684bda20f0630c1623d9' }
           )
 
           expect(action.result.class).to eq(Lighstorm::Model::Bitcoin::Transaction)
 
           expect(action.result._key.size).to eq(64)
-          expect(action.result.at.utc.to_s).to eq('2023-04-01 23:31:10 UTC')
+          expect(action.result.at.utc.to_s).to eq('2023-04-03 22:14:12 UTC')
           expect(action.result.hash).to eq(action.response[:txid])
           expect(action.result.amount.millisatoshis).to eq(-500_000_000)
           expect(action.result.fee.millisatoshis).to eq(154_000)
           expect(action.result.description).to eq('Wallet Withdrawal')
 
           Contract.expect(
-            action.to_h, 'f2a2ecb8b4443ed8511f30cc76b1639552421ec0afdca3b134e0dc8b071e3e2b'
+            action.to_h, '890b67ce4c074ee9aaa9a67b78ad5ff2275ce17e3493ce7000f6986fcb6810cc'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)

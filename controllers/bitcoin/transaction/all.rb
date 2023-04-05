@@ -9,7 +9,7 @@ module Lighstorm
     module Bitcoin
       module Transaction
         module All
-          def self.fetch(components, hash: nil, limit: nil)
+          def self.fetch(components, direction: nil, hash: nil, limit: nil)
             at = Time.now
 
             transactions = []
@@ -17,7 +17,12 @@ module Lighstorm
             response = components[:grpc].lightning.get_transactions
 
             response.transactions.each do |transaction|
-              next unless hash.nil? || transaction.to_h[:tx_hash] == hash
+              next unless hash.nil? || transaction.tx_hash == hash
+
+              next unless
+                direction.nil? ||
+                (direction == 'in' && transaction.amount.positive?) ||
+                (direction == 'out' && transaction.amount.negative?)
 
               transactions << transaction.to_h
             end
@@ -41,11 +46,11 @@ module Lighstorm
             adapted[:get_transactions]
           end
 
-          def self.data(components, hash: nil, limit: nil, &vcr)
+          def self.data(components, hash: nil, direction: nil, limit: nil, &vcr)
             raw = if vcr.nil?
-                    fetch(components, hash: hash, limit: limit)
+                    fetch(components, hash: hash, direction: direction, limit: limit)
                   else
-                    vcr.call(-> { fetch(components, hash: hash, limit: limit) })
+                    vcr.call(-> { fetch(components, hash: hash, direction: direction, limit: limit) })
                   end
 
             adapted = adapt(raw)
