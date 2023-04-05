@@ -33,14 +33,15 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Request::Decode do
       expect(model.uri).to eq('bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz')
 
       expect(model.to_h).to eq(
-        {
-          _key: 'cfe53fceea2fb1ce8a0d40584e1e595bbc2182e445fd726df0ac80d288bb2952',
-          address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
+        { _key: 'cfe53fceea2fb1ce8a0d40584e1e595bbc2182e445fd726df0ac80d288bb2952',
+          address: {
+            code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W',
+            specification: { format: 'legacy', code: 'P2PKH', bip: nil }
+          },
+          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz',
           amount: { millisatoshis: 5_000_000_000_000 },
           description: 'Luke-Jr',
-          message: 'Donation for project xyz',
-          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
-        }
+          message: 'Donation for project xyz' }
       )
     end
   end
@@ -70,11 +71,12 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Request::Decode do
       expect(model.uri).to eq('bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W')
 
       expect(model.to_h).to eq(
-        {
-          _key: '416b10c7da18c34ae1444db9363e382e0db29b8323be07c34f312506425b834c',
-          address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
-          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
-        }
+        { _key: '416b10c7da18c34ae1444db9363e382e0db29b8323be07c34f312506425b834c',
+          address: {
+            code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W',
+            specification: { format: 'legacy', code: 'P2PKH', bip: nil }
+          },
+          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' }
       )
     end
   end
@@ -104,11 +106,12 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Request::Decode do
       expect(model.uri).to eq('bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W')
 
       expect(model.to_h).to eq(
-        {
-          _key: '416b10c7da18c34ae1444db9363e382e0db29b8323be07c34f312506425b834c',
-          address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
-          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'
-        }
+        { _key: '416b10c7da18c34ae1444db9363e382e0db29b8323be07c34f312506425b834c',
+          address: {
+            code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W',
+            specification: { format: 'legacy', code: 'P2PKH', bip: nil }
+          },
+          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' }
       )
     end
   end
@@ -139,14 +142,51 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Request::Decode do
       expect(model.uri).to eq('bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz')
 
       expect(model.to_h).to eq(
-        {
-          _key: 'cfe53fceea2fb1ce8a0d40584e1e595bbc2182e445fd726df0ac80d288bb2952',
-          address: { code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W' },
+        { _key: 'cfe53fceea2fb1ce8a0d40584e1e595bbc2182e445fd726df0ac80d288bb2952',
+          address: {
+            code: '175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W',
+            specification: { format: 'legacy', code: 'P2PKH', bip: nil }
+          },
+          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz',
           amount: { millisatoshis: 5_000_000_000_000 },
           description: 'Luke-Jr',
-          message: 'Donation for project xyz',
-          uri: 'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation+for+project+xyz'
-        }
+          message: 'Donation for project xyz' }
+      )
+    end
+  end
+
+  context 'precision' do
+    let(:uri) do
+      'bitcoin:bcrt1qlkuvzpzug6v2xl93sdkm25qcxetddyzx6cz9yj?amount=0.00000000001'
+    end
+
+    it 'models' do
+      data = described_class.data(uri: uri)
+
+      expect(data).to eq(
+        { _source: :decode,
+          _key: '0a250ed2eb2daccbb6c897e807a1da44f70ec30f214c8f325946d06193cf26b9',
+          address: { code: 'bcrt1qlkuvzpzug6v2xl93sdkm25qcxetddyzx6cz9yj' },
+          amount: { millisatoshis: 1 } }
+      )
+
+      model = described_class.model(data, Lighstorm::Controller::Bitcoin::Request.components)
+
+      expect(model.address.code).to eq('bcrt1qlkuvzpzug6v2xl93sdkm25qcxetddyzx6cz9yj')
+      expect(model.amount.millisatoshis).to eq(1)
+      expect(model.amount.bitcoins).to eq(0.00000000001)
+      expect(model.description).to be_nil
+      expect(model.message).to be_nil
+      expect(model.uri).to eq('bitcoin:bcrt1qlkuvzpzug6v2xl93sdkm25qcxetddyzx6cz9yj?amount=0.00000000001')
+
+      expect(model.to_h).to eq(
+        { _key: '0a250ed2eb2daccbb6c897e807a1da44f70ec30f214c8f325946d06193cf26b9',
+          address: {
+            code: 'bcrt1qlkuvzpzug6v2xl93sdkm25qcxetddyzx6cz9yj',
+            specification: { format: 'segwit', code: 'P2WPKH', bip: 173 }
+          },
+          uri: 'bitcoin:bcrt1qlkuvzpzug6v2xl93sdkm25qcxetddyzx6cz9yj?amount=0.00000000001',
+          amount: { millisatoshis: 1 } }
       )
     end
   end

@@ -15,7 +15,7 @@ RSpec.describe Lighstorm::Bitcoin::Address do
           request = described_class.create(preview: true)
 
           expect(request).to eq(
-            { service: :lightning, method: :new_address, params: { type: :WITNESS_PUBKEY_HASH } }
+            { service: :lightning, method: :new_address, params: { type: :TAPROOT_PUBKEY } }
           )
         end
       end
@@ -29,7 +29,7 @@ RSpec.describe Lighstorm::Bitcoin::Address do
           expect(action.result.class).to eq(Lighstorm::Model::Bitcoin::Address)
 
           Contract.expect(
-            action.to_h, '03cf73d9d2ea3741b5be4c03710ed7d912e6a1ae341ba1005d9021ec87fddadf'
+            action.to_h, '06a789e4851198058a0e66ded776ef6fd9c6390ff5ec7f6990af8c03d910f0fb'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)
@@ -48,7 +48,7 @@ RSpec.describe Lighstorm::Bitcoin::Address do
 
         request = address.pay(
           amount: { millisatoshis: 250_000_000 },
-          fee: { satoshis_per_vitual_byte: 1 },
+          fee: { maximum: { satoshis_per_vitual_byte: 1 } },
           preview: true
         )
 
@@ -65,7 +65,7 @@ RSpec.describe Lighstorm::Bitcoin::Address do
 
         action = address.pay(
           amount: { millisatoshis: 250_000_000 },
-          fee: { satoshis_per_vitual_byte: 1 }
+          fee: { maximum: { satoshis_per_vitual_byte: 1 } }
         ) do |fn, from = :fetch|
           VCR.reel.unsafe('I_KNOW_WHAT_I_AM_DOING').replay("#{vcr_key}/#{from}", request) { fn.call }
         end

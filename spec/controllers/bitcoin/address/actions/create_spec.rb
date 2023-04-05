@@ -11,14 +11,14 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Create do
 
     context 'gradual' do
       it 'flows' do
-        request = described_class.prepare
+        request = described_class.prepare(format: 'taproot')
 
         expect(request).to eq(
           {
             service: :lightning,
             method: :new_address,
             params: {
-              type: :WITNESS_PUBKEY_HASH
+              type: :TAPROOT_PUBKEY
             }
           }
         )
@@ -39,19 +39,19 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Create do
 
         expect(adapted_to_h).to eq(
           { _source: :new_address,
-            _key: 'ed0248d083d5a9f7de6fb286f16a559525981fdc597be74da9e66a90485bc8dc',
-            created_at: '2023-04-01 23:17:05 UTC',
-            code: 'bcrt1qd6zttxeyr4xwn7skwrmkvkfyx3emexs5lckewx' }
+            _key: 'e36bb402a48cefa9308e2850bd3bd8916c019a90aaf365eec36c84224c52f7ad',
+            code: 'bcrt1peunl67vvh76fmsdfkgyhgpmf7vf7duduw6sxulzy0xrvrsf7dxrqgstrn5',
+            created_at: '2023-04-04 12:41:45 UTC' }
         )
 
         model = described_class.model(adapted, Lighstorm::Controller::Bitcoin::Address.components)
 
         expect(model._key.size).to eq(64)
-        expect(model.created_at.utc.to_s).to eq('2023-04-01 23:17:05 UTC')
-        expect(model.code).to eq('bcrt1qd6zttxeyr4xwn7skwrmkvkfyx3emexs5lckewx')
+        expect(model.created_at.utc.to_s).to eq('2023-04-04 12:41:45 UTC')
+        expect(model.code).to eq('bcrt1peunl67vvh76fmsdfkgyhgpmf7vf7duduw6sxulzy0xrvrsf7dxrqgstrn5')
 
         Contract.expect(
-          model.to_h, '19b9b21feb645a6717f6cf43a98207f81d798c9b9d4b6523f961053d41dc746a'
+          model.to_h, '8c2ebd984c979d5e504fa3786a5fa11de2f5952360806ee0e8e985be48e3ba84'
         ) do |actual, expected|
           expect(actual.hash).to eq(expected.hash)
           expect(actual.contract).to eq(expected.contract)
@@ -72,7 +72,7 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Create do
               service: :lightning,
               method: :new_address,
               params: {
-                type: :WITNESS_PUBKEY_HASH
+                type: :TAPROOT_PUBKEY
               }
             }
           )
@@ -88,17 +88,17 @@ RSpec.describe Lighstorm::Controller::Bitcoin::Address::Create do
           end
 
           expect(action.response).to eq(
-            { address: 'bcrt1qhs2949xljflpxcl34ehyrwf56n75k6vj588mn9' }
+            { address: 'bcrt1pthpaqp4y30hxf5vh7y27z7yk3jh62htm9t7u3qce43dxtdqcuzssll03j4' }
           )
 
           expect(action.result.class).to eq(Lighstorm::Model::Bitcoin::Address)
 
           expect(action.result._key.size).to eq(64)
-          expect(action.result.created_at.utc.to_s).to eq('2023-04-01 23:19:57 UTC')
-          expect(action.result.code).to eq('bcrt1qhs2949xljflpxcl34ehyrwf56n75k6vj588mn9')
+          expect(action.result.created_at.utc.to_s).to eq('2023-04-04 12:43:43 UTC')
+          expect(action.result.code).to eq('bcrt1pthpaqp4y30hxf5vh7y27z7yk3jh62htm9t7u3qce43dxtdqcuzssll03j4')
 
           Contract.expect(
-            action.to_h, '03cf73d9d2ea3741b5be4c03710ed7d912e6a1ae341ba1005d9021ec87fddadf'
+            action.to_h, '8490c5e8bf4f610cf62e323f42011daab114719631b193686ed509c0a33baa0b'
           ) do |actual, expected|
             expect(actual.hash).to eq(expected.hash)
             expect(actual.contract).to eq(expected.contract)

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 require 'digest'
 
 module Lighstorm
@@ -15,7 +17,7 @@ module Lighstorm
 
           if uri[:params]['amount']
             result[:amount] = {
-              millisatoshis: uri[:params]['amount'].to_f * 100_000_000_000.0
+              millisatoshis: BigDecimal(uri[:params]['amount']) * BigDecimal('100000000000.0')
             }
           end
 

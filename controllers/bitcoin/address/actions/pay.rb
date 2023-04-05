@@ -38,7 +38,7 @@ module Lighstorm
               params: {
                 addr: address_code,
                 amount: (amount[:millisatoshis].to_f / 1000.0).to_i,
-                sat_per_vbyte: fee[:satoshis_per_vitual_byte],
+                sat_per_vbyte: fee[:maximum][:satoshis_per_vitual_byte],
                 min_confs: required_confirmations
               }
             }

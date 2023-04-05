@@ -514,7 +514,7 @@ action = Lighstorm::Bitcoin::Request.decode(
 ).pay(
   amount: { millisatoshis: 5000000000000 },
   description: 'Making a Donation',
-  fee: { satoshis_per_vitual_byte: 1 },
+  fee: { maximum: { satoshis_per_vitual_byte: 1 } },
   required_confirmations: 6,
   preview: true
 )
@@ -523,7 +523,7 @@ action = Lighstorm::Bitcoin::Request.decode(
 ```ruby
 action = Lighstorm::Bitcoin::Request.decode(
   'bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz'
-).pay(fee: { satoshis_per_vitual_byte: 1 })
+).pay(fee: { maximum: { satoshis_per_vitual_byte: 1 } })
 
 action.request
 action.response
@@ -572,7 +572,7 @@ Lighstorm::Bitcoin::Address.new(
   code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
 ).pay(
   amount: { millisatoshis: 250_000_000 },
-  fee: { satoshis_per_vitual_byte: 4 },
+  fee: { maximum: { satoshis_per_vitual_byte: 4 } },
   preview: true
 )
 
@@ -580,7 +580,7 @@ action = Lighstorm::Bitcoin::Address.new(
   code: 'bcrt1qq5gl3thf4ka93eluz0guweek9vmeyqyrck3py2'
 ).pay(
   amount: { millisatoshis: 500_000_000 },
-  fee: { satoshis_per_vitual_byte: 1 },
+  fee: { maximum: { satoshis_per_vitual_byte: 1 } },
   description: 'Wallet Withdrawal',
   required_confirmations: 6
 )
@@ -870,6 +870,7 @@ invoice.state
 
 # https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
 invoice.code # "lnbc20m1pv...qqdhhwkj"
+invoice.uri # "lightning:lnbc20m1pv...qqdhhwkj"
 
 invoice.amount.millisatoshis
 
@@ -933,6 +934,24 @@ invoice = Lighstorm::Lightning::Invoice.find_by_code('lnbc20n1pj...0eqps7h0k9')
 invoice.secret.valid_proof?(
   'c504f73f83e3772b802844b54021e44e071c03011eeda476b198f7a093bcb09e'
 ) # => true
+```
+
+#### Decode
+
+```ruby
+invoice = Lighstorm::Lightning::Invoice.decode('lnbc20m1pv...qqdhhwkj')
+
+invoice.amount.millisatoshis
+invoice.description.memo
+invoice.expires_at
+
+invoice.created_at
+invoice.payable
+invoice.secret.hash
+
+# https://github.com/lightning/bolts/blob/master/11-payment-encoding.md
+invoice.code # "lnbc20m1pv...qqdhhwkj"
+invoice.uri # "lightning:lnbc20m1pv...qqdhhwkj"
 ```
 
 #### Pay

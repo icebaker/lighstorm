@@ -11,8 +11,10 @@ module Lighstorm
         module Decode
           def self.fetch(components, code)
             {
-              _code: code,
-              decode_pay_req: components[:grpc].lightning.decode_pay_req(pay_req: code).to_h
+              _code: code.sub('lightning:', ''),
+              decode_pay_req: components[:grpc].lightning.decode_pay_req(
+                pay_req: code.sub('lightning:', '')
+              ).to_h
             }
           end
 
@@ -30,9 +32,9 @@ module Lighstorm
 
           def self.data(components, code, &vcr)
             raw = if vcr.nil?
-                    fetch(components, code.sub('lightning:', ''))
+                    fetch(components, code)
                   else
-                    vcr.call(-> { fetch(components, code.sub('lightning:', '')) })
+                    vcr.call(-> { fetch(components, code) })
                   end
 
             adapted = adapt(raw)

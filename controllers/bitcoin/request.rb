@@ -14,9 +14,9 @@ module Lighstorm
         extend Impersonatable
 
         class DSL < Impersonatable::DSL
-          def create(address: nil, amount: nil, description: nil, message: nil, preview: false, &vcr)
+          def create(address: nil, format: 'taproot', amount: nil, description: nil, message: nil, preview: false, &vcr)
             if address.nil?
-              address_action = Address::Create.perform(components, preview: preview, &vcr)
+              address_action = Address::Create.perform(components, format: format, preview: preview, &vcr)
               return address_action if preview
 
               address = address_action.result.to_h

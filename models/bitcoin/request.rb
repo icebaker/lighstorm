@@ -25,7 +25,7 @@ module Lighstorm
         end
 
         def amount
-          @amount ||= @data[:amount] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
+          @amount ||= @data[:amount] && @data[:amount][:millisatoshis] ? Satoshis.new(millisatoshis: @data[:amount][:millisatoshis]) : nil
         end
 
         def uri
@@ -35,7 +35,7 @@ module Lighstorm
 
           params = {}
 
-          params[:amount] = amount.bitcoins if amount
+          params[:amount] = ('%.20f' % amount.bitcoins).sub(/\.?0+$/, '') if amount
           params[:label] = description if description
           params[:message] = message if message
 
